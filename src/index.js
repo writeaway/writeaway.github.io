@@ -5,7 +5,7 @@ var RedaxtorCodemirror = require('../../redaxtor-codemirror/src/index');
 
 require('../../redaxtor-medium/dist/medium-editor.css');
 require('../../redaxtor-medium/dist/redaxtor-medium.css');
-//require('style!css?-url!codemirror/lib/codemirror.css');
+require('../node_modules/codemirror/lib/codemirror.css');
 
 var components = {
     html: RedaxtorMedium,

@@ -41,12 +41,16 @@ var config = {
             },
             {
                 test: /\.css$/,
-                exclude: /(node_modules)/,
                 loaders: [
                     'style-loader',
                     'css-loader?-url',
                     'postcss-loader'
                 ]
+            },
+            {
+                test: /\.(woff)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                exclude: /(node_modules)/,
+                loaders: ["url-loader?limit=10000"]
             }
         ]
     },

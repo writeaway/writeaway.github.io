@@ -5,8 +5,9 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:umd": "cross-env NODE_ENV=development webpack ./src/index.js ./redaxtor.min.js --display-error-details",
-    "build:umd:min": "cross-env NODE_ENV=production webpack ./src/index.js ./redaxtor.js"
+    "build": "npm run build:umd && npm run build:umd:min",
+    "build:umd": "cross-env NODE_ENV=development webpack ./src/index.js ./redaxtor.js --display-error-details",
+    "build:umd:min": "cross-env NODE_ENV=production webpack ./src/index.js ./redaxtor.min.js"
   },
   "author": "",
   "license": "MIT",
@@ -18,6 +19,7 @@
     "react-redux": "^4.4.6",
     "react-tap-event-plugin": "^0.2.2",
     "redux": "^3.3.1",
+    "react-codemirror": "^0.2.5",
     "redux-thunk": "^2.0.1",
     "react-redux-toastr": "^3.0.8",
     "react-toggle": "^2.2.0",
