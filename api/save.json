@@ -1,7 +1,7 @@
 {
   "status": 200,
   "message": {
-    "content": "OK",
+    "content": "Server saved changes",
     "timeout": 1000
   }
 }

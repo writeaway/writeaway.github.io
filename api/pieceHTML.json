@@ -2,7 +2,7 @@
   "status": 200,
   "piece": {
     "data": {
-      "html": "<h1>This is an example for the 'HTML' piece</h1><img src='http://www.w3schools.com/tags/smiley.gif' alt='Happy smile'>"
+      "html": "<h1>Hey! You did it!</h1><p>This text has changed, because it was fetched from server before editing. Next block just directly uses content and is not fetching anything.</p>"
     }
   }
 }

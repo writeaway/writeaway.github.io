@@ -2,7 +2,7 @@
   "status": 200,
   "piece": {
     "data": {
-      "html": "<h1>This is an example for the 'SOURCE' piece</h1>"
+      "html": "<h2>Edit source</h2><p>If you use <pre>data-piece=\"source\"</pre> attribute, Redaxtor will call source editor</p>"
     }
   }
 }
