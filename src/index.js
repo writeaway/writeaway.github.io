@@ -10,7 +10,9 @@ require('../../redaxtor-medium/dist/redaxtor-medium.css');
 require('../node_modules/codemirror/lib/codemirror.css');
 
 var components = {
-    html: RedaxtorMedium,
+    html: RedaxtorMedium.HTMLEditor,
+    image: RedaxtorMedium.IMGTagEditor,
+    background: RedaxtorMedium.BackgroundImageEditor,
     source: RedaxtorCodemirror
 };
 
