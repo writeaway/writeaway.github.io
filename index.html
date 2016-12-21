@@ -39,9 +39,9 @@
     </style>
 </head>
 <body>
-    <div class="bs-docs-header">
+    <div class="bs-docs-header" data-piece="background" data-id="bgSample2" data-name="Header Background" >
         <div class="container">
-            <div data-piece="html" data-id="pieceHTML">
+            <div data-piece="html" data-id="pieceHTML" data-name="Header">
                 <h1>Getting started</h1>
                 <p>Click Redaxtor bar in top left corner and edit me!</p>
             </div>
@@ -50,7 +50,7 @@
 
     <div class="container">
         <p>&nbsp;</p>
-        <div data-piece="html" data-id="pieceHTMLFromPage" data-use-html="1">
+        <div data-piece="html" data-id="pieceHTMLFromPage" data-name="Body">
             <h2>Alternative html mode</h2>
             <p>If you use <pre>data-use-html</pre> attribute, Redaxtor is not ferching content from server, it uses html from DOM</p>
             <p>Set it like so to DIV wrapper <pre>data-use-html="1"</pre> and you are set!</p>
@@ -62,22 +62,22 @@
         <p>&nbsp;</p>
         <div>
             <h2>Image editor</h2>
-            <p style="text-align: center"><img data-piece="image"  data-id="imageSample" src="http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png" alt="Happy smile"></p>
+            <p style="text-align: center"><img  data-name="Image Sample" data-piece="image"  data-id="imageSample" src="http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png" alt="Happy smile"></p>
         </div>
         <p>&nbsp;</p>
     </div>
-    <!-- div class="container" data-piece="background" style="background: #efefef url('http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png') 50% 50% no-repeat">
+    <div class="container" data-piece="background" data-id="bgSample" data-name="Backgound Sample" style="background: #efefef url('http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png') 0 0 repeat">
         <p>&nbsp;</p>
         <div>
             <h2>Background editor</h2>
-            <p style="text-align: center">Edit div background. Not implemented.</p>
+            <p style="text-align: center">Edit div background. Currently breaks nesting.</p>
         </div>
         <p>&nbsp;</p>
-    </div -->
+    </div>
 
     <div class="container">
         <p>&nbsp;</p>
-        <div data-piece="source" data-id="pieceSource" data-get-url="api/pieceSource.json">
+        <div data-piece="source" data-id="pieceSource" data-get-url="api/pieceSource.json"  data-name="Source Sample">
             <h2>Edit source</h2>
             <p>If you use <pre>data-piece="source"</pre> attribute, Redaxtor will call source editor</p>
         </div>
@@ -85,17 +85,39 @@
     </div>
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  rel="stylesheet"/>
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
     <script src="redaxtor.js"></script>
     <script>
         var redaxtor = new Redaxtor({
-            ajax: {
-                headers: {
-                    "X-CSRF-TOKEN": "xcsrftoken"
-                }
-            },
             pieces: {
-               // getURL: "api/pieceHTML.json",
-                saveURL: "api/save.json"
+            },
+            api: {
+                getImageList: function () {
+                    return new Promise(function(resolve, reject) {
+                        $.get({
+                            url: "api/images.json",
+                            dataType: "json"
+                        }).done(function(data) {
+                            resolve(data.data.list);
+                        }).fail(function(error) {
+                            reject(error);
+                        });
+                    });
+                },
+                uploadImage: function() {
+
+                },
+                /* Use default getter, commenting out
+                getPieceData: function(piece) {
+
+                }, */
+                savePieceData: function(piece) {
+                    console.info("Saving to server", piece);
+                    return Promise.resolve();
+                }
             }
         });
     </script>
