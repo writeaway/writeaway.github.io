@@ -22311,12 +22311,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var piecesEnableEdit = exports.piecesEnableEdit = function piecesEnableEdit() {
-	    return { type: _constants2.default.PIECES_ENABLE_EDIT };
+	var piecesEnableEdit = exports.piecesEnableEdit = function piecesEnableEdit(subType) {
+	    return { type: _constants2.default.PIECES_ENABLE_EDIT, subType: subType };
 	};
 	
-	var piecesDisableEdit = exports.piecesDisableEdit = function piecesDisableEdit() {
-	    return { type: _constants2.default.PIECES_DISABLE_EDIT };
+	var piecesDisableEdit = exports.piecesDisableEdit = function piecesDisableEdit(subType) {
+	    return { type: _constants2.default.PIECES_DISABLE_EDIT, subType: subType };
+	};
+	
+	var piecesRunInit = function piecesRunInit(dispatch, pieces) {
+	    Object.keys(pieces.byId).forEach(function (id) {
+	        dispatch(pieceGet(id));
+	    });
 	};
 	
 	var piecesInit = exports.piecesInit = function piecesInit() {
@@ -22325,39 +22331,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (pieces.editorActive) {
 	            dispatch(piecesEnableEdit());
 	            if (!pieces.initialized) {
-	                Object.keys(pieces.byId).forEach(function (id) {
-	                    var piece = pieces.byId[id];
-	                    if (piece.useHTML) {
-	                        dispatch(pieceFetched(id, { data: { html: piece.node.innerHTML } }));
-	                        pieceRender(piece);
-	                    } else {
-	                        dispatch(pieceGet(id));
-	                    }
-	                });
+	                piecesRunInit(dispatch, pieces);
 	            }
 	        }
 	    };
 	};
 	
-	var piecesToggleEdit = exports.piecesToggleEdit = function piecesToggleEdit() {
+	var piecesToggleEdit = exports.piecesToggleEdit = function piecesToggleEdit(subType) {
 	    return function (dispatch, getState) {
-	        var pieces = getState().pieces,
-	            editorActive = !pieces.editorActive;
+	        var pieces = getState().pieces;var editorActive = !pieces.editorActive;
+	        if (subType) {
+	            editorActive = !pieces["editorEnabled:" + subType];
+	        }
 	        if (editorActive) {
-	            dispatch(piecesEnableEdit());
-	            if (pieces.initialized) {} else {
-	                Object.keys(pieces.byId).forEach(function (id) {
-	                    var piece = pieces.byId[id];
-	                    if (piece.useHTML) {
-	                        dispatch(pieceFetched(id, { data: { html: piece.node.innerHTML } }));
-	                        pieceRender(piece);
-	                    } else {
-	                        dispatch(pieceGet(id));
-	                    }
-	                });
+	            dispatch(piecesEnableEdit(subType));
+	            if (!pieces.initialized) {
+	                piecesRunInit(dispatch, pieces);
 	            }
 	        } else {
-	            dispatch(piecesDisableEdit());
+	            dispatch(piecesDisableEdit(subType));
 	        }
 	    };
 	};
@@ -32336,6 +32328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = CodeMirror;
 	CodeMirror.__renderType = "INSIDE";
+	CodeMirror.__name = "Source";
 
 /***/ },
 /* 121 */
@@ -32445,7 +32438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'findRedaxtor',
 	        value: function findRedaxtor(el) {
-	            while (el && el.tagName.toLowerCase() != 'redaxtor') {
+	            while (el && el.tagName.toLowerCase() != 'redaxtor' && el.className.indexOf("r_modal-overlay") == -1) {
 	                el = el.parentElement;
 	            }
 	            return el;
@@ -32545,6 +32538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = RedaxtorBackgroundEditor;
 	RedaxtorBackgroundEditor.__renderType = "BEFORE";
+	RedaxtorBackgroundEditor.__name = "Backgrounds";
 
 /***/ },
 /* 123 */
@@ -32850,6 +32844,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = RedaxtorImageTag;
 	RedaxtorImageTag.__renderType = "BEFORE";
+	RedaxtorImageTag.__name = "Images";
 
 /***/ },
 /* 125 */
@@ -33081,6 +33076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = RedaxtorMedium;
 	RedaxtorMedium.__renderType = "INSIDE";
+	RedaxtorMedium.__name = "Html";
 
 /***/ },
 /* 126 */
@@ -34611,6 +34607,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var Redaxtor = function () {
 	    function Redaxtor(options) {
+	        var _this = this;
+	
 	        _classCallCheck(this, Redaxtor);
 	
 	        /**
@@ -34653,6 +34651,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            config.pieces = {
 	                components: options.pieces.components
 	            };
+	
+	            defaultState.pieces = {};
+	
+	            Object.keys(options.pieces.components).forEach(function (key) {
+	                _this.pieces["editorEnabled:" + key] = true;
+	                defaultState.pieces["editorEnabled:" + key] = true;
+	            });
 	        }
 	
 	        if (options.pages) {
@@ -35319,11 +35324,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    _react2.default.createElement(
 	                        'label',
 	                        null,
-	                        'Edit'
+	                        'All Editors'
 	                    ),
-	                    _react2.default.createElement(_reactToggle2.default, { defaultChecked: this.props.editorActive,
-	                        onChange: this.props.piecesToggleEdit })
+	                    _react2.default.createElement(_reactToggle2.default, { checked: this.props.editorActive,
+	                        onChange: function onChange() {
+	                            return _this2.props.piecesToggleEdit(false);
+	                        } })
 	                ),
+	                Object.keys(this.props.components).map(function (object, index) {
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { className: 'r_list-header', key: index },
+	                        _react2.default.createElement(
+	                            'label',
+	                            null,
+	                            _this2.props.components[object].__name || object
+	                        ),
+	                        _react2.default.createElement(_reactToggle2.default, { checked: _this2.props['editorEnabled:' + object],
+	                            onChange: function onChange() {
+	                                return _this2.props.piecesToggleEdit(object);
+	                            } })
+	                    );
+	                }),
 	                _react2.default.createElement(_PiecesList2.default, { editorActive: this.props.editorActive, pieces: this.props.byId,
 	                    source: this.props.components.source,
 	                    setSourceId: this.props.setSourceId,
@@ -35667,7 +35689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var mapStateToProps = function mapStateToProps(state, ownProps) {
 	    return _extends({}, state.pieces.byId[ownProps.id], {
 	        highlight: state.pieces.highlight,
-	        editorActive: state.pieces.editorActive
+	        editorActive: state.pieces.editorActive && state.pieces['editorEnabled:' + state.pieces.byId[ownProps.id].type] !== false //Note strict comparison to false. Undefined is treated as true
 	    });
 	};
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -35970,9 +35992,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    switch (action.type) {
 	        case _constants2.default.PIECES_ENABLE_EDIT:
-	            return _extends({}, pieces, { editorActive: true, initialized: true });
+	            if (action.subType) {
+	                var data = _extends({}, pieces, { initialized: true });
+	                data['editorEnabled:' + action.subType] = true;
+	                return data;
+	            } else {
+	                return _extends({}, pieces, { editorActive: true, initialized: true });
+	            }
 	        case _constants2.default.PIECES_DISABLE_EDIT:
-	            return _extends({}, pieces, { editorActive: false });
+	            if (action.subType) {
+	                var _data = _extends({}, pieces, { initialized: true });
+	                _data['editorEnabled:' + action.subType] = false;
+	                return _data;
+	            } else {
+	                return _extends({}, pieces, { editorActive: false });
+	            }
 	        case _constants2.default.PIECES_SET_SOURCE_ID:
 	            return _extends({}, pieces, { sourceId: action.id });
 	
@@ -38202,7 +38236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.i(__webpack_require__(163), "");
 	
 	// module
-	exports.push([module.id, ".vanilla-color-picker-single-color[data-color=\"inherit\"] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n/*# sourceMappingURL=medium-editor.css.map */", ""]);
+	exports.push([module.id, ".vanilla-color-picker-single-color[data-color=\"inherit\"] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n.r_edit .medium-editor-element {\n  word-wrap: normal;\n  min-height: unset;\n}\n/*# sourceMappingURL=medium-editor.css.map */", ""]);
 	
 	// exports
 
