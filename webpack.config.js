@@ -4,6 +4,7 @@ var autoprefixer = require('autoprefixer');
 var node_modules_dir = path.resolve(__dirname, 'node_modules');
 var env = process.env.NODE_ENV;
 var webpack = require(path.resolve(node_modules_dir, 'webpack'));
+var Visualizer = require('webpack-visualizer-plugin');
 
 var config = {
     output: {
@@ -15,6 +16,9 @@ var config = {
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(env)
+        }),
+        new Visualizer({
+            filename: './webpack-stat.'+env+'.html'
         })
     ],
     module: {

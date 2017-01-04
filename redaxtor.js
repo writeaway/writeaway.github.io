@@ -34551,10 +34551,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //TODO: Unused, remove
-	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	// import Img from "./components/img/ImgContainer";
 	
 	var _react = __webpack_require__(3);
@@ -34721,7 +34722,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            defaultState.i18n = this.i18n;
 	        }
 	
-	        this.store = (0, _redux.createStore)(_reducers2.default, _extends({}, defaultState, options.state), (0, _redux.applyMiddleware)(_reduxThunk2.default));
+	        var composeEnhancers =
+	        //process.env.NODE_ENV !== 'production' && //TODO: Disallow in production
+	        (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+	            name: "RedaXtor"
+	        }) : _react.compose;
+	
+	        this.store = (0, _redux.createStore)(_reducers2.default, _extends({}, defaultState, options.state), composeEnhancers((0, _redux.applyMiddleware)(_reduxThunk2.default)));
 	
 	        (0, _store.setStore)(this.store);
 	        if (options.ajax) (0, _callFetch.configureFetch)(options.ajax);
