@@ -25,7 +25,7 @@ var config = {
         loaders: [
             {
                 test: /\.(js)$/, exclude: /(node_modules)/,
-                loader: 'babel-loader',
+                loader: 'babel',
                 query: {
                     plugins: [
                         'babel-plugin-transform-object-rest-spread'
