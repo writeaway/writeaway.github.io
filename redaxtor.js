@@ -32463,7 +32463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'findRedaxtor',
 	        value: function findRedaxtor(el) {
-	            while (el && el.tagName.toLowerCase() != 'redaxtor' && el.className && el.className.indexOf("r_modal-overlay") == -1 && el.className.indexOf("r_bar") == -1) {
+	            while (el && el.tagName.toLowerCase() != 'redaxtor' && (!el.className || el.className.indexOf("r_modal-overlay") == -1 && el.className.indexOf("r_bar") == -1)) {
 	                el = el.parentElement;
 	            }
 	            return el;
@@ -32522,7 +32522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        /**
-	         * Based on external prop ensures editor is enabled or disabled
+	         * Based on external prop ensures editor is enabled or disabled and attaches-detaches non-react bindings
 	         */
 	        value: function check() {
 	            if (this.props.editorActive) {
@@ -32531,9 +32531,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.die();
 	            }
 	        }
+	
+	        /**
+	         * Updates rendering of props that are not updated by react
+	         * Here that updates styles of background
+	         */
+	
 	    }, {
-	        key: 'applyStyling',
-	        value: function applyStyling(data) {
+	        key: 'renderNonReactAttributes',
+	        value: function renderNonReactAttributes(data) {
 	            if (this.targetDiv) {
 	                this.targetDiv.style.backgroundImage = 'url(' + data.url + ')';
 	                this.targetDiv.style.backgroundSize = data.bgSize;
@@ -32553,7 +32559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'render',
 	        value: function render() {
 	            this.check();
-	            this.applyStyling(this.props.data);
+	            this.renderNonReactAttributes(this.props.data);
 	            return _react2.default.createElement(this.props.wrapper, {});
 	        }
 	    }]);
@@ -32792,9 +32798,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'saveCallback',
 	        value: function saveCallback(data) {
-	            this.targetImg.src = data.url;
-	            this.targetImg.alt = data.alt;
-	            this.props.updatePiece(this.props.id, { data: { src: this.targetImg.src, alt: this.targetImg.alt } });
+	            this.props.updatePiece(this.props.id, { data: { src: data.url, alt: data.alt } });
 	            this.props.savePiece(this.props.id);
 	        }
 	    }, {
@@ -32847,7 +32851,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	        /**
-	         * Based on external prop ensures editor is enabled or disabled
+	         * Based on external prop ensures editor is enabled or disabled and attaches-detaches non-react bindings
 	         */
 	        value: function check() {
 	            if (this.props.editorActive) {
@@ -32855,6 +32859,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else {
 	                this.die();
 	            }
+	        }
+	
+	        /**
+	         * Updates rendering of props that are not updated by react
+	         * Here that updates IMG tag src and alt
+	         */
+	
+	    }, {
+	        key: 'renderNonReactAttributes',
+	        value: function renderNonReactAttributes(data) {
+	            this.targetImg.src = data.src;
+	            this.targetImg.alt = data.alt;
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -32866,6 +32882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'render',
 	        value: function render() {
 	            this.check();
+	            this.renderNonReactAttributes(this.props.data);
 	            return _react2.default.createElement(this.props.wrapper, {});
 	        }
 	    }]);
@@ -34726,9 +34743,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        //process.env.NODE_ENV !== 'production' && //TODO: Disallow in production
 	        (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
 	            name: "RedaXtor"
-	        }) : _react.compose;
+	        }) : _redux.compose;
 	
-	        this.store = (0, _redux.createStore)(_reducers2.default, _extends({}, defaultState, options.state), composeEnhancers((0, _redux.applyMiddleware)(_reduxThunk2.default)));
+	        this.store = (0, _redux.createStore)(_reducers2.default, _extends({}, defaultState, options.state), composeEnhancers((0, _redux.applyMiddleware)(_reduxThunk2.default)
+	        // other store enhancers if any
+	        ));
 	
 	        (0, _store.setStore)(this.store);
 	        if (options.ajax) (0, _callFetch.configureFetch)(options.ajax);
