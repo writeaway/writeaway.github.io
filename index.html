@@ -95,6 +95,7 @@
             pieces: {
             },
             api: {
+                /*api for get gallery image list*/
                 getImageList: function () {
                     return new Promise(function(resolve, reject) {
                         $.get({
@@ -106,6 +107,10 @@
                             reject(error);
                         });
                     });
+                },
+                /* example of api for delete images */
+                deleteImage: function (id) {
+                    return Promise.resolve();
                 },
                 uploadImage: function() {
 
