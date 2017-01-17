@@ -56,6 +56,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -86,8 +88,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, RedaxtorBundle);
 	
 	        options.pieces.components = components;
+	        RedaxtorBundle.checkHtmlPiecesCompartibility(document);
 	        return _possibleConstructorReturn(this, (RedaxtorBundle.__proto__ || Object.getPrototypeOf(RedaxtorBundle)).call(this, options));
 	    }
+	
+	    /**
+	     * Scans html pieces for invalid internal html and reverts them to source editor if needed
+	     * @param node
+	     */
+	
+	
+	    _createClass(RedaxtorBundle, null, [{
+	        key: 'checkHtmlPiecesCompartibility',
+	        value: function checkHtmlPiecesCompartibility(node) {
+	            /**
+	             * In Spiral html pieces are marked up as data-piece="html", collect them
+	             */
+	            var pieces = node.querySelectorAll('[data-piece="html"]');
+	            for (var i = 0; i < pieces.length; i++) {
+	                var piece = pieces[i];
+	                if (piece.querySelector('iframe') || piece.querySelector('script')) {
+	                    //We have invalid piece data, fallback to source
+	                    piece.setAttribute("data-piece", "source");
+	                }
+	            }
+	        }
+	    }]);
 	
 	    return RedaxtorBundle;
 	}(Redaxtor);
@@ -9430,6 +9456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PIECE_RESET: "PIECE_RESET",
 	    PIECE_ADD: "PIECE_ADD",
 	    PIECE_REMOVE: "PIECE_REMOVE",
+	    PIECE_SET_DATA: "PIECE_SET_DATA",
 	    PIECE_HAS_REMOVED: "PIECE_HAS_REMOVED",
 	
 	    PIECE_FETCHING: "PIECE_FETCHING",
@@ -22287,7 +22314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.removePiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
+	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.setPieceData = exports.removePiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
 	
 	var _react = __webpack_require__(3);
 	
@@ -22322,7 +22349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var piecesRunInit = function piecesRunInit(dispatch, pieces) {
-	    Object.keys(pieces.byId).forEach(function (id) {
+	    pieces.byId && Object.keys(pieces.byId).forEach(function (id) {
 	        dispatch(pieceGet(id));
 	    });
 	};
@@ -22374,6 +22401,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var removePiece = exports.removePiece = function removePiece(id) {
 	    return { type: _constants2.default.PIECE_REMOVE, id: id };
+	};
+	
+	var setPieceData = exports.setPieceData = function setPieceData(id, data) {
+	    return { type: _constants2.default.PIECE_SET_DATA, id: id, data: data };
 	};
 	
 	var hasRemovedPiece = exports.hasRemovedPiece = function hasRemovedPiece(id) {
@@ -32969,7 +33000,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'onToggleImagePopup',
 	        value: function onToggleImagePopup() {
 	            if (this.img) {
-	                _index.imageManagerApi.get().setImageData({ url: this.img.src, alt: this.img.alt || "", width: +this.img.width, height: +this.img.height });
+	                _index.imageManagerApi.get().setImageData({
+	                    url: this.img.src,
+	                    alt: this.img.alt || "",
+	                    width: +this.img.width,
+	                    height: +this.img.height
+	                });
 	            }
 	            this.medium.editor.saveSelection();
 	            //this.saveSelection()
@@ -32997,7 +33033,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else {
 	                this.medium.editor.pasteHTML('<img src="' + (data.url || "") + '" alt="' + (data.alt || "") + 'style="' + 'width: "' + (data.width || "") + 'px; height: "' + (data.height || "") + 'px">');
 	            }
-	            this.props.updatePiece(this.props.id, { data: { html: this.medium.element.innerHTML } });
+	            this.props.updatePiece(this.props.id, { data: { html: this.medium.editor.getContent() } });
 	        }
 	    }, {
 	        key: 'cancelCallback',
@@ -33050,21 +33086,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dom = _reactDom2.default.findDOMNode(this);
 	            this.medium = new _HTMLEditor2.default(dom, {
 	                onUpdate: function onUpdate() {
-	                    _this2.props.updatePiece(_this2.props.id, { data: { html: _this2.medium.element.innerHTML } });
+	                    _this2.props.updatePiece(_this2.props.id, { data: { html: _this2.medium.editor.getContent() } });
 	                },
 	                onSave: function onSave() {
 	                    _this2.props.savePiece(_this2.props.id);
 	                },
 	                onLeave: function onLeave(resetCallback) {
 	                    /* if(resetCallback) {
-	                         if(confirm("Save changes?")) {
-	                             this.props.savePiece(this.props.id);
-	                         } else {
-	                             resetCallback();
-	                             this.props.resetPiece(this.props.id);
-	                         }
+	                     if(confirm("Save changes?")) {
+	                     this.props.savePiece(this.props.id);
 	                     } else {
-	                         //
+	                     resetCallback();
+	                     this.props.resetPiece(this.props.id);
+	                     }
+	                     } else {
+	                     //
 	                     }*/
 	                    _this2.props.savePiece(_this2.props.id);
 	                },
@@ -33079,7 +33115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'shouldComponentUpdate',
 	        value: function shouldComponentUpdate(nextProps, nextState) {
 	            !nextProps.editorActive && this.die();
-	            return this.medium && nextProps.data.html !== this.medium.element.innerHTML || this.state.firstRun !== nextState.firstRun || nextProps.editorActive !== this.props.editorActive;
+	            return this.medium && nextProps.data.html !== this.medium.editor.getContent() || this.state.firstRun !== nextState.firstRun || nextProps.editorActive !== this.props.editorActive;
 	        }
 	    }, {
 	        key: 'die',
@@ -33089,6 +33125,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.medium.editor.destroy();
 	            }
 	            this.state.firstRun = true;
+	        }
+	    }, {
+	        key: 'renderNonReactAttributes',
+	
+	
+	        /**
+	         * Updates rendering of props that are not updated by react
+	         * Here that updates styles of background
+	         */
+	        value: function renderNonReactAttributes(data) {
+	            if (!this.medium) {
+	                return;
+	            }
+	
+	            var content = this.medium.editor.getContent();
+	            if (content != data.html) {
+	                this.medium.editor.setContent(data.html);
+	            }
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -33121,6 +33175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    onClick: this.onClick.bind(this)
 	                };
 	            }
+	            this.renderNonReactAttributes(this.props.data);
 	            return _react2.default.createElement(this.props.wrapper, settings);
 	        }
 	    }]);
@@ -33751,8 +33806,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -33795,6 +33848,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	
 	        props.api && props.api.getImageList && props.api.getImageList().then(function (list) {
+	            // add index to item if not set by the server
+	            list.forEach(function (item, index) {
+	                if (!item.Id) {
+	                    item.id = index;
+	                }
+	            });
 	            _this.setState({ gallery: list });
 	        });
 	        return _this;
@@ -33821,20 +33880,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }, {
 	        key: 'onUrlChange',
-	        value: function onUrlChange(url) {
-	            this.setState({ url: url, alt: "" });
-	            this.getImageSize(url);
+	        value: function onUrlChange(imageData) {
+	            this.setState({ url: imageData.url, alt: "" });
+	            this.getImageSize(imageData);
 	        }
 	    }, {
 	        key: 'getImageSize',
-	        value: function getImageSize(url, getOriginalSizeOnly) {
-	            var that = this;
-	            var img = new Image();
-	            img.onload = function () {
-	                !getOriginalSizeOnly && that.setState({ width: this.width, height: this.height });
-	                that.setState({ originalWidth: this.width, originalHeight: this.height });
-	            };
-	            img.src = url;
+	        value: function getImageSize(imageData, getOriginalSizeOnly) {
+	
+	            //if is image from gallery
+	            if (imageData.width && imageData.height) {
+	                !getOriginalSizeOnly && this.setState({ width: imageData.width, height: imageData.height });
+	                this.setState({ originalWidth: imageData.width, originalHeight: imageData.height });
+	            } else {
+	                //if set by hands
+	                var that = this;
+	                var img = new Image();
+	                img.onload = function () {
+	                    !getOriginalSizeOnly && that.setState({ width: this.width, height: this.height });
+	                    that.setState({ originalWidth: this.width, originalHeight: this.height });
+	                };
+	                img.src = imageData.url;
+	            }
 	        }
 	    }, {
 	        key: 'setBgSize',
@@ -33973,7 +34040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function setImageData(data) {
 	            !data.alt && data.url && (data.alt = "");
 	            this.setState(data);
-	            data.url && this.getImageSize(data.url, !!data.width);
+	            data.url && this.getImageSize(data, !!data.width);
 	        }
 	    }, {
 	        key: 'sendFile',
@@ -33988,22 +34055,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                formdata.append("image", file);
 	
 	                this.props.api.uploadImage(formdata).then(function (response) {
-	                    _this3.onUrlChange(response.url);
+	                    var newImageData = {
+	                        url: response.url,
+	                        thumbnailUrl: response.thumbnailUrl,
+	                        width: response.width,
+	                        height: response.height,
+	                        id: response.id || _this3.state.gallery.length
+	                    };
+	
+	                    _this3.onUrlChange(newImageData);
 	                    if (_this3.state.gallery) {
-	                        _this3.state.gallery.push(response.url);
+	                        _this3.state.gallery.push(newImageData);
 	                        _this3.setState({ file: null });
 	                    }
 	                });
 	            }
 	        }
+	
+	        /**
+	         * save new images data
+	         * @param data {object} new image data
+	         */
+	
 	    }, {
 	        key: 'selectGalleryItem',
 	        value: function selectGalleryItem(data) {
-	            if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === "object") {
-	                this.setImageData(data);
-	            } else {
+	
+	            //change URL
+	            if (data.url != this.state.url) {
 	                this.onUrlChange(data);
 	            }
+	            this.setImageData(data);
 	        }
 	    }, {
 	        key: 'deleteGalleryItem',
@@ -34057,7 +34139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                'div',
 	                                { className: 'item-form' },
 	                                _react2.default.createElement('input', { onChange: function onChange(e) {
-	                                        return _this5.onUrlChange.call(_this5, e.target.value);
+	                                        return _this5.onUrlChange.call(_this5, { url: e.target.value });
 	                                    },
 	                                    placeholder: 'Enter image URL', value: this.state.url || "" })
 	                            ),
@@ -34110,7 +34192,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    { className: 'input-container' },
 	                                    _react2.default.createElement(
 	                                        'select',
-	                                        { name: 'background-size', value: this.state.bgSize, onChange: this.setBgSize.bind(this) },
+	                                        { name: 'background-size', value: this.state.bgSize,
+	                                            onChange: this.setBgSize.bind(this) },
 	                                        _react2.default.createElement(
 	                                            'option',
 	                                            { value: '' },
@@ -34133,7 +34216,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    { className: 'input-container' },
 	                                    _react2.default.createElement(
 	                                        'select',
-	                                        { name: 'background-repeat', value: this.state.bgRepeat, onChange: this.setBgRepeat.bind(this) },
+	                                        { name: 'background-repeat', value: this.state.bgRepeat,
+	                                            onChange: this.setBgRepeat.bind(this) },
 	                                        _react2.default.createElement(
 	                                            'option',
 	                                            { value: 'no-repeat' },
@@ -34161,7 +34245,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    { className: 'input-container' },
 	                                    _react2.default.createElement(
 	                                        'select',
-	                                        { name: 'background-position', value: this.state.bgPosition, onChange: this.setBgPosition.bind(this) },
+	                                        { name: 'background-position', value: this.state.bgPosition,
+	                                            onChange: this.setBgPosition.bind(this) },
 	                                        _react2.default.createElement(
 	                                            'option',
 	                                            { value: '50% 50%' },
@@ -34185,7 +34270,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        style: { width: "150px", marginRight: "5px" } }),
 	                                    _react2.default.createElement('div', { color: this.state.bgColor, ref: function ref(div) {
 	                                            _this5.colorDiv = div;
-	                                        }, onClick: this.pickBgColor.bind(this), className: 'color-pick', style: { backgroundColor: this.state.bgColor || "" } })
+	                                        }, onClick: this.pickBgColor.bind(this), className: 'color-pick',
+	                                        style: { backgroundColor: this.state.bgColor || "" } })
 	                                )
 	                            )
 	                        ),
@@ -34215,8 +34301,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        )
 	                    ),
 	                    this.state.gallery && _react2.default.createElement(_Gallery2.default, { gallery: this.state.gallery, api: this.props.api,
-	                        onChange: function onChange(url) {
-	                            _this5.selectGalleryItem.call(_this5, url);
+	                        onChange: function onChange(imageData) {
+	                            _this5.selectGalleryItem.call(_this5, imageData);
 	                        },
 	                        onDelete: function onDelete(id) {
 	                            return _this5.deleteGalleryItem.call(_this5, id);
@@ -34327,7 +34413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    onClick: function onClick() {
 	                                        _this2.props.onChange(_this2.props.gallery[index]);
 	                                    },
-	                                    style: { backgroundImage: "url(" + (_this2.props.gallery[index].url ? _this2.props.gallery[index].url : _this2.props.gallery[index]) + ")" } },
+	                                    style: { backgroundImage: "url(" + (_this2.props.gallery[index].thumbnailUrl ? _this2.props.gallery[index].thumbnailUrl : _this2.props.gallery[index]) + ")" } },
 	                                _this2.props.api.deleteImage && _react2.default.createElement(
 	                                    'span',
 	                                    { className: 'delete-icon',
@@ -34335,7 +34421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                            e.stopPropagation();
 	                                            _this2.setState({ image: _this2.props.gallery[index] });
 	                                        } },
-	                                    _react2.default.createElement('i', { className: 'im-icon-trash-empty' })
+	                                    _react2.default.createElement('i', { className: 'fa fa-trash-o', 'aria-hidden': 'true' })
 	                                )
 	                            )
 	                        );
@@ -34752,9 +34838,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        (0, _store.setStore)(this.store);
 	        if (options.ajax) (0, _callFetch.configureFetch)(options.ajax);
 	
-	        options.pieces && this.initPieces(document);
+	        /**
+	         * options.piecesRoot - say where get pieces
+	         */
+	        options.pieces && this.initPieces(options.piecesRoot || document);
 	
 	        this.showBar();
+	
+	        /**
+	         * enable pieces editing if set option 'enableEdit'
+	         */
+	        if (options.enableEdit) {
+	            this.store.dispatch((0, _pieces.piecesToggleEdit)());
+	        }
 	    }
 	
 	    /**
@@ -34842,6 +34938,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function destroyPiece(id) {
 	            this.store.dispatch((0, _pieces.removePiece)(id)); //TODO: Might be deprecated
 	            this.store.dispatch((0, _pieces.pieceUnmount)(this.store.getState().pieces.byId[id])); //Remove element from dom and trigger removing from state
+	        }
+	
+	        /**
+	         * set new data to a piece by Id
+	         * @param pieceId {string} id of piece
+	         * @param obj {Object} new data
+	         */
+	
+	    }, {
+	        key: "setData",
+	        value: function setData(pieceId, obj) {
+	            var state = this.store.getState();
+	            var currentPiece = state.pieces && state.pieces.byId && state.pieces.byId[pieceId];
+	            if (!currentPiece) {
+	                throw new Error("You are trying to set data to an unexisting piece. Piece id: " + pieceId);
+	            }
+	            if (!currentPiece.fetched) {
+	                throw new Error("Piece was not initialized before use setDate function. Piece id: " + pieceId);
+	            }
+	            this.store.dispatch((0, _pieces.setPieceData)(pieceId, obj));
 	        }
 	
 	        /**
@@ -35463,7 +35579,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            } })
 	                    );
 	                }),
-	                _react2.default.createElement(_PiecesList2.default, { editorActive: this.props.editorActive, pieces: this.props.byId,
+	                _react2.default.createElement(_PiecesList2.default, { editorActive: this.props.editorActive, pieces: this.props.byId || {},
 	                    source: this.props.components.source,
 	                    setSourceId: this.props.setSourceId,
 	                    savePiece: this.props.savePiece, updatePiece: this.props.updatePiece })
@@ -36073,11 +36189,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    switch (action.type) {
 	        case _constants2.default.PIECE_UPDATE:
-	            return _extends({}, piece, action.piece, { changed: !(action.notChanged || action.piece.data.html === piece.data.html) || piece.changed });
+	            return _extends({}, piece, action.piece, {
+	                changed: !(action.notChanged || action.piece.data.html === piece.data.html) || piece.changed
+	            });
 	        case _constants2.default.PIECE_RESET:
 	            return _extends({}, piece, { changed: false });
 	        case _constants2.default.PIECE_REMOVE:
 	            return _extends({}, piece, { destroy: true });
+	        case _constants2.default.PIECE_SET_DATA:
+	            //check is initiated
+	            if (!piece.fetched) {
+	                console.error('Piece was not initialized before use setDate function. Piece id: ' + piece.id);
+	                return _extends({}, piece);
+	            } else {
+	                //set data
+	                return _extends({}, piece, { data: _extends({}, piece.data, action.data) });
+	            }
 	        case _constants2.default.PIECE_HAS_REMOVED:
 	            return _extends({}, piece, { destroyed: true });
 	        case _constants2.default.PIECE_SAVING:
@@ -36142,6 +36269,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return _extends({}, pieces, {
 	                byId: byId
+	            });
+	
+	        case _constants2.default.PIECE_SET_DATA:
+	
+	            //check to existing piece
+	            if (!pieces.byId[action.id]) {
+	                console.error('You are trying to set data to an unexisting piece. Piece id: ' + action.id);
+	                return _extends({}, pieces);
+	            }
+	
+	            return _extends({}, pieces, {
+	                byId: _extends({}, pieces.byId, _defineProperty({}, action.id, piece(pieces.byId[action.id], action)))
 	            });
 	
 	        case _constants2.default.PIECE_UPDATE:
@@ -38380,7 +38519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.push([module.id, "@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);", ""]);
 	
 	// module
-	exports.push([module.id, ".r_modal-overlay {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(255, 255, 255, 0.75);\n  z-index: 200010;\n  display: none;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n}\n.r_modal-overlay.r_visible {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content {\n  width: 900px;\n  max-height: 70%;\n  z-index: 1;\n  border: 1px solid #ccc;\n  overflow: auto;\n  padding: 20px;\n  box-sizing: border-box;\n  color: #444;\n  border-radius: 2px;\n  background-color: white;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n  max-height: 450px;\n  overflow: auto;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .r_modal-content .item-form {\n  display: block;\n  margin-bottom: 15px;\n}\n.r_modal-overlay .r_modal-content .item-form .input-container {\n  padding-right: 10px;\n}\n.r_modal-overlay .r_modal-content .item-form .item-label {\n  font-size: 14px;\n  line-height: 16px;\n  color: #666666;\n  display: block;\n  padding-bottom: 5px;\n  font-weight: 100;\n}\n.r_modal-overlay .r_modal-content .item-form .sizes-checkbox {\n  display: inline-block;\n  margin-left: 20px;\n}\n.r_modal-overlay .r_modal-content .item-form select {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 100%;\n  height: 39px;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick {\n  height: 39px;\n  width: 39px;\n  display: inline-block;\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  vertical-align: bottom;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick[data-vanilla-picker-color='inherit'] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n.r_modal-overlay .r_modal-content .item-form input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item .delete-icon {\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .button {\n  border: 10px;\n  box-sizing: border-box;\n  display: inline-block;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  cursor: pointer;\n  text-decoration: none;\n  outline: none;\n  transform: translate3d(0px, 0px, 0px);\n  color: #00bcd4;\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  font-size: 14px;\n  letter-spacing: 0px;\n  text-transform: uppercase;\n  font-weight: 500;\n  border-radius: 2px;\n  position: relative;\n  overflow: hidden;\n  line-height: 36px;\n  min-width: 88px;\n  padding: 0px;\n  margin: 0px;\n  text-align: center;\n  -webkit-user-select: none;\n  background: none rgba(0, 0, 0, 0);\n}\n.r_modal-overlay .button.button-cancel {\n  color: #597582;\n}\n.r_modal-overlay .button.button-save {\n  background-color: #597582;\n  color: white;\n}\n.medium-toolbar-arrow-under:after {\n  border-color: #455a64 transparent transparent transparent;\n  top: 30px;\n}\n.medium-toolbar-arrow-over:before {\n  border-color: transparent transparent #455a64 transparent;\n}\n.medium-editor-toolbar {\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n  border-radius: 5px;\n  z-index: 200000;\n  text-align: center;\n  max-width: 458px;\n}\n.medium-editor-toolbar.medium-editor-on-bottom::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: transparent transparent #455a64 transparent;\n  top: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar.medium-editor-on-top::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: #455a64 transparent transparent transparent;\n  bottom: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar ul {\n  border-radius: 5px;\n  padding: 5px;\n  background: #455a64;\n}\n.medium-editor-toolbar li {\n  background-color: #455a64;\n  display: inline-block;\n  vertical-align: top;\n}\n.medium-editor-toolbar li:nth-child(1) button,\n.medium-editor-toolbar li:nth-child(2) button,\n.medium-editor-toolbar li:nth-child(3) button,\n.medium-editor-toolbar li:nth-child(4) button,\n.medium-editor-toolbar li:nth-child(5) button,\n.medium-editor-toolbar li:nth-child(6) button {\n  color: white;\n}\n.medium-editor-toolbar li.separator {\n  width: 0;\n  height: 22.5px;\n  margin-top: 3.75px;\n  margin-left: 14px;\n  margin-right: 14px;\n  border-left: 2px solid #5a7582;\n}\n.medium-editor-toolbar li.new-line {\n  clear: left;\n}\n.medium-editor-toolbar li button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n}\n.medium-editor-toolbar li button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-button-first {\n  border-bottom-left-radius: 5px;\n  border-top-left-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-last {\n  border-bottom-right-radius: 5px;\n  border-right: none;\n  border-top-right-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-active {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-action-pre {\n  padding: 5px;\n}\n.medium-editor-toolbar-form {\n  background: #455a64;\n  border-radius: 5px;\n  color: #ffedd5;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-unlink {\n  display: none;\n  font-size: 20px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input {\n  background: #455a64;\n  color: #e8e8f0;\n  height: 30px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-webkit-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-moz-placeholder {\n  /* Firefox 18- */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-moz-placeholder {\n  /* Firefox 19+ */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-ms-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form a {\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-anchor-preview {\n  background: #455a64;\n  border-radius: 5px;\n  color: #e8e8f0;\n}\n.medium-editor-placeholder:after {\n  color: #5a7582;\n}\n.vanilla-color-picker {\n  display: inline-block;\n  position: absolute;\n  width: 216px;\n  padding: 5px;\n  background-color: #efefef;\n  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);\n}\n.vanilla-color-picker-single-color {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  margin: 1px 2px 0;\n  border-radius: 2px;\n}\n.no-color {\n  background: linear-gradient(45deg, #ffffff 0%, #ffffff 47%, #ff0f0f 51%, #ff0f0f 51%, #ff0f0f 51%, #ffffff 55%, #ffffff 100%);\n}\n.medium-editor-anchor-preview a {\n  color: black;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input,\n.medium-editor-toolbar-form label {\n  color: black;\n  text-align: left;\n}\n/*# sourceMappingURL=redaxtor-medium.css.map */", ""]);
+	exports.push([module.id, "#editorInput {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n#editorInput #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n#editorInput[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n#editorInput[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n#editorInput[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n#editorInput[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(255, 255, 255, 0.75);\n  z-index: 200010;\n  display: none;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n}\n.r_modal-overlay.r_visible {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content {\n  width: 900px;\n  max-height: 70%;\n  z-index: 1;\n  border: 1px solid #ccc;\n  overflow: auto;\n  padding: 20px;\n  box-sizing: border-box;\n  color: #444;\n  border-radius: 2px;\n  background-color: white;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n  max-height: 450px;\n  overflow: auto;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .r_modal-content .item-form {\n  display: block;\n  margin-bottom: 15px;\n}\n.r_modal-overlay .r_modal-content .item-form .input-container {\n  padding-right: 10px;\n}\n.r_modal-overlay .r_modal-content .item-form .item-label {\n  font-size: 14px;\n  line-height: 16px;\n  color: #666666;\n  display: block;\n  padding-bottom: 5px;\n  font-weight: 100;\n}\n.r_modal-overlay .r_modal-content .item-form .sizes-checkbox {\n  display: inline-block;\n  margin-left: 20px;\n}\n.r_modal-overlay .r_modal-content .item-form select {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 100%;\n  height: 39px;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick {\n  height: 39px;\n  width: 39px;\n  display: inline-block;\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  vertical-align: bottom;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick[data-vanilla-picker-color='inherit'] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n.r_modal-overlay .r_modal-content .item-form input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n.r_modal-overlay .r_modal-content .item-form input #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item .delete-icon {\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .button {\n  border: 10px;\n  box-sizing: border-box;\n  display: inline-block;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  cursor: pointer;\n  text-decoration: none;\n  outline: none;\n  transform: translate3d(0px, 0px, 0px);\n  color: #00bcd4;\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  font-size: 14px;\n  letter-spacing: 0px;\n  text-transform: uppercase;\n  font-weight: 500;\n  border-radius: 2px;\n  position: relative;\n  overflow: hidden;\n  line-height: 36px;\n  min-width: 88px;\n  padding: 0px;\n  margin: 0px;\n  text-align: center;\n  -webkit-user-select: none;\n  background: none rgba(0, 0, 0, 0);\n}\n.r_modal-overlay .button.button-cancel {\n  color: #597582;\n}\n.r_modal-overlay .button.button-save {\n  background-color: #597582;\n  color: white;\n}\n.medium-toolbar-arrow-under:after {\n  border-color: #455a64 transparent transparent transparent;\n  top: 30px;\n}\n.medium-toolbar-arrow-over:before {\n  border-color: transparent transparent #455a64 transparent;\n}\n.medium-editor-toolbar {\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n  border-radius: 5px;\n  z-index: 200000;\n  text-align: center;\n  max-width: 458px;\n}\n.medium-editor-toolbar.medium-editor-on-bottom::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: transparent transparent #455a64 transparent;\n  top: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar.medium-editor-on-top::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: #455a64 transparent transparent transparent;\n  bottom: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar ul {\n  border-radius: 5px;\n  padding: 5px;\n  background: #455a64;\n}\n.medium-editor-toolbar li {\n  background-color: #455a64;\n  display: inline-block;\n  vertical-align: top;\n}\n.medium-editor-toolbar li:nth-child(1) button,\n.medium-editor-toolbar li:nth-child(2) button,\n.medium-editor-toolbar li:nth-child(3) button,\n.medium-editor-toolbar li:nth-child(4) button,\n.medium-editor-toolbar li:nth-child(5) button,\n.medium-editor-toolbar li:nth-child(6) button {\n  color: white;\n}\n.medium-editor-toolbar li.separator {\n  width: 0;\n  height: 22.5px;\n  margin-top: 3.75px;\n  margin-left: 14px;\n  margin-right: 14px;\n  border-left: 2px solid #5a7582;\n}\n.medium-editor-toolbar li.new-line {\n  clear: left;\n}\n.medium-editor-toolbar li button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n}\n.medium-editor-toolbar li button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-button-first {\n  border-bottom-left-radius: 5px;\n  border-top-left-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-last {\n  border-bottom-right-radius: 5px;\n  border-right: none;\n  border-top-right-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-active {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-action-pre {\n  padding: 5px;\n}\n.medium-editor-toolbar-form {\n  background: #455a64;\n  border-radius: 5px;\n  color: #ffedd5;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n  font-size: 14px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n  height: 30px;\n  margin: 9px 10px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input:focus {\n  border: 1px solid #b9b9b9;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-toolbar-form-row {\n  padding: 9px 10px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-unlink {\n  display: none;\n  font-size: 20px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input {\n  background: #455a64;\n  color: #e8e8f0;\n  height: 30px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-webkit-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-moz-placeholder {\n  /* Firefox 18- */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-moz-placeholder {\n  /* Firefox 19+ */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-ms-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form a {\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-anchor-preview {\n  background: #455a64;\n  border-radius: 5px;\n  color: #e8e8f0;\n}\n.medium-editor-placeholder:after {\n  color: #5a7582;\n}\n.vanilla-color-picker {\n  display: inline-block;\n  position: absolute;\n  width: 216px;\n  padding: 5px;\n  background-color: #efefef;\n  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);\n}\n.vanilla-color-picker-single-color {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  margin: 1px 2px 0;\n  border-radius: 2px;\n}\n.no-color {\n  background: linear-gradient(45deg, #ffffff 0%, #ffffff 47%, #ff0f0f 51%, #ff0f0f 51%, #ff0f0f 51%, #ffffff 55%, #ffffff 100%);\n}\n.medium-editor-anchor-preview a {\n  color: black;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input,\n.medium-editor-toolbar-form label {\n  color: black;\n  text-align: left;\n}\n/*# sourceMappingURL=redaxtor-medium.css.map */", ""]);
 	
 	// exports
 
