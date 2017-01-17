@@ -77,9 +77,10 @@
 
     <div class="container">
         <p>&nbsp;</p>
-        <div data-piece="source" data-id="pieceSource" data-get-url="api/pieceSource.json"  data-name="Source Sample">
-            <h2>Edit source</h2>
+        <div data-piece="html" data-id="pieceSource" data-name="Source Sample">
+            <h2>Edit source. This piece should auto-fallback to source editor</h2>
             <p>If you use <pre>data-piece="source"</pre> attribute, Redaxtor will call source editor</p>
+            <iframe></iframe>
         </div>
         <p>&nbsp;</p>
     </div>
@@ -93,6 +94,18 @@
     <script>
         var redaxtor = new Redaxtor({
             pieces: {
+            },
+            options: {
+              html: {
+                  pickerColors: [
+                      "inherit",//Equivalent to resetting a color
+                      "#9b59b6",
+                      "#34495e",
+                      "#16a085",
+                      "#27ae60",
+                      "#2980b9"
+                  ]
+              }
             },
             api: {
                 /*api for get gallery image list*/
