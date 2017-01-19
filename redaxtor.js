@@ -33388,6 +33388,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        placeholderText: 'Paste or type a link',
 	
+	        /* urlInputText: [string]
+	         * text to be shown as the label of the anchor input.
+	         */
+	        urlInputText: 'URL:',
+	
+	        /* placeholderRelText: [string]
+	         * text to be shown as placeholder of the rel input.
+	         */
+	        placeholderRelText: 'Paste or type a rel value',
+	
+	        /* relInputText: [string]
+	         * text to be shown as the label of the rel input.
+	         */
+	        relInputText: 'Rel:',
+	
 	        /* targetCheckbox: [boolean]  (previously options.anchorTarget)
 	         * enables/disables displaying a "Open in new window" checkbox, which when checked
 	         * changes the `target` attribute of the created link.
@@ -33398,6 +33413,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * text to be shown in the checkbox enabled via the __targetCheckbox__ option.
 	         */
 	        targetCheckboxText: 'Open in new window',
+	
+	        /* excludeCheckbox: [boolean]
+	         * enables/disables displaying a "Exclude url from search engines" checkbox, which when checked
+	         * changes the `nofollow` attribute of the created link.
+	         */
+	        excludeCheckbox: true,
+	
+	        /* excludeCheckboxText: [string]
+	         * text to be shown in the checkbox enabled via the __excludeCheckbox__ option.
+	         */
+	        excludeCheckboxText: 'Exclude url from search engines',
 	
 	        // Options for the Button base class
 	        name: 'link',
@@ -33426,7 +33452,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var node = MediumEditor.util.getClosestTag(MediumEditor.selection.getSelectedParentElement(range), 'a');
 	                opts = {
 	                    url: node.getAttribute('href'),
-	                    target: node.target || ""
+	                    target: node.target || "",
+	                    rel: node.rel || ""
 	                };
 	                //return this.execAction('unlink');
 	            }
@@ -33454,13 +33481,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        getTemplate: function getTemplate() {
-	            var template = ['<input type="text" class="medium-editor-toolbar-input" placeholder="', this.placeholderText, '">'];
+	            var template = ['<div class="medium-editor-toolbar-form-row">', '<label for="urlInput" class="inline-label">', this.urlInputText, '</label>', '<input type="text" id="urlInput" class="medium-editor-toolbar-input" placeholder="', this.placeholderText, '">'];
 	
-	            template.push('<a href="#" class="medium-editor-toolbar-save">', this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-check"></i>' : this.formSaveLabel, '</a>');
+	            template.push('<a href="#" class="medium-editor-button medium-editor-toolbar-save">', this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-check"></i>' : this.formSaveLabel, '</a>');
 	
-	            template.push('<a href="#" class="medium-editor-toolbar-close">', this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-times"></i>' : this.formCloseLabel, '</a>');
+	            template.push('<a href="#" class="medium-editor-button medium-editor-toolbar-close">', this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-times"></i>' : this.formCloseLabel, '</a>');
 	
-	            template.push('<a href="#" class="medium-editor-toolbar-unlink" title="Unlink">', '<i class="fa fa-chain-broken"></i></a>');
+	            template.push('<a href="#" class="medium-editor-button medium medium-editor-toolbar-unlink" title="Unlink">', '<i class="fa fa-chain-broken"></i></a>');
+	
+	            template.push('</div>'); //close tag for the <div class="medium-editor-toolbar-form-row">
+	
+	            //the rel editor
+	            template.push('<div class="medium-editor-toolbar-form-row">');
+	            template.push('<label for="relInput" class="inline-label">', this.relInputText, '</label>', '<input type="text" id="relInput" class="medium-editor-toolbar-input" placeholder="', this.placeholderRelText, '">');
+	            template.push('</div>');
 	
 	            // both of these options are slightly moot with the ability to
 	            // override the various form buildup/serialize functions.
@@ -33468,13 +33502,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (this.targetCheckbox) {
 	                // fixme: ideally, this targetCheckboxText would be a formLabel too,
 	                // figure out how to deprecate? also consider `fa-` icon default implcations.
-	                template.push('<div class="medium-editor-toolbar-form-row">', '<input type="checkbox" class="medium-editor-toolbar-anchor-target">', '<label>', this.targetCheckboxText, '</label>', '</div>');
+	                template.push('<div class="medium-editor-toolbar-form-row">', '<input type="checkbox" id="targetCheckbox" class="medium-editor-toolbar-anchor-target">', '<label for="targetCheckbox">', this.targetCheckboxText, '</label>', '</div>');
+	            }
+	
+	            if (this.excludeCheckbox) {
+	                template.push('<div class="medium-editor-toolbar-form-row">', '<input type="checkbox" id="excludeCheckbox" class="medium-editor-toolbar-anchor-exclude">', '<label for="excludeCheckbox">', this.excludeCheckboxText, '</label>', '</div>');
 	            }
 	
 	            if (this.customClassOption) {
 	                // fixme: expose this `Button` text as a formLabel property, too
 	                // and provide similar access to a `fa-` icon default.
-	                template.push('<div class="medium-editor-toolbar-form-row">', '<input type="checkbox" class="medium-editor-toolbar-anchor-button">', '<label>', this.customClassOptionText, '</label>', '</div>');
+	                template.push('<div class="medium-editor-toolbar-form-row">', '<input type="checkbox" id="anchorCheckbox" class="medium-editor-toolbar-anchor-button">', '<label for="anchorCheckbox">', this.customClassOptionText, '</label>', '</div>');
 	            }
 	
 	            return template.join('');
@@ -33492,7 +33530,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        showForm: function showForm(opts) {
 	            var input = this.getInput(),
+	                relInput = this.getRelInput(),
 	                targetCheckbox = this.getAnchorTargetCheckbox(),
+	                excludeCheckbox = this.getAnchorExcludeCheckbox(),
 	                buttonCheckbox = this.getAnchorButtonCheckbox(),
 	                buttonUnlink = this.getUnlink();
 	            opts = opts || { url: '' };
@@ -33504,10 +33544,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	            }
 	            if (opts.url) {
+	                input.style.width = "calc(100% - 161px)"; //update input width pto place all the buttons in one line
+	                relInput.style.width = "calc(100% - 161px)";
 	                buttonUnlink.style.display = "inline-block";
 	            } else {
+	                input.style.width = "calc(100% - 130px)";
+	                relInput.style.width = "calc(100% - 130px)";
 	                buttonUnlink.style.display = "none";
 	            }
+	
 	            this.base.saveSelection();
 	            this.hideToolbarDefaultActions();
 	            MediumEditor.extensions.form.prototype.showForm.apply(this);
@@ -33515,6 +33560,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            input.value = opts.url;
 	            input.focus();
+	
+	            var relValue = opts.rel ? opts.rel.split(' ') : [];
+	            var index = relValue.indexOf('nofollow');
+	            if (index >= 0) {
+	                relValue.splice(index, 1);
+	            }
+	            excludeCheckbox.checked = index >= 0;
+	            relInput.value = relValue.join(' ');
 	
 	            // If we have a target checkbox, we want it to be checked/unchecked
 	            // based on whether the existing link has target=_blank
@@ -33548,6 +33601,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        getFormOpts: function getFormOpts() {
 	            // no notion of private functions? wanted `_getFormOpts`
 	            var targetCheckbox = this.getAnchorTargetCheckbox(),
+	                relInput = this.getRelInput(),
+	                excludeCheckbox = this.getAnchorExcludeCheckbox(),
 	                buttonCheckbox = this.getAnchorButtonCheckbox(),
 	                opts = {
 	                url: this.getInput().value.trim()
@@ -33560,6 +33615,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            opts.target = '_self';
 	            if (targetCheckbox && targetCheckbox.checked) {
 	                opts.target = '_blank';
+	            }
+	
+	            opts.rel = relInput.value;
+	            if (excludeCheckbox && excludeCheckbox.checked) {
+	                opts.rel += ' nofollow';
 	            }
 	
 	            if (buttonCheckbox && buttonCheckbox.checked) {
@@ -33579,6 +33639,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var node = MediumEditor.util.getClosestTag(MediumEditor.selection.getSelectedParentElement(MediumEditor.selection.getSelectionRange(this.document)), 'a');
 	            node && this.base.selectElement(node);
 	            this.execAction(this.action, opts);
+	
+	            //a node an be crated after exec action. MediumEditor have no options to set the rel attribute
+	            var createdNode = MediumEditor.util.getClosestTag(MediumEditor.selection.getSelectedParentElement(MediumEditor.selection.getSelectionRange(this.document)), 'a');
+	            createdNode.rel = opts.rel;
+	
 	            this.base.checkSelection();
 	        },
 	
@@ -33607,7 +33672,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        attachFormEvents: function attachFormEvents(form) {
 	            var close = form.querySelector('.medium-editor-toolbar-close'),
 	                save = form.querySelector('.medium-editor-toolbar-save'),
-	                input = form.querySelector('.medium-editor-toolbar-input'),
+	                input = form.querySelector('#urlInput.medium-editor-toolbar-input'),
+	                relInput = form.querySelector('#relInput.medium-editor-toolbar-input'),
 	                unlink = form.querySelector('.medium-editor-toolbar-unlink');
 	
 	            // Handle clicks on the form itself
@@ -33631,7 +33697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                form = doc.createElement('div');
 	
 	            // Anchor Form (div)
-	            form.className = 'medium-editor-toolbar-form';
+	            form.className = 'medium-editor-toolbar-form medium-editor-link-form-toolbar';
 	            form.id = 'medium-editor-toolbar-form-anchor-' + this.getEditorId();
 	            form.innerHTML = this.getTemplate();
 	            this.attachFormEvents(form);
@@ -33640,7 +33706,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	
 	        getInput: function getInput() {
-	            return this.getForm().querySelector('input.medium-editor-toolbar-input');
+	            return this.getForm().querySelector('input#urlInput.medium-editor-toolbar-input');
+	        },
+	
+	        getRelInput: function getRelInput() {
+	            return this.getForm().querySelector('input#relInput.medium-editor-toolbar-input');
 	        },
 	
 	        getUnlink: function getUnlink() {
@@ -33651,8 +33721,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return this.getForm().querySelector('.medium-editor-toolbar-anchor-target');
 	        },
 	
+	        getAnchorExcludeCheckbox: function getAnchorExcludeCheckbox() {
+	            return this.getForm().querySelector('.medium-editor-toolbar-anchor-exclude');
+	        },
+	
 	        getAnchorButtonCheckbox: function getAnchorButtonCheckbox() {
 	            return this.getForm().querySelector('.medium-editor-toolbar-anchor-button');
+	        },
+	
+	        getAnchorTargetCheckboxLabel: function getAnchorTargetCheckboxLabel() {
+	            return this.getForm().querySelector('.medium-editor-toolbar-anchor-target + label');
 	        },
 	
 	        handleTextboxKeyup: function handleTextboxKeyup(event) {
@@ -33686,6 +33764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            event.preventDefault();
 	            this.doFormCancel();
 	        },
+	
 	        handleUnlinkClick: function handleUnlinkClick(event) {
 	            this.base.restoreSelection();
 	            var node = MediumEditor.util.getClosestTag(MediumEditor.selection.getSelectedParentElement(MediumEditor.selection.getSelectionRange(this.document)), 'a');
@@ -34849,7 +34928,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        options.pieces && this.initPieces(options.piecesRoot || document);
 	
-	        this.showBar();
+	        /**
+	         * default options for navbar
+	         */
+	        var barOptions = {
+	            navBarRoot: options.navBarRoot || document.body,
+	            navBarDraggable: options.navBarDraggable !== undefined && options.navBarDraggable !== null ? options.navBarDraggable : true,
+	            navBarCollapsable: options.navBarCollapsable !== undefined && options.navBarCollapsable !== null ? options.navBarCollapsable : true
+	        };
+	
+	        this.showBar(barOptions);
 	
 	        /**
 	         * enable pieces editing if set option 'enableEdit'
@@ -34866,7 +34954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    _createClass(Redaxtor, [{
 	        key: "showBar",
-	        value: function showBar() {
+	        value: function showBar(options) {
 	            this.barNode = document.createElement("DIV");
 	            _reactDom2.default.render(_react2.default.createElement(
 	                _reactRedux.Provider,
@@ -34875,6 +34963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    "div",
 	                    null,
 	                    _react2.default.createElement(_RedaxtorContainer2.default, {
+	                        options: options,
 	                        components: this.pieces.components,
 	                        tabs: {
 	                            pieces: !!this.pieces,
@@ -34887,7 +34976,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        position: "top-right" })
 	                )
 	            ), this.barNode);
-	            document.body.appendChild(this.barNode);
+	            options.navBarRoot.appendChild(this.barNode);
 	        }
 	    }, {
 	        key: "initPieces",
@@ -35184,7 +35273,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    null,
 	                    "RedaXtor"
 	                ),
-	                _react2.default.createElement(
+	                this.props.isCollapsable && _react2.default.createElement(
 	                    "button",
 	                    { className: "r_bar-header-button" },
 	                    this.props.isOpen ? _react2.default.createElement("i", { className: "r_icon-down-dir" }) : _react2.default.createElement("i", { className: "r_icon-up-dir" })
@@ -35346,7 +35435,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this.state = {
 	            value: 'pieces',
 	            dragging: false,
-	            isOpen: false
+	            isOpen: _this.props.options.navBarCollapsable != undefined && _this.props.options.navBarCollapsable != null ? !_this.props.options.navBarCollapsable : false,
+	            isCollapsible: _this.props.options.navBarCollapsable
 	        };
 	        return _this;
 	    }
@@ -35382,6 +35472,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "onMouseDown",
 	        value: function onMouseDown(e) {
+	            //ignore if don't set draggable option
+	            if (!this.props.options.navBarDraggable) {
+	                return;
+	            }
+	
 	            // only left mouse button
 	            if (e.button !== 0) return;
 	            this._rel.x = e.pageX - this._node.offsetLeft;
@@ -35395,6 +35490,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "onMouseMove",
 	        value: function onMouseMove(e) {
+	            //ignore if don't set draggable option
+	            if (!this.props.options.navBarDraggable) {
+	                return;
+	            }
+	
 	            if (!this.state.dragging) return;
 	            if (e.pageX == this._rel.startX && e.pageY == this._rel.startY) {
 	                return;
@@ -35408,6 +35508,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "onMouseUp",
 	        value: function onMouseUp(e) {
+	            //ignore if don't set draggable option
+	            if (!this.props.options.navBarDraggable) {
+	                return;
+	            }
+	
 	            this.setState({ dragging: false });
 	            e.stopPropagation();
 	            e.preventDefault();
@@ -35415,6 +35520,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "toggleOpen",
 	        value: function toggleOpen() {
+	            //ignore if don't set draggable option
+	            if (!this.props.options.navBarCollapsable) {
+	                return;
+	            }
+	
 	            if (!this.state.dragged) {
 	                this.setState({ isOpen: !this.state.isOpen });
 	            } else {
@@ -35454,7 +35564,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _react2.default.createElement(
 	                    "div",
 	                    { ref: "bar", className: "r_bar" },
-	                    _react2.default.createElement(_PanelHandler2.default, { isOpen: this.state.isOpen,
+	                    _react2.default.createElement(_PanelHandler2.default, { isCollapsable: this.state.isCollapsible,
+	                        isOpen: this.state.isOpen,
 	                        onMouseDown: this.onMouseDown.bind(this),
 	                        toggleOpen: this.toggleOpen.bind(this), message: this.props.message }),
 	                    this.state.isOpen ? _react2.default.createElement(
@@ -35542,6 +35653,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function render() {
 	            var _this2 = this;
 	
+	            var representPieceTypes = {};
+	            this.props.byId && Object.keys(this.props.byId).forEach(function (pieceId) {
+	                return representPieceTypes[_this2.props.byId[pieceId].type] = true;
+	            });
+	
 	            var sourceEditor = null;
 	            if (this.props.components.source && this.props.sourceId) {
 	                sourceEditor = _react2.default.createElement(this.props.components.source, { wrapper: 'redaxtor-modal',
@@ -35571,7 +35687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        } })
 	                ),
 	                Object.keys(this.props.components).map(function (object, index) {
-	                    return _react2.default.createElement(
+	                    return representPieceTypes[object] && _react2.default.createElement(
 	                        'div',
 	                        { className: 'r_list-header r_list-subheader', key: index },
 	                        _react2.default.createElement(
@@ -38526,7 +38642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.push([module.id, "@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);", ""]);
 	
 	// module
-	exports.push([module.id, ".r_modal-overlay {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(255, 255, 255, 0.75);\n  z-index: 200010;\n  display: none;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n}\n.r_modal-overlay.r_visible {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content {\n  width: 900px;\n  max-height: 70%;\n  z-index: 1;\n  border: 1px solid #ccc;\n  overflow: auto;\n  padding: 20px;\n  box-sizing: border-box;\n  color: #444;\n  border-radius: 2px;\n  background-color: white;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n  max-height: 450px;\n  overflow: auto;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .r_modal-content .item-form {\n  display: block;\n  margin-bottom: 15px;\n}\n.r_modal-overlay .r_modal-content .item-form .input-container {\n  padding-right: 10px;\n}\n.r_modal-overlay .r_modal-content .item-form .item-label {\n  font-size: 14px;\n  line-height: 16px;\n  color: #666666;\n  display: block;\n  padding-bottom: 5px;\n  font-weight: 100;\n}\n.r_modal-overlay .r_modal-content .item-form .sizes-checkbox {\n  display: inline-block;\n  margin-left: 20px;\n}\n.r_modal-overlay .r_modal-content .item-form select {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 100%;\n  height: 39px;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick {\n  height: 39px;\n  width: 39px;\n  display: inline-block;\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  vertical-align: bottom;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick[data-vanilla-picker-color='inherit'] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n.r_modal-overlay .r_modal-content .item-form input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item .delete-icon {\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .button {\n  border: 10px;\n  box-sizing: border-box;\n  display: inline-block;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  cursor: pointer;\n  text-decoration: none;\n  outline: none;\n  transform: translate3d(0px, 0px, 0px);\n  color: #00bcd4;\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  font-size: 14px;\n  letter-spacing: 0px;\n  text-transform: uppercase;\n  font-weight: 500;\n  border-radius: 2px;\n  position: relative;\n  overflow: hidden;\n  line-height: 36px;\n  min-width: 88px;\n  padding: 0px;\n  margin: 0px;\n  text-align: center;\n  -webkit-user-select: none;\n  background: none rgba(0, 0, 0, 0);\n}\n.r_modal-overlay .button.button-cancel {\n  color: #597582;\n}\n.r_modal-overlay .button.button-save {\n  background-color: #597582;\n  color: white;\n}\n.medium-toolbar-arrow-under:after {\n  border-color: #455a64 transparent transparent transparent;\n  top: 30px;\n}\n.medium-toolbar-arrow-over:before {\n  border-color: transparent transparent #455a64 transparent;\n}\n.medium-editor-toolbar {\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n  border-radius: 5px;\n  z-index: 200000;\n  text-align: center;\n  max-width: 458px;\n}\n.medium-editor-toolbar.medium-editor-on-bottom::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: transparent transparent #455a64 transparent;\n  top: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar.medium-editor-on-top::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: #455a64 transparent transparent transparent;\n  bottom: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar ul {\n  border-radius: 5px;\n  padding: 5px;\n  background: #455a64;\n}\n.medium-editor-toolbar li {\n  background-color: #455a64;\n  display: inline-block;\n  vertical-align: top;\n}\n.medium-editor-toolbar li:nth-child(1) button,\n.medium-editor-toolbar li:nth-child(2) button,\n.medium-editor-toolbar li:nth-child(3) button,\n.medium-editor-toolbar li:nth-child(4) button,\n.medium-editor-toolbar li:nth-child(5) button,\n.medium-editor-toolbar li:nth-child(6) button {\n  color: white;\n}\n.medium-editor-toolbar li.separator {\n  width: 0;\n  height: 22.5px;\n  margin-top: 3.75px;\n  margin-left: 14px;\n  margin-right: 14px;\n  border-left: 2px solid #5a7582;\n}\n.medium-editor-toolbar li.new-line {\n  clear: left;\n}\n.medium-editor-toolbar li button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n}\n.medium-editor-toolbar li button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-button-first {\n  border-bottom-left-radius: 5px;\n  border-top-left-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-last {\n  border-bottom-right-radius: 5px;\n  border-right: none;\n  border-top-right-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-active {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-action-pre {\n  padding: 5px;\n}\n.medium-editor-toolbar-form {\n  background: #455a64;\n  border-radius: 5px;\n  color: #ffedd5;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-unlink {\n  display: none;\n  font-size: 20px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input {\n  background: #455a64;\n  color: #e8e8f0;\n  height: 30px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-webkit-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-moz-placeholder {\n  /* Firefox 18- */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-moz-placeholder {\n  /* Firefox 19+ */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-ms-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form a {\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-anchor-preview {\n  background: #455a64;\n  border-radius: 5px;\n  color: #e8e8f0;\n}\n.medium-editor-placeholder:after {\n  color: #5a7582;\n}\n.vanilla-color-picker {\n  display: inline-block;\n  position: absolute;\n  width: 216px;\n  padding: 5px;\n  background-color: #efefef;\n  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);\n}\n.vanilla-color-picker-single-color {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  margin: 1px 2px 0;\n  border-radius: 2px;\n}\n.no-color {\n  background: linear-gradient(45deg, #ffffff 0%, #ffffff 47%, #ff0f0f 51%, #ff0f0f 51%, #ff0f0f 51%, #ffffff 55%, #ffffff 100%);\n}\n.medium-editor-anchor-preview a {\n  color: black;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input,\n.medium-editor-toolbar-form label {\n  color: black;\n  text-align: left;\n}\n/*# sourceMappingURL=redaxtor-medium.css.map */", ""]);
+	exports.push([module.id, "#editorInput {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n#editorInput #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n#editorInput[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n#editorInput[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n#editorInput[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n#editorInput[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay {\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(255, 255, 255, 0.75);\n  z-index: 200010;\n  display: none;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n}\n.r_modal-overlay.r_visible {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content {\n  width: 900px;\n  max-height: 70%;\n  z-index: 1;\n  border: 1px solid #ccc;\n  overflow: auto;\n  padding: 20px;\n  box-sizing: border-box;\n  color: #444;\n  border-radius: 2px;\n  background-color: white;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n  max-height: 450px;\n  overflow: auto;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .r_modal-content .item-form {\n  display: block;\n  margin-bottom: 15px;\n}\n.r_modal-overlay .r_modal-content .item-form .input-container {\n  padding-right: 10px;\n}\n.r_modal-overlay .r_modal-content .item-form .item-label {\n  font-size: 14px;\n  line-height: 16px;\n  color: #666666;\n  display: block;\n  padding-bottom: 5px;\n  font-weight: 100;\n}\n.r_modal-overlay .r_modal-content .item-form .sizes-checkbox {\n  display: inline-block;\n  margin-left: 20px;\n}\n.r_modal-overlay .r_modal-content .item-form select {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 100%;\n  height: 39px;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick {\n  height: 39px;\n  width: 39px;\n  display: inline-block;\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  vertical-align: bottom;\n}\n.r_modal-overlay .r_modal-content .item-form .color-pick[data-vanilla-picker-color='inherit'] {\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n.r_modal-overlay .r_modal-content .item-form input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n}\n.r_modal-overlay .r_modal-content .item-form input #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.r_modal-overlay .r_modal-content .item-form input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container {\n  display: -ms-flexbox;\n  display: flex;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part {\n  -ms-flex: 1 1 100%;\n      flex: 1 1 100%;\n  margin-right: 20px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-left-part .sizes .input-container {\n  display: inline-block;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part {\n  -ms-flex: 1 1 200px;\n      flex: 1 1 200px;\n  height: 200px;\n}\n.r_modal-overlay .r_modal-content .image-inputs-container .image-right-part img {\n  max-width: 100%;\n  max-height: 100%;\n}\n.r_modal-overlay .r_modal-content .gallery-container {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  -ms-flex-pack: justify;\n      justify-content: space-between;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container {\n  color: rgba(0, 0, 0, 0.870588);\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  box-sizing: border-box;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 6px, rgba(0, 0, 0, 0.117647) 0px 1px 4px;\n  border-radius: 2px;\n  width: 200px;\n  height: 200px;\n  cursor: pointer;\n  margin-bottom: 10px;\n  background-color: #ffffff;\n  position: relative;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item {\n  height: 100%;\n  width: 100%;\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n.r_modal-overlay .r_modal-content .gallery-container .gallery-item-container .gallery-item .delete-icon {\n  position: absolute;\n  right: 5px;\n  top: 5px;\n}\n.r_modal-overlay .r_modal-content .actions-bar {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  padding: 8px;\n  margin-bottom: 8px;\n  width: 100%;\n  text-align: right;\n}\n.r_modal-overlay .button {\n  border: 10px;\n  box-sizing: border-box;\n  display: inline-block;\n  font-family: Roboto, sans-serif;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  cursor: pointer;\n  text-decoration: none;\n  outline: none;\n  transform: translate3d(0px, 0px, 0px);\n  color: #00bcd4;\n  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  font-size: 14px;\n  letter-spacing: 0px;\n  text-transform: uppercase;\n  font-weight: 500;\n  border-radius: 2px;\n  position: relative;\n  overflow: hidden;\n  line-height: 36px;\n  min-width: 88px;\n  padding: 0px;\n  margin: 0px;\n  text-align: center;\n  -webkit-user-select: none;\n  background: none rgba(0, 0, 0, 0);\n}\n.r_modal-overlay .button.button-cancel {\n  color: #597582;\n}\n.r_modal-overlay .button.button-save {\n  background-color: #597582;\n  color: white;\n}\n.medium-toolbar-arrow-under:after {\n  border-color: #455a64 transparent transparent transparent;\n  top: 30px;\n}\n.medium-toolbar-arrow-over:before {\n  border-color: transparent transparent #455a64 transparent;\n}\n.medium-editor-toolbar {\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n  border-radius: 5px;\n  z-index: 200000;\n  text-align: center;\n  max-width: 458px;\n}\n.medium-editor-toolbar.medium-editor-on-bottom::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: transparent transparent #455a64 transparent;\n  top: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar.medium-editor-on-top::before {\n  content: '';\n  border: 10px solid #455a64;\n  border-color: #455a64 transparent transparent transparent;\n  bottom: -20px;\n  left: 50%;\n  position: absolute;\n  z-index: 20;\n}\n.medium-editor-toolbar ul {\n  border-radius: 5px;\n  padding: 5px;\n  background: #455a64;\n}\n.medium-editor-toolbar li {\n  background-color: #455a64;\n  display: inline-block;\n  vertical-align: top;\n}\n.medium-editor-toolbar li:nth-child(1) button,\n.medium-editor-toolbar li:nth-child(2) button,\n.medium-editor-toolbar li:nth-child(3) button,\n.medium-editor-toolbar li:nth-child(4) button,\n.medium-editor-toolbar li:nth-child(5) button,\n.medium-editor-toolbar li:nth-child(6) button {\n  color: white;\n}\n.medium-editor-toolbar li.separator {\n  width: 0;\n  height: 22.5px;\n  margin-top: 3.75px;\n  margin-left: 14px;\n  margin-right: 14px;\n  border-left: 2px solid #5a7582;\n}\n.medium-editor-toolbar li.new-line {\n  clear: left;\n}\n.medium-editor-toolbar li button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n}\n.medium-editor-toolbar li button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-button-first {\n  border-bottom-left-radius: 5px;\n  border-top-left-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-last {\n  border-bottom-right-radius: 5px;\n  border-right: none;\n  border-top-right-radius: 5px;\n}\n.medium-editor-toolbar li .medium-editor-button-active {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar li .medium-editor-action-pre {\n  padding: 5px;\n}\n.medium-editor-toolbar-form {\n  background: #455a64;\n  border-radius: 5px;\n  color: #ffedd5;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar {\n  padding-bottom: 8px;\n  padding-top: 8px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-toolbar-form-row {\n  text-align: left;\n  padding: 1px 10px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-button {\n  margin: 1px;\n  border-radius: 5px;\n  background-color: transparent;\n  border: none;\n  box-sizing: border-box;\n  color: #e8e8f0;\n  width: 30px;\n  height: 30px;\n  padding: 5px;\n  transition: background-color 0.2s ease-in, color 0.2s ease-in;\n  text-align: center;\n  line-height: 20px;\n  font-size: 14px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .medium-editor-button:hover {\n  background-color: #303f46;\n  color: #ffffff;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar .inline-label {\n  width: 45px;\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input {\n  border: 1px solid #b9b9b9;\n  border-radius: 2px;\n  padding: 10px;\n  height: auto;\n  box-sizing: border-box;\n  font-size: 15px;\n  line-height: 15px;\n  width: 70%;\n  height: 30px;\n  margin: 9px 10px;\n  border: 0;\n  background-color: #253A44;\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input #beforeCheckboxLabel {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] {\n  position: absolute;\n  z-index: -1000;\n  left: -1000px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  width: 1px;\n  margin: -1px;\n  padding: 0;\n  border: 0;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] + label {\n  display: inline-block;\n  vertical-align: middle;\n  cursor: pointer;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] + label:before {\n  content: '';\n  width: 16px;\n  height: 12px;\n  display: inline-block;\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAABvUlEQVRYhe3WMWsUQRjG8d8syxHCFSISRMQPIJJCsLPR3ipNaj9CKr9GmnTWkjp1AmIhWljZaGehCClsNIV4GYudPZbN7l1udw5S3AMHOzPs8995b3bfJ0TrU6AIsbqY4CWeYDrQ723kqD1ZBm7jHR7iI34OBEwgsIUiclEvvMYv7EaM+aFQAW5hUpf/Ow7HmjchzXGBe3g/sCxSWYrGcKu5VsigyGUCTSIXoQHJAggUgTLyN/AUX7ICIPIvXd7Hg6yAukRd6gSEjDvrM1o7oHfLWQCLapoFkFMbwM0AXKLM6FlqnMICX7GXEbCXPOc6wAyvsDOi0ewkjxkOGvMKHKaFsQ1tlrzmXS3UlFB1tseGp4rf+BT50ZycA3IrdbW7ZRpkzUWBbZxgmjMXTVvmu3hG3ly0jVOc41HWXNRlXgMi9tdhXgevUWrXPPI5tMLX4B10PbkqF30bvYOuJ09L43PRAvMr6stFd/qy0SrmvQB8wHFo9YlVzWtd+ZPxHH9wLH0ZLTiKrXv3EZe+Bw3IG9VnYKn5SoAW5Pw65l2AhacocoYXqhZ47Zo3tbTZJ8jZqsa1NrmoS5tcdMNy0X/98FYAPC/6vAAAAABJRU5ErkJggg==');\n  background-repeat: no-repeat;\n  background-position: 0 0;\n  background-size: 12px auto;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox]:checked + label:before {\n  background-position: 0 -12px;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input + label {\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-form.medium-editor-link-form-toolbar input[type=checkbox] + label:before {\n  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAwCAYAAAALiLqjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTM0A1t6AAABm0lEQVRYR+2WMUoDURCGQxARsRARCysPIJ7AytoDWHgAsRIL8RoewFrEIngAS4scQKwsLKwsrCxl/b/HzrKru+a9txOQJQPf8N4k+f/sZLNvRkVRzJOxLZbFibgWt5mcirp4gLQhngQxFfeZnAn0VsRquQ4GfOsPsWfFHowFBuuCrgSDN3HFxglMqj2JOBJVMYO6aNUeIBF9DYzQFkGbQo1EeFzBUrneF6/lei4tQosIexLh1SKIMmjcCYlEGVg/c/gfV9CHhcFMBmjwJY6t4ABaaIY96VlMrOAAWmiGPelc4HgptihmwmfRQAvNUCfxr+VE44W+gQZa1ZPA3GFbHAp+pBz4LBp1zYaBN5xqO7bxnos4lx/ElI3XXHQh6uLvYpeC51zUEKdG0Wsu+iUOJIK7oP7mVFrFgUT0MWgTd5uL2sTd5qKutqBFhD2JSDXo7LmIMtgUXZPFX+IQZfAi7sTP+WiWOEQZHIhPwSPAriRGHKIMwExuxJqIEYdoAzAThGPEIckAMHkUMeKQbJDKAA04qBdzEQxyLipG34KpVRG+Jz6uAAAAAElFTkSuQmCC);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-unlink {\n  display: none;\n  font-size: 20px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input {\n  background: #455a64;\n  color: #e8e8f0;\n  height: 30px;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-webkit-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-moz-placeholder {\n  /* Firefox 18- */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input::-moz-placeholder {\n  /* Firefox 19+ */\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input:-ms-input-placeholder {\n  color: #c9c9dc;\n  color: rgba(201, 201, 220, 0.008);\n}\n.medium-editor-toolbar-form a {\n  color: #e8e8f0;\n}\n.medium-editor-toolbar-anchor-preview {\n  background: #455a64;\n  border-radius: 5px;\n  color: #e8e8f0;\n}\n.medium-editor-placeholder:after {\n  color: #5a7582;\n}\n.vanilla-color-picker {\n  display: inline-block;\n  position: absolute;\n  width: 216px;\n  padding: 5px;\n  background-color: #efefef;\n  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.3);\n}\n.vanilla-color-picker-single-color {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  margin: 1px 2px 0;\n  border-radius: 2px;\n}\n.no-color {\n  background: linear-gradient(45deg, #ffffff 0%, #ffffff 47%, #ff0f0f 51%, #ff0f0f 51%, #ff0f0f 51%, #ffffff 55%, #ffffff 100%);\n}\n.medium-editor-anchor-preview a {\n  color: black;\n}\n.medium-editor-toolbar-form .medium-editor-toolbar-input,\n.medium-editor-toolbar-form label {\n  color: black;\n  text-align: left;\n}\n/*# sourceMappingURL=redaxtor-medium.css.map */", ""]);
 	
 	// exports
 
