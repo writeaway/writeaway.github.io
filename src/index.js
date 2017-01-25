@@ -34,9 +34,13 @@ class RedaxtorBundle extends Redaxtor {
         let pieces = node.querySelectorAll('[data-piece="html"]');
         for (let i = 0; i < pieces.length; i++) {
             let piece = pieces[i];
-            if (piece.querySelector('iframe') || piece.querySelector('script')) {
+            if (piece.querySelector('iframe')) {
                 //We have invalid piece data, fallback to source
                 piece.setAttribute("data-piece", "source");
+            }
+            if(piece.querySelector('script')) {
+                //Script is not expected to be editable at the moment
+                piece.removeAttribute("data-piece");
             }
         }
     }

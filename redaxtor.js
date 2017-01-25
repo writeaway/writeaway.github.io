@@ -107,9 +107,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var pieces = node.querySelectorAll('[data-piece="html"]');
 	            for (var i = 0; i < pieces.length; i++) {
 	                var piece = pieces[i];
-	                if (piece.querySelector('iframe') || piece.querySelector('script')) {
+	                if (piece.querySelector('iframe')) {
 	                    //We have invalid piece data, fallback to source
 	                    piece.setAttribute("data-piece", "source");
+	                }
+	                if (piece.querySelector('script')) {
+	                    //Script is not expected to be editable at the moment
+	                    piece.removeAttribute("data-piece");
 	                }
 	            }
 	        }
@@ -32961,6 +32965,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -32975,7 +32981,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var _this = _possibleConstructorReturn(this, (RedaxtorMedium.__proto__ || Object.getPrototypeOf(RedaxtorMedium)).call(this, props));
 	
-	        _this.state = { codeEditorActive: false, firstRun: true };
+	        _this.onClickBound = _this.onClick.bind(_this);
+	        _this.state = { codeEditorActive: false };
 	        return _this;
 	    }
 	
@@ -33041,19 +33048,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'cancelCallback',
 	        value: function cancelCallback() {
 	            this.medium.editor.restoreSelection();
-	            //this.restoreSelection();
-	        }
-	
-	        /**
-	         * Prevent parent elements from getting our click
-	         */
-	
-	    }, {
-	        key: 'onClickPreventBubble',
-	        value: function onClickPreventBubble(e) {
-	            console.trace("Prevent click 1", e);
-	            e.preventDefault();
-	            e.stopPropagation();
 	        }
 	
 	        /**
@@ -33081,11 +33075,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            sel.addRange(range);
 	        }
 	    }, {
-	        key: 'componentInit',
-	        value: function componentInit() {
+	        key: 'createEditor',
+	        value: function createEditor() {
 	            var _this2 = this;
 	
-	            var dom = _reactDom2.default.findDOMNode(this);
+	            var dom = this.props.node;
+	            // const dom = ReactDOM.findDOMNode(this);
 	            this.medium = new _HTMLEditor2.default(dom, {
 	                onUpdate: function onUpdate() {
 	                    _this2.props.updatePiece(_this2.props.id, { data: { html: _this2.medium.editor.getContent() } });
@@ -33112,22 +33107,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onToggleImagePopup: this.onToggleImagePopup.bind(this),
 	                pickerColors: this.props.options.pickerColors
 	            });
-	            this.setState({ firstRun: false });
+	            this.props.node.addEventListener('click', this.onClickBound);
 	        }
 	    }, {
 	        key: 'shouldComponentUpdate',
 	        value: function shouldComponentUpdate(nextProps, nextState) {
-	            !nextProps.editorActive && this.die();
-	            return this.medium && nextProps.data.html !== this.medium.editor.getContent() || this.state.firstRun !== nextState.firstRun || nextProps.editorActive !== this.props.editorActive;
+	            !nextProps.editorActive && this.destroyEditor();
+	            return this.medium && nextProps.data.html !== this.medium.editor.getContent() || nextProps.editorActive !== this.props.editorActive;
 	        }
 	    }, {
-	        key: 'die',
-	        value: function die() {
+	        key: 'destroyEditor',
+	        value: function destroyEditor() {
 	            if (this.medium) {
 	                this.medium.editor.getExtensionByName('toolbar').destroy();
 	                this.medium.editor.destroy();
+	                this.props.node.removeEventListener('click', this.onClickBound);
+	                delete this.medium;
 	            }
-	            this.state.firstRun = true;
 	        }
 	    }, {
 	        key: 'renderNonReactAttributes',
@@ -33138,48 +33134,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Here that updates styles of background
 	         */
 	        value: function renderNonReactAttributes(data) {
-	            if (!this.medium) {
-	                return;
+	            if (this.props.editorActive) {
+	                if (!this.medium) {
+	                    var _props$node$classList;
+	
+	                    this.createEditor();
+	                    (_props$node$classList = this.props.node.classList).add.apply(_props$node$classList, _toConsumableArray(this.props.className.split(' ')));
+	                }
+	            } else {
+	                var _props$node$classList2;
+	
+	                (_props$node$classList2 = this.props.node.classList).remove.apply(_props$node$classList2, _toConsumableArray(this.props.className.split(' ')));
+	
+	                // the destroyEditor method called also from  the shouldComponentUpdate method and this. medium can not exist here
+	                if (this.medium) {
+	                    this.destroyEditor();
+	                }
 	            }
 	
-	            var content = this.medium.editor.getContent();
-	            if (content != data.html) {
-	                this.medium.editor.setContent(data.html);
+	            if (this.medium) {
+	                var content = this.medium.editor.getContent();
+	                if (content != data.html) {
+	                    this.medium.editor.setContent(data.html);
+	                }
+	            } else {
+	                var _content = this.props.node.innerHTML;
+	                if (_content != data.html) {
+	                    this.props.node.innerHTML = data.html;
+	                }
 	            }
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.die();
+	            this.destroyEditor();
 	            console.log('Medium editor ' + this.props.id + ' unmounted');
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var settings;
-	            if (!this.props.editorActive) {
-	                settings = {
-	                    className: this.props.className,
-	                    dangerouslySetInnerHTML: { __html: this.props.data.html }
-	                };
-	            } else if (this.state.firstRun) {
-	                settings = {
-	                    className: this.props.className,
-	                    dangerouslySetInnerHTML: { __html: this.props.data.html },
-	                    onFocus: this.componentInit.bind(this),
-	                    onClick: this.onClickPreventBubble.bind(this),
-	                    contentEditable: true
-	                };
-	            } else {
-	                settings = {
-	                    className: this.props.className,
-	                    dangerouslySetInnerHTML: { __html: this.props.data.html },
-	                    contentEditable: true,
-	                    onClick: this.onClick.bind(this)
-	                };
-	            }
 	            this.renderNonReactAttributes(this.props.data);
-	            return _react2.default.createElement(this.props.wrapper, settings);
+	            return _react2.default.createElement(this.props.wrapper, {});
 	        }
 	    }]);
 	
@@ -33193,7 +33188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	exports.default = RedaxtorMedium;
-	RedaxtorMedium.__renderType = "INSIDE";
+	RedaxtorMedium.__renderType = "BEFORE";
 	RedaxtorMedium.__name = "Html";
 
 /***/ },
