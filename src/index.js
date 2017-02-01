@@ -1,5 +1,6 @@
 "use strict";
 var Redaxtor = require('../../redaxtor/src/index');
+var RedaxtorDefaultApi = require('../../redaxtor/src/Redaxtor').defaultMinimumApi;
 var RedaxtorMedium = require('../../redaxtor-medium/src/index');
 var RedaxtorCodemirror = require('../../redaxtor-codemirror/src/index');
 
@@ -40,10 +41,13 @@ class RedaxtorBundle extends Redaxtor {
             }
             if(piece.querySelector('script')) {
                 //Script is not expected to be editable at the moment
-                piece.removeAttribute("data-piece");
+                piece.setAttribute("data-piece", "source");
+                piece.setAttribute("data-nonupdateable", "1");
             }
         }
     }
 }
+
+RedaxtorBundle.defaultApi = RedaxtorDefaultApi;
 
 module.exports = RedaxtorBundle;
