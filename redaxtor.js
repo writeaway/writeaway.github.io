@@ -22368,9 +22368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var pieces = getState().pieces;
 	        if (pieces.editorActive) {
 	            dispatch(piecesEnableEdit());
-	            if (!pieces.initialized) {
-	                piecesRunInit(dispatch, pieces);
-	            }
+	            piecesRunInit(dispatch, pieces);
 	        }
 	    };
 	};
@@ -22383,9 +22381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (editorActive) {
 	            dispatch(piecesEnableEdit(subType));
-	            if (!pieces.initialized) {
-	                piecesRunInit(dispatch, pieces);
-	            }
+	            piecesRunInit(dispatch, pieces);
 	        } else {
 	            dispatch(piecesDisableEdit(subType));
 	        }
@@ -22495,13 +22491,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	var pieceGet = exports.pieceGet = function pieceGet(id) {
 	    return function (dispatch, getState) {
-	        dispatch(pieceFetching(id));
-	
 	        var piece = getState().pieces.byId[id];
 	        if (!piece) {
 	            dispatch(pieceFetchingError(id, "This piece does not exist"));
 	            return;
 	        }
+	
+	        if (piece.initialized || piece.fetching) {
+	            return; // Don't need to init initialized piece or piece that is already being fetched
+	        }
+	
+	        dispatch(pieceFetching(id));
+	
 	        (0, _config.getConfig)().api.getPieceData(piece).then(function (updatedPiece) {
 	            dispatch(pieceFetched(id, updatedPiece));
 	            var piece = getState().pieces.byId[id];
@@ -28116,7 +28117,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	// import Img from "./components/img/ImgContainer";
 	
 	var _react = __webpack_require__(3);
 	
@@ -28177,7 +28177,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (piece.type == "source" || piece.type == "html") {
 	            return Promise.resolve(_extends({}, piece, {
 	                data: {
-	                    html: piece.node.innerHTML
+	                    html: piece.node.innerHTML,
+	                    updateNode: true
 	                }
 	            }));
 	        }
@@ -28400,6 +28401,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!this.pieces.components[piece.type]) throw new Error("Can't add piece with unsupported type \"" + piece.type + "\"");
 	
 	            this.store.dispatch((0, _pieces.addPiece)(piece));
+	            if (this.store.getState().pieces.editorActive) {
+	                this.store.dispatch((0, _pieces.pieceGet)(piece.id));
+	            }
 	        }
 	
 	        /**
@@ -35739,6 +35743,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.props.piecesInit();
 	        }
 	    }, {
+	        key: 'toggleAllEditors',
+	        value: function toggleAllEditors(e) {
+	            this.props.piecesToggleEdit(false);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
@@ -35772,9 +35781,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        'All Editors'
 	                    ),
 	                    _react2.default.createElement(_reactToggle2.default, { checked: this.props.editorActive,
-	                        onChange: function onChange() {
-	                            return _this2.props.piecesToggleEdit(false);
-	                        } })
+	                        onChange: this.toggleAllEditors.bind(this) })
 	                ),
 	                Object.keys(this.props.components).map(function (object, index) {
 	                    return representPieceTypes[object] && _react2.default.createElement(
@@ -35793,7 +35800,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    );
 	                }),
 	                _react2.default.createElement(_PiecesList2.default, { editorActive: this.props.editorActive, pieces: this.props.byId || {},
-	                    source: this.props.components.source,
+	                    source: this.props['editorEnabled:source'] && this.props.components.source,
 	                    setSourceId: this.props.setSourceId,
 	                    savePiece: this.props.savePiece, updatePiece: this.props.updatePiece })
 	            );
@@ -35944,7 +35951,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        savePiece: function savePiece() {
 	                            return _this4.props.savePiece(id);
 	                        },
-	                        source: _this4.props['editorEnabled:source'] && _this4.props.source,
+	                        source: _this4.props.source,
 	                        setSourceId: _this4.props.setSourceId,
 	                        editorActive: _this4.props.editorActive });
 	                })
@@ -36414,7 +36421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var piece = function piece() {
-	    var piece = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    var piece = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { initialized: false };
 	    var action = arguments[1];
 	
 	    switch (action.type) {
@@ -36449,7 +36456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        case _constants2.default.PIECE_FETCHING:
 	            return _extends({}, piece, { fetched: false, fetching: true });
 	        case _constants2.default.PIECE_FETCHED:
-	            return _extends({}, piece, action.piece, { fetched: true, fetching: false });
+	            return _extends({}, piece, action.piece, { fetched: true, fetching: false, initialized: true });
 	        case _constants2.default.PIECE_FETCHING_FAILED:
 	            console.error(action.answer);
 	            return _extends({}, piece, { fetched: false, fetching: false });

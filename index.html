@@ -85,6 +85,25 @@
         <p>&nbsp;</p>
     </div>
 
+    <div class="container">
+        <p>&nbsp;</p>
+        <div data-piece="html" data-id="pieceSource2" data-name="Source Sample 2">
+            <h2>Edit source 2.</h2>
+            <p>This block has script, so saving will show a warning.</p>
+            <script></script>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+
+    <div class="container">
+        <p>&nbsp;</p>
+        <div data-piece="html" data-id="errorSample" data-name="Error Sample">
+            <h2>And doing changes to this block will demo an error</h2>
+            <p>You can't save me, haha!</p>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  rel="stylesheet"/>
     <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
@@ -128,13 +147,21 @@
                 uploadImage: function() {
 
                 },
-                /* Use default getter, commenting out
                 getPieceData: function(piece) {
-
-                }, */
+                    return Redaxtor.defaultApi.getPieceData(piece).then(function(piece) {
+                       if(piece.id==="pieceSource2") {
+                           piece.data.updateNode = false;
+                       }
+                       return piece;
+                    });
+                },
                 savePieceData: function(piece) {
                     console.info("Saving to server", piece);
-                    return Promise.resolve();
+                    if(piece.id==="errorSample") {
+                        return Promise.reject("Error sample");
+                    } else {
+                        return Promise.resolve();
+                    }
                 }
             }
         });
