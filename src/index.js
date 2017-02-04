@@ -23,8 +23,12 @@ class RedaxtorBundle extends Redaxtor {
         RedaxtorBundle.checkHtmlPiecesCompartibility(document);
         super(options);
 
-        this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive'));
-        this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed'));
+        if(options.editorActive == undefined || options.editorActive == null) {
+            this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive'));
+        }
+        if(options.navBarCollapsed == undefined || options.navBarCollapsed == null) {
+            this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed'));
+        }
 
         this.onUnload = this.beforeUnload.bind(this);
         window.addEventListener("beforeunload", this.onUnload)
