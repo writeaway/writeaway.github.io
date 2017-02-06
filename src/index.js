@@ -24,10 +24,10 @@ class RedaxtorBundle extends Redaxtor {
         super(options);
 
         if(options.editorActive == undefined || options.editorActive == null) {
-            this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive'));
+            this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive') == 'true');
         }
         if(options.navBarCollapsed == undefined || options.navBarCollapsed == null) {
-            this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed'));
+            this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed') == 'true');
         }
 
         this.onUnload = this.beforeUnload.bind(this);

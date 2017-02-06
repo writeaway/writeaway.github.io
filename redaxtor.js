@@ -94,10 +94,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = _possibleConstructorReturn(this, (RedaxtorBundle.__proto__ || Object.getPrototypeOf(RedaxtorBundle)).call(this, options));
 	
 	        if (options.editorActive == undefined || options.editorActive == null) {
-	            _this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive'));
+	            _this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive') == 'true');
 	        }
 	        if (options.navBarCollapsed == undefined || options.navBarCollapsed == null) {
-	            _this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed'));
+	            _this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed') == 'true');
 	        }
 	
 	        _this.onUnload = _this.beforeUnload.bind(_this);
