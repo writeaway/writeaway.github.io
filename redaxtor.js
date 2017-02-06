@@ -204,18 +204,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * will remain to ensure logic does not differ in production.
 	 */
 	
-	var validateFormat = function validateFormat(format) {};
-	
-	if (true) {
-	  validateFormat = function validateFormat(format) {
+	function invariant(condition, format, a, b, c, d, e, f) {
+	  if (true) {
 	    if (format === undefined) {
 	      throw new Error('invariant requires an error message argument');
 	    }
-	  };
-	}
-	
-	function invariant(condition, format, a, b, c, d, e, f) {
-	  validateFormat(format);
+	  }
 	
 	  if (!condition) {
 	    var error;
@@ -478,13 +472,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var internalInstanceKey = '__reactInternalInstance$' + Math.random().toString(36).slice(2);
 	
 	/**
-	 * Check if a given node should be cached.
-	 */
-	function shouldPrecacheNode(node, nodeID) {
-	  return node.nodeType === 1 && node.getAttribute(ATTR_NAME) === String(nodeID) || node.nodeType === 8 && node.nodeValue === ' react-text: ' + nodeID + ' ' || node.nodeType === 8 && node.nodeValue === ' react-empty: ' + nodeID + ' ';
-	}
-	
-	/**
 	 * Drill down (through composites and empty components) until we get a host or
 	 * host text component.
 	 *
@@ -549,7 +536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    // We assume the child nodes are in the same order as the child instances.
 	    for (; childNode !== null; childNode = childNode.nextSibling) {
-	      if (shouldPrecacheNode(childNode, childID)) {
+	      if (childNode.nodeType === 1 && childNode.getAttribute(ATTR_NAME) === String(childID) || childNode.nodeType === 8 && childNode.nodeValue === ' react-text: ' + childID + ' ' || childNode.nodeType === 8 && childNode.nodeValue === ' react-empty: ' + childID + ' ') {
 	        precacheNode(childInst, childNode);
 	        continue outer;
 	      }
@@ -9945,6 +9932,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 	
+	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3, a4, a5);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3, a4, a5);
+	  }
+	};
+	
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ?  true ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -9984,7 +9982,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler,
+	  fiveArgumentPooler: fiveArgumentPooler
 	};
 	
 	module.exports = PooledClass;
@@ -11910,12 +11909,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var bidiOrdering = (function() {
 	  // Character types for codepoints 0 to 0xff
 	  var lowTypes = "bbbbbbbbbtstwsbbbbbbbbbbbbbbssstwNN%%%NNNNNN,N,N1111111111NNNNNNNLLLLLLLLLLLLLLLLLLLLLLLLLLNNNNNNLLLLLLLLLLLLLLLLLLLLLLLLLLNNNNbbbbbbsbbbbbbbbbbbbbbbbbbbbbbbbbb,N%%%%NNNNLNNNNN%%11NLNNN1LNNNNNLLLLLLLLLLLLLLLLLLLLLLLNLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLN"
-	  // Character types for codepoints 0x600 to 0x6f9
-	  var arabicTypes = "nnnnnnNNr%%r,rNNmmmmmmmmmmmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmmmmmmmmmmmmmmmnnnnnnnnnn%nnrrrmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmnNmmmmmmrrmmNmmmmrr1111111111"
+	  // Character types for codepoints 0x600 to 0x6ff
+	  var arabicTypes = "rrrrrrrrrrrr,rNNmmmmmmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmmmmmmmmrrrrrrrnnnnnnnnnn%nnrrrmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmmmmmmmmmmmmmNmmmm"
 	  function charType(code) {
 	    if (code <= 0xf7) { return lowTypes.charAt(code) }
 	    else if (0x590 <= code && code <= 0x5f4) { return "R" }
-	    else if (0x600 <= code && code <= 0x6f9) { return arabicTypes.charAt(code - 0x600) }
+	    else if (0x600 <= code && code <= 0x6ed) { return arabicTypes.charAt(code - 0x600) }
 	    else if (0x6ee <= code && code <= 0x8ac) { return "r" }
 	    else if (0x2000 <= code && code <= 0x200b) { return "w" }
 	    else if (code == 0x200c) { return "b" }
@@ -14221,7 +14220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
-	var NativeScrollbars = function(place, scroll, cm) {
+	function NativeScrollbars(place, scroll, cm) {
 	  this.cm = cm
 	  var vert = this.vert = elt("div", [elt("div", null, null, "min-width: 1px")], "CodeMirror-vscrollbar")
 	  var horiz = this.horiz = elt("div", [elt("div", null, null, "height: 100%; min-height: 1px")], "CodeMirror-hscrollbar")
@@ -14237,92 +14236,91 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.checkedZeroWidth = false
 	  // Need to set a minimum width to see the scrollbar on IE7 (but must not set it on IE8).
 	  if (ie && ie_version < 8) { this.horiz.style.minHeight = this.vert.style.minWidth = "18px" }
-	};
+	}
 	
-	NativeScrollbars.prototype.update = function (measure) {
-	  var needsH = measure.scrollWidth > measure.clientWidth + 1
-	  var needsV = measure.scrollHeight > measure.clientHeight + 1
-	  var sWidth = measure.nativeBarWidth
+	NativeScrollbars.prototype = copyObj({
+	  update: function(measure) {
+	    var needsH = measure.scrollWidth > measure.clientWidth + 1
+	    var needsV = measure.scrollHeight > measure.clientHeight + 1
+	    var sWidth = measure.nativeBarWidth
 	
-	  if (needsV) {
-	    this.vert.style.display = "block"
-	    this.vert.style.bottom = needsH ? sWidth + "px" : "0"
-	    var totalHeight = measure.viewHeight - (needsH ? sWidth : 0)
-	    // A bug in IE8 can cause this value to be negative, so guard it.
-	    this.vert.firstChild.style.height =
-	      Math.max(0, measure.scrollHeight - measure.clientHeight + totalHeight) + "px"
-	  } else {
-	    this.vert.style.display = ""
-	    this.vert.firstChild.style.height = "0"
+	    if (needsV) {
+	      this.vert.style.display = "block"
+	      this.vert.style.bottom = needsH ? sWidth + "px" : "0"
+	      var totalHeight = measure.viewHeight - (needsH ? sWidth : 0)
+	      // A bug in IE8 can cause this value to be negative, so guard it.
+	      this.vert.firstChild.style.height =
+	        Math.max(0, measure.scrollHeight - measure.clientHeight + totalHeight) + "px"
+	    } else {
+	      this.vert.style.display = ""
+	      this.vert.firstChild.style.height = "0"
+	    }
+	
+	    if (needsH) {
+	      this.horiz.style.display = "block"
+	      this.horiz.style.right = needsV ? sWidth + "px" : "0"
+	      this.horiz.style.left = measure.barLeft + "px"
+	      var totalWidth = measure.viewWidth - measure.barLeft - (needsV ? sWidth : 0)
+	      this.horiz.firstChild.style.width =
+	        (measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
+	    } else {
+	      this.horiz.style.display = ""
+	      this.horiz.firstChild.style.width = "0"
+	    }
+	
+	    if (!this.checkedZeroWidth && measure.clientHeight > 0) {
+	      if (sWidth == 0) { this.zeroWidthHack() }
+	      this.checkedZeroWidth = true
+	    }
+	
+	    return {right: needsV ? sWidth : 0, bottom: needsH ? sWidth : 0}
+	  },
+	  setScrollLeft: function(pos) {
+	    if (this.horiz.scrollLeft != pos) { this.horiz.scrollLeft = pos }
+	    if (this.disableHoriz) { this.enableZeroWidthBar(this.horiz, this.disableHoriz) }
+	  },
+	  setScrollTop: function(pos) {
+	    if (this.vert.scrollTop != pos) { this.vert.scrollTop = pos }
+	    if (this.disableVert) { this.enableZeroWidthBar(this.vert, this.disableVert) }
+	  },
+	  zeroWidthHack: function() {
+	    var w = mac && !mac_geMountainLion ? "12px" : "18px"
+	    this.horiz.style.height = this.vert.style.width = w
+	    this.horiz.style.pointerEvents = this.vert.style.pointerEvents = "none"
+	    this.disableHoriz = new Delayed
+	    this.disableVert = new Delayed
+	  },
+	  enableZeroWidthBar: function(bar, delay) {
+	    bar.style.pointerEvents = "auto"
+	    function maybeDisable() {
+	      // To find out whether the scrollbar is still visible, we
+	      // check whether the element under the pixel in the bottom
+	      // left corner of the scrollbar box is the scrollbar box
+	      // itself (when the bar is still visible) or its filler child
+	      // (when the bar is hidden). If it is still visible, we keep
+	      // it enabled, if it's hidden, we disable pointer events.
+	      var box = bar.getBoundingClientRect()
+	      var elt = document.elementFromPoint(box.left + 1, box.bottom - 1)
+	      if (elt != bar) { bar.style.pointerEvents = "none" }
+	      else { delay.set(1000, maybeDisable) }
+	    }
+	    delay.set(1000, maybeDisable)
+	  },
+	  clear: function() {
+	    var parent = this.horiz.parentNode
+	    parent.removeChild(this.horiz)
+	    parent.removeChild(this.vert)
 	  }
+	}, NativeScrollbars.prototype)
 	
-	  if (needsH) {
-	    this.horiz.style.display = "block"
-	    this.horiz.style.right = needsV ? sWidth + "px" : "0"
-	    this.horiz.style.left = measure.barLeft + "px"
-	    var totalWidth = measure.viewWidth - measure.barLeft - (needsV ? sWidth : 0)
-	    this.horiz.firstChild.style.width =
-	      (measure.scrollWidth - measure.clientWidth + totalWidth) + "px"
-	  } else {
-	    this.horiz.style.display = ""
-	    this.horiz.firstChild.style.width = "0"
-	  }
+	function NullScrollbars() {}
 	
-	  if (!this.checkedZeroWidth && measure.clientHeight > 0) {
-	    if (sWidth == 0) { this.zeroWidthHack() }
-	    this.checkedZeroWidth = true
-	  }
-	
-	  return {right: needsV ? sWidth : 0, bottom: needsH ? sWidth : 0}
-	};
-	
-	NativeScrollbars.prototype.setScrollLeft = function (pos) {
-	  if (this.horiz.scrollLeft != pos) { this.horiz.scrollLeft = pos }
-	  if (this.disableHoriz) { this.enableZeroWidthBar(this.horiz, this.disableHoriz) }
-	};
-	
-	NativeScrollbars.prototype.setScrollTop = function (pos) {
-	  if (this.vert.scrollTop != pos) { this.vert.scrollTop = pos }
-	  if (this.disableVert) { this.enableZeroWidthBar(this.vert, this.disableVert) }
-	};
-	
-	NativeScrollbars.prototype.zeroWidthHack = function () {
-	  var w = mac && !mac_geMountainLion ? "12px" : "18px"
-	  this.horiz.style.height = this.vert.style.width = w
-	  this.horiz.style.pointerEvents = this.vert.style.pointerEvents = "none"
-	  this.disableHoriz = new Delayed
-	  this.disableVert = new Delayed
-	};
-	
-	NativeScrollbars.prototype.enableZeroWidthBar = function (bar, delay) {
-	  bar.style.pointerEvents = "auto"
-	  function maybeDisable() {
-	    // To find out whether the scrollbar is still visible, we
-	    // check whether the element under the pixel in the bottom
-	    // left corner of the scrollbar box is the scrollbar box
-	    // itself (when the bar is still visible) or its filler child
-	    // (when the bar is hidden). If it is still visible, we keep
-	    // it enabled, if it's hidden, we disable pointer events.
-	    var box = bar.getBoundingClientRect()
-	    var elt = document.elementFromPoint(box.left + 1, box.bottom - 1)
-	    if (elt != bar) { bar.style.pointerEvents = "none" }
-	    else { delay.set(1000, maybeDisable) }
-	  }
-	  delay.set(1000, maybeDisable)
-	};
-	
-	NativeScrollbars.prototype.clear = function () {
-	  var parent = this.horiz.parentNode
-	  parent.removeChild(this.horiz)
-	  parent.removeChild(this.vert)
-	};
-	
-	var NullScrollbars = function () {};
-	
-	NullScrollbars.prototype.update = function () { return {bottom: 0, right: 0} };
-	NullScrollbars.prototype.setScrollLeft = function () {};
-	NullScrollbars.prototype.setScrollTop = function () {};
-	NullScrollbars.prototype.clear = function () {};
+	NullScrollbars.prototype = copyObj({
+	  update: function() { return {bottom: 0, right: 0} },
+	  setScrollLeft: function() {},
+	  setScrollTop: function() {},
+	  clear: function() {}
+	}, NullScrollbars.prototype)
 	
 	function updateScrollbars(cm, measure) {
 	  if (!measure) { measure = measureForScrollbars(cm) }
@@ -14901,7 +14899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// DISPLAY DRAWING
 	
-	var DisplayUpdate = function(cm, viewport, force) {
+	function DisplayUpdate(cm, viewport, force) {
 	  var display = cm.display
 	
 	  this.viewport = viewport
@@ -14914,18 +14912,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.force = force
 	  this.dims = getDimensions(cm)
 	  this.events = []
-	};
+	}
 	
-	DisplayUpdate.prototype.signal = function (emitter, type) {
+	DisplayUpdate.prototype.signal = function(emitter, type) {
 	  if (hasHandler(emitter, type))
 	    { this.events.push(arguments) }
-	};
-	DisplayUpdate.prototype.finish = function () {
-	    var this$1 = this;
+	}
+	DisplayUpdate.prototype.finish = function() {
+	  var this$1 = this;
 	
 	  for (var i = 0; i < this.events.length; i++)
 	    { signal.apply(null, this$1.events[i]) }
-	};
+	}
 	
 	function maybeClipScrollbars(cm) {
 	  var display = cm.display
@@ -18053,7 +18051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = newBreaks.length - 1; i >= 0; i--)
 	      { replaceRange(cm.doc, val, newBreaks[i], Pos(newBreaks[i].line, newBreaks[i].ch + val.length)) }
 	  })
-	  option("specialChars", /[\u0000-\u001f\u007f\u00ad\u061c\u200b-\u200f\u2028\u2029\ufeff]/g, function (cm, val, old) {
+	  option("specialChars", /[\u0000-\u001f\u007f\u00ad\u200b-\u200f\u2028\u2029\ufeff]/g, function (cm, val, old) {
 	    cm.state.specialChars = new RegExp(val.source + (val.test("\t") ? "" : "|\t"), "g")
 	    if (old != Init) { cm.refresh() }
 	  })
@@ -18143,7 +18141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function guttersChanged(cm) {
 	  updateGutters(cm)
 	  regChange(cm)
-	  alignHorizontally(cm)
+	  setTimeout(function () { return alignHorizontally(cm); }, 20)
 	}
 	
 	function dragDropChanged(cm, value, old) {
@@ -18198,6 +18196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  themeChanged(this)
 	  if (options.lineWrapping)
 	    { this.display.wrapper.className += " CodeMirror-wrap" }
+	  if (options.autofocus && !mobile) { display.input.focus() }
 	  initScrollbars(this)
 	
 	  this.state = {
@@ -18215,8 +18214,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    keySeq: null,  // Unfinished key sequence
 	    specialChars: null
 	  }
-	
-	  if (options.autofocus && !mobile) { display.input.focus() }
 	
 	  // Override magic textarea content restore that IE sometimes does
 	  // on our hidden textarea on reload
@@ -18573,7 +18570,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      options[option] = value
 	      if (optionHandlers.hasOwnProperty(option))
 	        { operation(this, optionHandlers[option])(this, value, old) }
-	      signal(this, "optionChange", this, option)
 	    },
 	
 	    getOption: function(option) {return this.options[option]},
@@ -19081,333 +19077,331 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// CONTENTEDITABLE INPUT STYLE
 	
-	var ContentEditableInput = function(cm) {
+	function ContentEditableInput(cm) {
 	  this.cm = cm
 	  this.lastAnchorNode = this.lastAnchorOffset = this.lastFocusNode = this.lastFocusOffset = null
 	  this.polling = new Delayed()
 	  this.composing = null
 	  this.gracePeriod = false
 	  this.readDOMTimeout = null
-	};
+	}
 	
-	ContentEditableInput.prototype.init = function (display) {
+	ContentEditableInput.prototype = copyObj({
+	  init: function(display) {
 	    var this$1 = this;
 	
-	  var input = this, cm = input.cm
-	  var div = input.div = display.lineDiv
-	  disableBrowserMagic(div, cm.options.spellcheck)
+	    var input = this, cm = input.cm
+	    var div = input.div = display.lineDiv
+	    disableBrowserMagic(div, cm.options.spellcheck)
 	
-	  on(div, "paste", function (e) {
-	    if (signalDOMEvent(cm, e) || handlePaste(e, cm)) { return }
-	    // IE doesn't fire input events, so we schedule a read for the pasted content in this way
-	    if (ie_version <= 11) { setTimeout(operation(cm, function () {
-	      if (!input.pollContent()) { regChange(cm) }
-	    }), 20) }
-	  })
+	    on(div, "paste", function (e) {
+	      if (signalDOMEvent(cm, e) || handlePaste(e, cm)) { return }
+	      // IE doesn't fire input events, so we schedule a read for the pasted content in this way
+	      if (ie_version <= 11) { setTimeout(operation(cm, function () {
+	        if (!input.pollContent()) { regChange(cm) }
+	      }), 20) }
+	    })
 	
-	  on(div, "compositionstart", function (e) {
-	    this$1.composing = {data: e.data, done: false}
-	  })
-	  on(div, "compositionupdate", function (e) {
-	    if (!this$1.composing) { this$1.composing = {data: e.data, done: false} }
-	  })
-	  on(div, "compositionend", function (e) {
-	    if (this$1.composing) {
-	      if (e.data != this$1.composing.data) { this$1.readFromDOMSoon() }
-	      this$1.composing.done = true
-	    }
-	  })
-	
-	  on(div, "touchstart", function () { return input.forceCompositionEnd(); })
-	
-	  on(div, "input", function () {
-	    if (!this$1.composing) { this$1.readFromDOMSoon() }
-	  })
-	
-	  function onCopyCut(e) {
-	    if (signalDOMEvent(cm, e)) { return }
-	    if (cm.somethingSelected()) {
-	      setLastCopied({lineWise: false, text: cm.getSelections()})
-	      if (e.type == "cut") { cm.replaceSelection("", null, "cut") }
-	    } else if (!cm.options.lineWiseCopyCut) {
-	      return
-	    } else {
-	      var ranges = copyableRanges(cm)
-	      setLastCopied({lineWise: true, text: ranges.text})
-	      if (e.type == "cut") {
-	        cm.operation(function () {
-	          cm.setSelections(ranges.ranges, 0, sel_dontScroll)
-	          cm.replaceSelection("", null, "cut")
-	        })
+	    on(div, "compositionstart", function (e) {
+	      this$1.composing = {data: e.data}
+	    })
+	    on(div, "compositionupdate", function (e) {
+	      if (!this$1.composing) { this$1.composing = {data: e.data} }
+	    })
+	    on(div, "compositionend", function (e) {
+	      if (this$1.composing) {
+	        if (e.data != this$1.composing.data) { this$1.readFromDOMSoon() }
+	        this$1.composing = null
 	      }
-	    }
-	    if (e.clipboardData) {
-	      e.clipboardData.clearData()
-	      var content = lastCopied.text.join("\n")
-	      // iOS exposes the clipboard API, but seems to discard content inserted into it
-	      e.clipboardData.setData("Text", content)
-	      if (e.clipboardData.getData("Text") == content) {
-	        e.preventDefault()
+	    })
+	
+	    on(div, "touchstart", function () { return input.forceCompositionEnd(); })
+	
+	    on(div, "input", function () {
+	      if (!this$1.composing) { this$1.readFromDOMSoon() }
+	    })
+	
+	    function onCopyCut(e) {
+	      if (signalDOMEvent(cm, e)) { return }
+	      if (cm.somethingSelected()) {
+	        setLastCopied({lineWise: false, text: cm.getSelections()})
+	        if (e.type == "cut") { cm.replaceSelection("", null, "cut") }
+	      } else if (!cm.options.lineWiseCopyCut) {
 	        return
+	      } else {
+	        var ranges = copyableRanges(cm)
+	        setLastCopied({lineWise: true, text: ranges.text})
+	        if (e.type == "cut") {
+	          cm.operation(function () {
+	            cm.setSelections(ranges.ranges, 0, sel_dontScroll)
+	            cm.replaceSelection("", null, "cut")
+	          })
+	        }
 	      }
+	      if (e.clipboardData) {
+	        e.clipboardData.clearData()
+	        var content = lastCopied.text.join("\n")
+	        // iOS exposes the clipboard API, but seems to discard content inserted into it
+	        e.clipboardData.setData("Text", content)
+	        if (e.clipboardData.getData("Text") == content) {
+	          e.preventDefault()
+	          return
+	        }
+	      }
+	      // Old-fashioned briefly-focus-a-textarea hack
+	      var kludge = hiddenTextarea(), te = kludge.firstChild
+	      cm.display.lineSpace.insertBefore(kludge, cm.display.lineSpace.firstChild)
+	      te.value = lastCopied.text.join("\n")
+	      var hadFocus = document.activeElement
+	      selectInput(te)
+	      setTimeout(function () {
+	        cm.display.lineSpace.removeChild(kludge)
+	        hadFocus.focus()
+	        if (hadFocus == div) { input.showPrimarySelection() }
+	      }, 50)
 	    }
-	    // Old-fashioned briefly-focus-a-textarea hack
-	    var kludge = hiddenTextarea(), te = kludge.firstChild
-	    cm.display.lineSpace.insertBefore(kludge, cm.display.lineSpace.firstChild)
-	    te.value = lastCopied.text.join("\n")
-	    var hadFocus = document.activeElement
-	    selectInput(te)
-	    setTimeout(function () {
-	      cm.display.lineSpace.removeChild(kludge)
-	      hadFocus.focus()
-	      if (hadFocus == div) { input.showPrimarySelection() }
-	    }, 50)
-	  }
-	  on(div, "copy", onCopyCut)
-	  on(div, "cut", onCopyCut)
-	};
+	    on(div, "copy", onCopyCut)
+	    on(div, "cut", onCopyCut)
+	  },
 	
-	ContentEditableInput.prototype.prepareSelection = function () {
-	  var result = prepareSelection(this.cm, false)
-	  result.focus = this.cm.state.focused
-	  return result
-	};
+	  prepareSelection: function() {
+	    var result = prepareSelection(this.cm, false)
+	    result.focus = this.cm.state.focused
+	    return result
+	  },
 	
-	ContentEditableInput.prototype.showSelection = function (info, takeFocus) {
-	  if (!info || !this.cm.display.view.length) { return }
-	  if (info.focus || takeFocus) { this.showPrimarySelection() }
-	  this.showMultipleSelections(info)
-	};
+	  showSelection: function(info, takeFocus) {
+	    if (!info || !this.cm.display.view.length) { return }
+	    if (info.focus || takeFocus) { this.showPrimarySelection() }
+	    this.showMultipleSelections(info)
+	  },
 	
-	ContentEditableInput.prototype.showPrimarySelection = function () {
-	  var sel = window.getSelection(), prim = this.cm.doc.sel.primary()
-	  var curAnchor = domToPos(this.cm, sel.anchorNode, sel.anchorOffset)
-	  var curFocus = domToPos(this.cm, sel.focusNode, sel.focusOffset)
-	  if (curAnchor && !curAnchor.bad && curFocus && !curFocus.bad &&
-	      cmp(minPos(curAnchor, curFocus), prim.from()) == 0 &&
-	      cmp(maxPos(curAnchor, curFocus), prim.to()) == 0)
-	    { return }
+	  showPrimarySelection: function() {
+	    var sel = window.getSelection(), prim = this.cm.doc.sel.primary()
+	    var curAnchor = domToPos(this.cm, sel.anchorNode, sel.anchorOffset)
+	    var curFocus = domToPos(this.cm, sel.focusNode, sel.focusOffset)
+	    if (curAnchor && !curAnchor.bad && curFocus && !curFocus.bad &&
+	        cmp(minPos(curAnchor, curFocus), prim.from()) == 0 &&
+	        cmp(maxPos(curAnchor, curFocus), prim.to()) == 0)
+	      { return }
 	
-	  var start = posToDOM(this.cm, prim.from())
-	  var end = posToDOM(this.cm, prim.to())
-	  if (!start && !end) { return }
+	    var start = posToDOM(this.cm, prim.from())
+	    var end = posToDOM(this.cm, prim.to())
+	    if (!start && !end) { return }
 	
-	  var view = this.cm.display.view
-	  var old = sel.rangeCount && sel.getRangeAt(0)
-	  if (!start) {
-	    start = {node: view[0].measure.map[2], offset: 0}
-	  } else if (!end) { // FIXME dangerously hacky
-	    var measure = view[view.length - 1].measure
-	    var map = measure.maps ? measure.maps[measure.maps.length - 1] : measure.map
-	    end = {node: map[map.length - 1], offset: map[map.length - 2] - map[map.length - 3]}
-	  }
+	    var view = this.cm.display.view
+	    var old = sel.rangeCount && sel.getRangeAt(0)
+	    if (!start) {
+	      start = {node: view[0].measure.map[2], offset: 0}
+	    } else if (!end) { // FIXME dangerously hacky
+	      var measure = view[view.length - 1].measure
+	      var map = measure.maps ? measure.maps[measure.maps.length - 1] : measure.map
+	      end = {node: map[map.length - 1], offset: map[map.length - 2] - map[map.length - 3]}
+	    }
 	
-	  var rng
-	  try { rng = range(start.node, start.offset, end.offset, end.node) }
-	  catch(e) {} // Our model of the DOM might be outdated, in which case the range we try to set can be impossible
-	  if (rng) {
-	    if (!gecko && this.cm.state.focused) {
-	      sel.collapse(start.node, start.offset)
-	      if (!rng.collapsed) {
+	    var rng
+	    try { rng = range(start.node, start.offset, end.offset, end.node) }
+	    catch(e) {} // Our model of the DOM might be outdated, in which case the range we try to set can be impossible
+	    if (rng) {
+	      if (!gecko && this.cm.state.focused) {
+	        sel.collapse(start.node, start.offset)
+	        if (!rng.collapsed) {
+	          sel.removeAllRanges()
+	          sel.addRange(rng)
+	        }
+	      } else {
 	        sel.removeAllRanges()
 	        sel.addRange(rng)
 	      }
-	    } else {
-	      sel.removeAllRanges()
-	      sel.addRange(rng)
+	      if (old && sel.anchorNode == null) { sel.addRange(old) }
+	      else if (gecko) { this.startGracePeriod() }
 	    }
-	    if (old && sel.anchorNode == null) { sel.addRange(old) }
-	    else if (gecko) { this.startGracePeriod() }
-	  }
-	  this.rememberSelection()
-	};
-	
-	ContentEditableInput.prototype.startGracePeriod = function () {
-	    var this$1 = this;
-	
-	  clearTimeout(this.gracePeriod)
-	  this.gracePeriod = setTimeout(function () {
-	    this$1.gracePeriod = false
-	    if (this$1.selectionChanged())
-	      { this$1.cm.operation(function () { return this$1.cm.curOp.selectionChanged = true; }) }
-	  }, 20)
-	};
-	
-	ContentEditableInput.prototype.showMultipleSelections = function (info) {
-	  removeChildrenAndAdd(this.cm.display.cursorDiv, info.cursors)
-	  removeChildrenAndAdd(this.cm.display.selectionDiv, info.selection)
-	};
-	
-	ContentEditableInput.prototype.rememberSelection = function () {
-	  var sel = window.getSelection()
-	  this.lastAnchorNode = sel.anchorNode; this.lastAnchorOffset = sel.anchorOffset
-	  this.lastFocusNode = sel.focusNode; this.lastFocusOffset = sel.focusOffset
-	};
-	
-	ContentEditableInput.prototype.selectionInEditor = function () {
-	  var sel = window.getSelection()
-	  if (!sel.rangeCount) { return false }
-	  var node = sel.getRangeAt(0).commonAncestorContainer
-	  return contains(this.div, node)
-	};
-	
-	ContentEditableInput.prototype.focus = function () {
-	  if (this.cm.options.readOnly != "nocursor") {
-	    if (!this.selectionInEditor())
-	      { this.showSelection(this.prepareSelection(), true) }
-	    this.div.focus()
-	  }
-	};
-	ContentEditableInput.prototype.blur = function () { this.div.blur() };
-	ContentEditableInput.prototype.getField = function () { return this.div };
-	
-	ContentEditableInput.prototype.supportsTouch = function () { return true };
-	
-	ContentEditableInput.prototype.receivedFocus = function () {
-	  var input = this
-	  if (this.selectionInEditor())
-	    { this.pollSelection() }
-	  else
-	    { runInOp(this.cm, function () { return input.cm.curOp.selectionChanged = true; }) }
-	
-	  function poll() {
-	    if (input.cm.state.focused) {
-	      input.pollSelection()
-	      input.polling.set(input.cm.options.pollInterval, poll)
-	    }
-	  }
-	  this.polling.set(this.cm.options.pollInterval, poll)
-	};
-	
-	ContentEditableInput.prototype.selectionChanged = function () {
-	  var sel = window.getSelection()
-	  return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset ||
-	    sel.focusNode != this.lastFocusNode || sel.focusOffset != this.lastFocusOffset
-	};
-	
-	ContentEditableInput.prototype.pollSelection = function () {
-	  if (!this.composing && this.readDOMTimeout == null && !this.gracePeriod && this.selectionChanged()) {
-	    var sel = window.getSelection(), cm = this.cm
 	    this.rememberSelection()
-	    var anchor = domToPos(cm, sel.anchorNode, sel.anchorOffset)
-	    var head = domToPos(cm, sel.focusNode, sel.focusOffset)
-	    if (anchor && head) { runInOp(cm, function () {
-	      setSelection(cm.doc, simpleSelection(anchor, head), sel_dontScroll)
-	      if (anchor.bad || head.bad) { cm.curOp.selectionChanged = true }
-	    }) }
-	  }
-	};
+	  },
 	
-	ContentEditableInput.prototype.pollContent = function () {
-	  if (this.readDOMTimeout != null) {
-	    clearTimeout(this.readDOMTimeout)
-	    this.readDOMTimeout = null
-	  }
-	
-	  var cm = this.cm, display = cm.display, sel = cm.doc.sel.primary()
-	  var from = sel.from(), to = sel.to()
-	  if (from.ch == 0 && from.line > cm.firstLine())
-	    { from = Pos(from.line - 1, getLine(cm.doc, from.line - 1).length) }
-	  if (to.ch == getLine(cm.doc, to.line).text.length && to.line < cm.lastLine())
-	    { to = Pos(to.line + 1, 0) }
-	  if (from.line < display.viewFrom || to.line > display.viewTo - 1) { return false }
-	
-	  var fromIndex, fromLine, fromNode
-	  if (from.line == display.viewFrom || (fromIndex = findViewIndex(cm, from.line)) == 0) {
-	    fromLine = lineNo(display.view[0].line)
-	    fromNode = display.view[0].node
-	  } else {
-	    fromLine = lineNo(display.view[fromIndex].line)
-	    fromNode = display.view[fromIndex - 1].node.nextSibling
-	  }
-	  var toIndex = findViewIndex(cm, to.line)
-	  var toLine, toNode
-	  if (toIndex == display.view.length - 1) {
-	    toLine = display.viewTo - 1
-	    toNode = display.lineDiv.lastChild
-	  } else {
-	    toLine = lineNo(display.view[toIndex + 1].line) - 1
-	    toNode = display.view[toIndex + 1].node.previousSibling
-	  }
-	
-	  if (!fromNode) { return false }
-	  var newText = cm.doc.splitLines(domTextBetween(cm, fromNode, toNode, fromLine, toLine))
-	  var oldText = getBetween(cm.doc, Pos(fromLine, 0), Pos(toLine, getLine(cm.doc, toLine).text.length))
-	  while (newText.length > 1 && oldText.length > 1) {
-	    if (lst(newText) == lst(oldText)) { newText.pop(); oldText.pop(); toLine-- }
-	    else if (newText[0] == oldText[0]) { newText.shift(); oldText.shift(); fromLine++ }
-	    else { break }
-	  }
-	
-	  var cutFront = 0, cutEnd = 0
-	  var newTop = newText[0], oldTop = oldText[0], maxCutFront = Math.min(newTop.length, oldTop.length)
-	  while (cutFront < maxCutFront && newTop.charCodeAt(cutFront) == oldTop.charCodeAt(cutFront))
-	    { ++cutFront }
-	  var newBot = lst(newText), oldBot = lst(oldText)
-	  var maxCutEnd = Math.min(newBot.length - (newText.length == 1 ? cutFront : 0),
-	                           oldBot.length - (oldText.length == 1 ? cutFront : 0))
-	  while (cutEnd < maxCutEnd &&
-	         newBot.charCodeAt(newBot.length - cutEnd - 1) == oldBot.charCodeAt(oldBot.length - cutEnd - 1))
-	    { ++cutEnd }
-	
-	  newText[newText.length - 1] = newBot.slice(0, newBot.length - cutEnd).replace(/^\u200b+/, "")
-	  newText[0] = newText[0].slice(cutFront).replace(/\u200b+$/, "")
-	
-	  var chFrom = Pos(fromLine, cutFront)
-	  var chTo = Pos(toLine, oldText.length ? lst(oldText).length - cutEnd : 0)
-	  if (newText.length > 1 || newText[0] || cmp(chFrom, chTo)) {
-	    replaceRange(cm.doc, newText, chFrom, chTo, "+input")
-	    return true
-	  }
-	};
-	
-	ContentEditableInput.prototype.ensurePolled = function () {
-	  this.forceCompositionEnd()
-	};
-	ContentEditableInput.prototype.reset = function () {
-	  this.forceCompositionEnd()
-	};
-	ContentEditableInput.prototype.forceCompositionEnd = function () {
-	  if (!this.composing) { return }
-	  clearTimeout(this.readDOMTimeout)
-	  this.composing = null
-	  if (!this.pollContent()) { regChange(this.cm) }
-	  this.div.blur()
-	  this.div.focus()
-	};
-	ContentEditableInput.prototype.readFromDOMSoon = function () {
+	  startGracePeriod: function() {
 	    var this$1 = this;
 	
-	  if (this.readDOMTimeout != null) { return }
-	  this.readDOMTimeout = setTimeout(function () {
-	    this$1.readDOMTimeout = null
-	    if (this$1.composing) {
-	      if (this$1.composing.done) { this$1.composing = null }
-	      else { return }
+	    clearTimeout(this.gracePeriod)
+	    this.gracePeriod = setTimeout(function () {
+	      this$1.gracePeriod = false
+	      if (this$1.selectionChanged())
+	        { this$1.cm.operation(function () { return this$1.cm.curOp.selectionChanged = true; }) }
+	    }, 20)
+	  },
+	
+	  showMultipleSelections: function(info) {
+	    removeChildrenAndAdd(this.cm.display.cursorDiv, info.cursors)
+	    removeChildrenAndAdd(this.cm.display.selectionDiv, info.selection)
+	  },
+	
+	  rememberSelection: function() {
+	    var sel = window.getSelection()
+	    this.lastAnchorNode = sel.anchorNode; this.lastAnchorOffset = sel.anchorOffset
+	    this.lastFocusNode = sel.focusNode; this.lastFocusOffset = sel.focusOffset
+	  },
+	
+	  selectionInEditor: function() {
+	    var sel = window.getSelection()
+	    if (!sel.rangeCount) { return false }
+	    var node = sel.getRangeAt(0).commonAncestorContainer
+	    return contains(this.div, node)
+	  },
+	
+	  focus: function() {
+	    if (this.cm.options.readOnly != "nocursor") {
+	      if (!this.selectionInEditor())
+	        { this.showSelection(this.prepareSelection(), true) }
+	      this.div.focus()
 	    }
-	    if (this$1.cm.isReadOnly() || !this$1.pollContent())
-	      { runInOp(this$1.cm, function () { return regChange(this$1.cm); }) }
-	  }, 80)
-	};
+	  },
+	  blur: function() { this.div.blur() },
+	  getField: function() { return this.div },
 	
-	ContentEditableInput.prototype.setUneditable = function (node) {
-	  node.contentEditable = "false"
-	};
+	  supportsTouch: function() { return true },
 	
-	ContentEditableInput.prototype.onKeyPress = function (e) {
-	  e.preventDefault()
-	  if (!this.cm.isReadOnly())
-	    { operation(this.cm, applyTextInput)(this.cm, String.fromCharCode(e.charCode == null ? e.keyCode : e.charCode), 0) }
-	};
+	  receivedFocus: function() {
+	    var input = this
+	    if (this.selectionInEditor())
+	      { this.pollSelection() }
+	    else
+	      { runInOp(this.cm, function () { return input.cm.curOp.selectionChanged = true; }) }
 	
-	ContentEditableInput.prototype.readOnlyChanged = function (val) {
-	  this.div.contentEditable = String(val != "nocursor")
-	};
+	    function poll() {
+	      if (input.cm.state.focused) {
+	        input.pollSelection()
+	        input.polling.set(input.cm.options.pollInterval, poll)
+	      }
+	    }
+	    this.polling.set(this.cm.options.pollInterval, poll)
+	  },
 	
-	ContentEditableInput.prototype.onContextMenu = function () {};
-	ContentEditableInput.prototype.resetPosition = function () {};
+	  selectionChanged: function() {
+	    var sel = window.getSelection()
+	    return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset ||
+	      sel.focusNode != this.lastFocusNode || sel.focusOffset != this.lastFocusOffset
+	  },
 	
-	ContentEditableInput.prototype.needsContentAttribute = true
+	  pollSelection: function() {
+	    if (!this.composing && this.readDOMTimeout == null && !this.gracePeriod && this.selectionChanged()) {
+	      var sel = window.getSelection(), cm = this.cm
+	      this.rememberSelection()
+	      var anchor = domToPos(cm, sel.anchorNode, sel.anchorOffset)
+	      var head = domToPos(cm, sel.focusNode, sel.focusOffset)
+	      if (anchor && head) { runInOp(cm, function () {
+	        setSelection(cm.doc, simpleSelection(anchor, head), sel_dontScroll)
+	        if (anchor.bad || head.bad) { cm.curOp.selectionChanged = true }
+	      }) }
+	    }
+	  },
+	
+	  pollContent: function() {
+	    if (this.readDOMTimeout != null) {
+	      clearTimeout(this.readDOMTimeout)
+	      this.readDOMTimeout = null
+	    }
+	
+	    var cm = this.cm, display = cm.display, sel = cm.doc.sel.primary()
+	    var from = sel.from(), to = sel.to()
+	    if (from.ch == 0 && from.line > cm.firstLine())
+	      { from = Pos(from.line - 1, getLine(cm.doc, from.line - 1).length) }
+	    if (to.ch == getLine(cm.doc, to.line).text.length && to.line < cm.lastLine())
+	      { to = Pos(to.line + 1, 0) }
+	    if (from.line < display.viewFrom || to.line > display.viewTo - 1) { return false }
+	
+	    var fromIndex, fromLine, fromNode
+	    if (from.line == display.viewFrom || (fromIndex = findViewIndex(cm, from.line)) == 0) {
+	      fromLine = lineNo(display.view[0].line)
+	      fromNode = display.view[0].node
+	    } else {
+	      fromLine = lineNo(display.view[fromIndex].line)
+	      fromNode = display.view[fromIndex - 1].node.nextSibling
+	    }
+	    var toIndex = findViewIndex(cm, to.line)
+	    var toLine, toNode
+	    if (toIndex == display.view.length - 1) {
+	      toLine = display.viewTo - 1
+	      toNode = display.lineDiv.lastChild
+	    } else {
+	      toLine = lineNo(display.view[toIndex + 1].line) - 1
+	      toNode = display.view[toIndex + 1].node.previousSibling
+	    }
+	
+	    if (!fromNode) { return false }
+	    var newText = cm.doc.splitLines(domTextBetween(cm, fromNode, toNode, fromLine, toLine))
+	    var oldText = getBetween(cm.doc, Pos(fromLine, 0), Pos(toLine, getLine(cm.doc, toLine).text.length))
+	    while (newText.length > 1 && oldText.length > 1) {
+	      if (lst(newText) == lst(oldText)) { newText.pop(); oldText.pop(); toLine-- }
+	      else if (newText[0] == oldText[0]) { newText.shift(); oldText.shift(); fromLine++ }
+	      else { break }
+	    }
+	
+	    var cutFront = 0, cutEnd = 0
+	    var newTop = newText[0], oldTop = oldText[0], maxCutFront = Math.min(newTop.length, oldTop.length)
+	    while (cutFront < maxCutFront && newTop.charCodeAt(cutFront) == oldTop.charCodeAt(cutFront))
+	      { ++cutFront }
+	    var newBot = lst(newText), oldBot = lst(oldText)
+	    var maxCutEnd = Math.min(newBot.length - (newText.length == 1 ? cutFront : 0),
+	                             oldBot.length - (oldText.length == 1 ? cutFront : 0))
+	    while (cutEnd < maxCutEnd &&
+	           newBot.charCodeAt(newBot.length - cutEnd - 1) == oldBot.charCodeAt(oldBot.length - cutEnd - 1))
+	      { ++cutEnd }
+	
+	    newText[newText.length - 1] = newBot.slice(0, newBot.length - cutEnd).replace(/^\u200b+/, "")
+	    newText[0] = newText[0].slice(cutFront).replace(/\u200b+$/, "")
+	
+	    var chFrom = Pos(fromLine, cutFront)
+	    var chTo = Pos(toLine, oldText.length ? lst(oldText).length - cutEnd : 0)
+	    if (newText.length > 1 || newText[0] || cmp(chFrom, chTo)) {
+	      replaceRange(cm.doc, newText, chFrom, chTo, "+input")
+	      return true
+	    }
+	  },
+	
+	  ensurePolled: function() {
+	    this.forceCompositionEnd()
+	  },
+	  reset: function() {
+	    this.forceCompositionEnd()
+	  },
+	  forceCompositionEnd: function() {
+	    if (!this.composing) { return }
+	    this.composing = null
+	    if (!this.pollContent()) { regChange(this.cm) }
+	    this.div.blur()
+	    this.div.focus()
+	  },
+	  readFromDOMSoon: function() {
+	    var this$1 = this;
+	
+	    if (this.readDOMTimeout != null) { return }
+	    this.readDOMTimeout = setTimeout(function () {
+	      this$1.readDOMTimeout = null
+	      if (this$1.composing) { return }
+	      if (this$1.cm.isReadOnly() || !this$1.pollContent())
+	        { runInOp(this$1.cm, function () { return regChange(this$1.cm); }) }
+	    }, 80)
+	  },
+	
+	  setUneditable: function(node) {
+	    node.contentEditable = "false"
+	  },
+	
+	  onKeyPress: function(e) {
+	    e.preventDefault()
+	    if (!this.cm.isReadOnly())
+	      { operation(this.cm, applyTextInput)(this.cm, String.fromCharCode(e.charCode == null ? e.keyCode : e.charCode), 0) }
+	  },
+	
+	  readOnlyChanged: function(val) {
+	    this.div.contentEditable = String(val != "nocursor")
+	  },
+	
+	  onContextMenu: nothing,
+	  resetPosition: nothing,
+	
+	  needsContentAttribute: true
+	  }, ContentEditableInput.prototype)
 	
 	function posToDOM(cm, pos) {
 	  var view = findViewForLine(cm, pos.line)
@@ -19544,7 +19538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// TEXTAREA INPUT STYLE
 	
-	var TextareaInput = function(cm) {
+	function TextareaInput(cm) {
 	  this.cm = cm
 	  // See input.poll and input.reset
 	  this.prevInput = ""
@@ -19561,333 +19555,335 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Used to work around IE issue with selection being forgotten when focus moves away from textarea
 	  this.hasSelection = false
 	  this.composing = null
-	};
+	}
 	
-	TextareaInput.prototype.init = function (display) {
+	TextareaInput.prototype = copyObj({
+	  init: function(display) {
 	    var this$1 = this;
 	
-	  var input = this, cm = this.cm
+	    var input = this, cm = this.cm
 	
-	  // Wraps and hides input textarea
-	  var div = this.wrapper = hiddenTextarea()
-	  // The semihidden textarea that is focused when the editor is
-	  // focused, and receives input.
-	  var te = this.textarea = div.firstChild
-	  display.wrapper.insertBefore(div, display.wrapper.firstChild)
+	    // Wraps and hides input textarea
+	    var div = this.wrapper = hiddenTextarea()
+	    // The semihidden textarea that is focused when the editor is
+	    // focused, and receives input.
+	    var te = this.textarea = div.firstChild
+	    display.wrapper.insertBefore(div, display.wrapper.firstChild)
 	
-	  // Needed to hide big blue blinking cursor on Mobile Safari (doesn't seem to work in iOS 8 anymore)
-	  if (ios) { te.style.width = "0px" }
+	    // Needed to hide big blue blinking cursor on Mobile Safari (doesn't seem to work in iOS 8 anymore)
+	    if (ios) { te.style.width = "0px" }
 	
-	  on(te, "input", function () {
-	    if (ie && ie_version >= 9 && this$1.hasSelection) { this$1.hasSelection = null }
-	    input.poll()
-	  })
-	
-	  on(te, "paste", function (e) {
-	    if (signalDOMEvent(cm, e) || handlePaste(e, cm)) { return }
-	
-	    cm.state.pasteIncoming = true
-	    input.fastPoll()
-	  })
-	
-	  function prepareCopyCut(e) {
-	    if (signalDOMEvent(cm, e)) { return }
-	    if (cm.somethingSelected()) {
-	      setLastCopied({lineWise: false, text: cm.getSelections()})
-	      if (input.inaccurateSelection) {
-	        input.prevInput = ""
-	        input.inaccurateSelection = false
-	        te.value = lastCopied.text.join("\n")
-	        selectInput(te)
-	      }
-	    } else if (!cm.options.lineWiseCopyCut) {
-	      return
-	    } else {
-	      var ranges = copyableRanges(cm)
-	      setLastCopied({lineWise: true, text: ranges.text})
-	      if (e.type == "cut") {
-	        cm.setSelections(ranges.ranges, null, sel_dontScroll)
-	      } else {
-	        input.prevInput = ""
-	        te.value = ranges.text.join("\n")
-	        selectInput(te)
-	      }
-	    }
-	    if (e.type == "cut") { cm.state.cutIncoming = true }
-	  }
-	  on(te, "cut", prepareCopyCut)
-	  on(te, "copy", prepareCopyCut)
-	
-	  on(display.scroller, "paste", function (e) {
-	    if (eventInWidget(display, e) || signalDOMEvent(cm, e)) { return }
-	    cm.state.pasteIncoming = true
-	    input.focus()
-	  })
-	
-	  // Prevent normal selection in the editor (we handle our own)
-	  on(display.lineSpace, "selectstart", function (e) {
-	    if (!eventInWidget(display, e)) { e_preventDefault(e) }
-	  })
-	
-	  on(te, "compositionstart", function () {
-	    var start = cm.getCursor("from")
-	    if (input.composing) { input.composing.range.clear() }
-	    input.composing = {
-	      start: start,
-	      range: cm.markText(start, cm.getCursor("to"), {className: "CodeMirror-composing"})
-	    }
-	  })
-	  on(te, "compositionend", function () {
-	    if (input.composing) {
+	    on(te, "input", function () {
+	      if (ie && ie_version >= 9 && this$1.hasSelection) { this$1.hasSelection = null }
 	      input.poll()
-	      input.composing.range.clear()
-	      input.composing = null
-	    }
-	  })
-	};
+	    })
 	
-	TextareaInput.prototype.prepareSelection = function () {
-	  // Redraw the selection and/or cursor
-	  var cm = this.cm, display = cm.display, doc = cm.doc
-	  var result = prepareSelection(cm)
+	    on(te, "paste", function (e) {
+	      if (signalDOMEvent(cm, e) || handlePaste(e, cm)) { return }
 	
-	  // Move the hidden textarea near the cursor to prevent scrolling artifacts
-	  if (cm.options.moveInputWithCursor) {
-	    var headPos = cursorCoords(cm, doc.sel.primary().head, "div")
-	    var wrapOff = display.wrapper.getBoundingClientRect(), lineOff = display.lineDiv.getBoundingClientRect()
-	    result.teTop = Math.max(0, Math.min(display.wrapper.clientHeight - 10,
-	                                        headPos.top + lineOff.top - wrapOff.top))
-	    result.teLeft = Math.max(0, Math.min(display.wrapper.clientWidth - 10,
-	                                         headPos.left + lineOff.left - wrapOff.left))
-	  }
+	      cm.state.pasteIncoming = true
+	      input.fastPoll()
+	    })
 	
-	  return result
-	};
-	
-	TextareaInput.prototype.showSelection = function (drawn) {
-	  var cm = this.cm, display = cm.display
-	  removeChildrenAndAdd(display.cursorDiv, drawn.cursors)
-	  removeChildrenAndAdd(display.selectionDiv, drawn.selection)
-	  if (drawn.teTop != null) {
-	    this.wrapper.style.top = drawn.teTop + "px"
-	    this.wrapper.style.left = drawn.teLeft + "px"
-	  }
-	};
-	
-	// Reset the input to correspond to the selection (or to be empty,
-	// when not typing and nothing is selected)
-	TextareaInput.prototype.reset = function (typing) {
-	  if (this.contextMenuPending) { return }
-	  var minimal, selected, cm = this.cm, doc = cm.doc
-	  if (cm.somethingSelected()) {
-	    this.prevInput = ""
-	    var range = doc.sel.primary()
-	    minimal = hasCopyEvent &&
-	      (range.to().line - range.from().line > 100 || (selected = cm.getSelection()).length > 1000)
-	    var content = minimal ? "-" : selected || cm.getSelection()
-	    this.textarea.value = content
-	    if (cm.state.focused) { selectInput(this.textarea) }
-	    if (ie && ie_version >= 9) { this.hasSelection = content }
-	  } else if (!typing) {
-	    this.prevInput = this.textarea.value = ""
-	    if (ie && ie_version >= 9) { this.hasSelection = null }
-	  }
-	  this.inaccurateSelection = minimal
-	};
-	
-	TextareaInput.prototype.getField = function () { return this.textarea };
-	
-	TextareaInput.prototype.supportsTouch = function () { return false };
-	
-	TextareaInput.prototype.focus = function () {
-	  if (this.cm.options.readOnly != "nocursor" && (!mobile || activeElt() != this.textarea)) {
-	    try { this.textarea.focus() }
-	    catch (e) {} // IE8 will throw if the textarea is display: none or not in DOM
-	  }
-	};
-	
-	TextareaInput.prototype.blur = function () { this.textarea.blur() };
-	
-	TextareaInput.prototype.resetPosition = function () {
-	  this.wrapper.style.top = this.wrapper.style.left = 0
-	};
-	
-	TextareaInput.prototype.receivedFocus = function () { this.slowPoll() };
-	
-	// Poll for input changes, using the normal rate of polling. This
-	// runs as long as the editor is focused.
-	TextareaInput.prototype.slowPoll = function () {
-	    var this$1 = this;
-	
-	  if (this.pollingFast) { return }
-	  this.polling.set(this.cm.options.pollInterval, function () {
-	    this$1.poll()
-	    if (this$1.cm.state.focused) { this$1.slowPoll() }
-	  })
-	};
-	
-	// When an event has just come in that is likely to add or change
-	// something in the input textarea, we poll faster, to ensure that
-	// the change appears on the screen quickly.
-	TextareaInput.prototype.fastPoll = function () {
-	  var missed = false, input = this
-	  input.pollingFast = true
-	  function p() {
-	    var changed = input.poll()
-	    if (!changed && !missed) {missed = true; input.polling.set(60, p)}
-	    else {input.pollingFast = false; input.slowPoll()}
-	  }
-	  input.polling.set(20, p)
-	};
-	
-	// Read input from the textarea, and update the document to match.
-	// When something is selected, it is present in the textarea, and
-	// selected (unless it is huge, in which case a placeholder is
-	// used). When nothing is selected, the cursor sits after previously
-	// seen text (can be empty), which is stored in prevInput (we must
-	// not reset the textarea when typing, because that breaks IME).
-	TextareaInput.prototype.poll = function () {
-	    var this$1 = this;
-	
-	  var cm = this.cm, input = this.textarea, prevInput = this.prevInput
-	  // Since this is called a *lot*, try to bail out as cheaply as
-	  // possible when it is clear that nothing happened. hasSelection
-	  // will be the case when there is a lot of text in the textarea,
-	  // in which case reading its value would be expensive.
-	  if (this.contextMenuPending || !cm.state.focused ||
-	      (hasSelection(input) && !prevInput && !this.composing) ||
-	      cm.isReadOnly() || cm.options.disableInput || cm.state.keySeq)
-	    { return false }
-	
-	  var text = input.value
-	  // If nothing changed, bail.
-	  if (text == prevInput && !cm.somethingSelected()) { return false }
-	  // Work around nonsensical selection resetting in IE9/10, and
-	  // inexplicable appearance of private area unicode characters on
-	  // some key combos in Mac (#2689).
-	  if (ie && ie_version >= 9 && this.hasSelection === text ||
-	      mac && /[\uf700-\uf7ff]/.test(text)) {
-	    cm.display.input.reset()
-	    return false
-	  }
-	
-	  if (cm.doc.sel == cm.display.selForContextMenu) {
-	    var first = text.charCodeAt(0)
-	    if (first == 0x200b && !prevInput) { prevInput = "\u200b" }
-	    if (first == 0x21da) { this.reset(); return this.cm.execCommand("undo") }
-	  }
-	  // Find the part of the input that is actually new
-	  var same = 0, l = Math.min(prevInput.length, text.length)
-	  while (same < l && prevInput.charCodeAt(same) == text.charCodeAt(same)) { ++same }
-	
-	  runInOp(cm, function () {
-	    applyTextInput(cm, text.slice(same), prevInput.length - same,
-	                   null, this$1.composing ? "*compose" : null)
-	
-	    // Don't leave long text in the textarea, since it makes further polling slow
-	    if (text.length > 1000 || text.indexOf("\n") > -1) { input.value = this$1.prevInput = "" }
-	    else { this$1.prevInput = text }
-	
-	    if (this$1.composing) {
-	      this$1.composing.range.clear()
-	      this$1.composing.range = cm.markText(this$1.composing.start, cm.getCursor("to"),
-	                                         {className: "CodeMirror-composing"})
-	    }
-	  })
-	  return true
-	};
-	
-	TextareaInput.prototype.ensurePolled = function () {
-	  if (this.pollingFast && this.poll()) { this.pollingFast = false }
-	};
-	
-	TextareaInput.prototype.onKeyPress = function () {
-	  if (ie && ie_version >= 9) { this.hasSelection = null }
-	  this.fastPoll()
-	};
-	
-	TextareaInput.prototype.onContextMenu = function (e) {
-	  var input = this, cm = input.cm, display = cm.display, te = input.textarea
-	  var pos = posFromMouse(cm, e), scrollPos = display.scroller.scrollTop
-	  if (!pos || presto) { return } // Opera is difficult.
-	
-	  // Reset the current text selection only if the click is done outside of the selection
-	  // and 'resetSelectionOnContextMenu' option is true.
-	  var reset = cm.options.resetSelectionOnContextMenu
-	  if (reset && cm.doc.sel.contains(pos) == -1)
-	    { operation(cm, setSelection)(cm.doc, simpleSelection(pos), sel_dontScroll) }
-	
-	  var oldCSS = te.style.cssText, oldWrapperCSS = input.wrapper.style.cssText
-	  input.wrapper.style.cssText = "position: absolute"
-	  var wrapperBox = input.wrapper.getBoundingClientRect()
-	  te.style.cssText = "position: absolute; width: 30px; height: 30px;\n      top: " + (e.clientY - wrapperBox.top - 5) + "px; left: " + (e.clientX - wrapperBox.left - 5) + "px;\n      z-index: 1000; background: " + (ie ? "rgba(255, 255, 255, .05)" : "transparent") + ";\n      outline: none; border-width: 0; outline: none; overflow: hidden; opacity: .05; filter: alpha(opacity=5);"
-	  var oldScrollY
-	  if (webkit) { oldScrollY = window.scrollY } // Work around Chrome issue (#2712)
-	  display.input.focus()
-	  if (webkit) { window.scrollTo(null, oldScrollY) }
-	  display.input.reset()
-	  // Adds "Select all" to context menu in FF
-	  if (!cm.somethingSelected()) { te.value = input.prevInput = " " }
-	  input.contextMenuPending = true
-	  display.selForContextMenu = cm.doc.sel
-	  clearTimeout(display.detectingSelectAll)
-	
-	  // Select-all will be greyed out if there's nothing to select, so
-	  // this adds a zero-width space so that we can later check whether
-	  // it got selected.
-	  function prepareSelectAllHack() {
-	    if (te.selectionStart != null) {
-	      var selected = cm.somethingSelected()
-	      var extval = "\u200b" + (selected ? te.value : "")
-	      te.value = "\u21da" // Used to catch context-menu undo
-	      te.value = extval
-	      input.prevInput = selected ? "" : "\u200b"
-	      te.selectionStart = 1; te.selectionEnd = extval.length
-	      // Re-set this, in case some other handler touched the
-	      // selection in the meantime.
-	      display.selForContextMenu = cm.doc.sel
-	    }
-	  }
-	  function rehide() {
-	    input.contextMenuPending = false
-	    input.wrapper.style.cssText = oldWrapperCSS
-	    te.style.cssText = oldCSS
-	    if (ie && ie_version < 9) { display.scrollbars.setScrollTop(display.scroller.scrollTop = scrollPos) }
-	
-	    // Try to detect the user choosing select-all
-	    if (te.selectionStart != null) {
-	      if (!ie || (ie && ie_version < 9)) { prepareSelectAllHack() }
-	      var i = 0, poll = function () {
-	        if (display.selForContextMenu == cm.doc.sel && te.selectionStart == 0 &&
-	            te.selectionEnd > 0 && input.prevInput == "\u200b")
-	          { operation(cm, selectAll)(cm) }
-	        else if (i++ < 10) { display.detectingSelectAll = setTimeout(poll, 500) }
-	        else { display.input.reset() }
+	    function prepareCopyCut(e) {
+	      if (signalDOMEvent(cm, e)) { return }
+	      if (cm.somethingSelected()) {
+	        setLastCopied({lineWise: false, text: cm.getSelections()})
+	        if (input.inaccurateSelection) {
+	          input.prevInput = ""
+	          input.inaccurateSelection = false
+	          te.value = lastCopied.text.join("\n")
+	          selectInput(te)
+	        }
+	      } else if (!cm.options.lineWiseCopyCut) {
+	        return
+	      } else {
+	        var ranges = copyableRanges(cm)
+	        setLastCopied({lineWise: true, text: ranges.text})
+	        if (e.type == "cut") {
+	          cm.setSelections(ranges.ranges, null, sel_dontScroll)
+	        } else {
+	          input.prevInput = ""
+	          te.value = ranges.text.join("\n")
+	          selectInput(te)
+	        }
 	      }
-	      display.detectingSelectAll = setTimeout(poll, 200)
+	      if (e.type == "cut") { cm.state.cutIncoming = true }
 	    }
-	  }
+	    on(te, "cut", prepareCopyCut)
+	    on(te, "copy", prepareCopyCut)
 	
-	  if (ie && ie_version >= 9) { prepareSelectAllHack() }
-	  if (captureRightClick) {
-	    e_stop(e)
-	    var mouseup = function () {
-	      off(window, "mouseup", mouseup)
-	      setTimeout(rehide, 20)
+	    on(display.scroller, "paste", function (e) {
+	      if (eventInWidget(display, e) || signalDOMEvent(cm, e)) { return }
+	      cm.state.pasteIncoming = true
+	      input.focus()
+	    })
+	
+	    // Prevent normal selection in the editor (we handle our own)
+	    on(display.lineSpace, "selectstart", function (e) {
+	      if (!eventInWidget(display, e)) { e_preventDefault(e) }
+	    })
+	
+	    on(te, "compositionstart", function () {
+	      var start = cm.getCursor("from")
+	      if (input.composing) { input.composing.range.clear() }
+	      input.composing = {
+	        start: start,
+	        range: cm.markText(start, cm.getCursor("to"), {className: "CodeMirror-composing"})
+	      }
+	    })
+	    on(te, "compositionend", function () {
+	      if (input.composing) {
+	        input.poll()
+	        input.composing.range.clear()
+	        input.composing = null
+	      }
+	    })
+	  },
+	
+	  prepareSelection: function() {
+	    // Redraw the selection and/or cursor
+	    var cm = this.cm, display = cm.display, doc = cm.doc
+	    var result = prepareSelection(cm)
+	
+	    // Move the hidden textarea near the cursor to prevent scrolling artifacts
+	    if (cm.options.moveInputWithCursor) {
+	      var headPos = cursorCoords(cm, doc.sel.primary().head, "div")
+	      var wrapOff = display.wrapper.getBoundingClientRect(), lineOff = display.lineDiv.getBoundingClientRect()
+	      result.teTop = Math.max(0, Math.min(display.wrapper.clientHeight - 10,
+	                                          headPos.top + lineOff.top - wrapOff.top))
+	      result.teLeft = Math.max(0, Math.min(display.wrapper.clientWidth - 10,
+	                                           headPos.left + lineOff.left - wrapOff.left))
 	    }
-	    on(window, "mouseup", mouseup)
-	  } else {
-	    setTimeout(rehide, 50)
-	  }
-	};
 	
-	TextareaInput.prototype.readOnlyChanged = function (val) {
-	  if (!val) { this.reset() }
-	};
+	    return result
+	  },
 	
-	TextareaInput.prototype.setUneditable = function () {};
+	  showSelection: function(drawn) {
+	    var cm = this.cm, display = cm.display
+	    removeChildrenAndAdd(display.cursorDiv, drawn.cursors)
+	    removeChildrenAndAdd(display.selectionDiv, drawn.selection)
+	    if (drawn.teTop != null) {
+	      this.wrapper.style.top = drawn.teTop + "px"
+	      this.wrapper.style.left = drawn.teLeft + "px"
+	    }
+	  },
 	
-	TextareaInput.prototype.needsContentAttribute = false
+	  // Reset the input to correspond to the selection (or to be empty,
+	  // when not typing and nothing is selected)
+	  reset: function(typing) {
+	    if (this.contextMenuPending) { return }
+	    var minimal, selected, cm = this.cm, doc = cm.doc
+	    if (cm.somethingSelected()) {
+	      this.prevInput = ""
+	      var range = doc.sel.primary()
+	      minimal = hasCopyEvent &&
+	        (range.to().line - range.from().line > 100 || (selected = cm.getSelection()).length > 1000)
+	      var content = minimal ? "-" : selected || cm.getSelection()
+	      this.textarea.value = content
+	      if (cm.state.focused) { selectInput(this.textarea) }
+	      if (ie && ie_version >= 9) { this.hasSelection = content }
+	    } else if (!typing) {
+	      this.prevInput = this.textarea.value = ""
+	      if (ie && ie_version >= 9) { this.hasSelection = null }
+	    }
+	    this.inaccurateSelection = minimal
+	  },
+	
+	  getField: function() { return this.textarea },
+	
+	  supportsTouch: function() { return false },
+	
+	  focus: function() {
+	    if (this.cm.options.readOnly != "nocursor" && (!mobile || activeElt() != this.textarea)) {
+	      try { this.textarea.focus() }
+	      catch (e) {} // IE8 will throw if the textarea is display: none or not in DOM
+	    }
+	  },
+	
+	  blur: function() { this.textarea.blur() },
+	
+	  resetPosition: function() {
+	    this.wrapper.style.top = this.wrapper.style.left = 0
+	  },
+	
+	  receivedFocus: function() { this.slowPoll() },
+	
+	  // Poll for input changes, using the normal rate of polling. This
+	  // runs as long as the editor is focused.
+	  slowPoll: function() {
+	    var this$1 = this;
+	
+	    if (this.pollingFast) { return }
+	    this.polling.set(this.cm.options.pollInterval, function () {
+	      this$1.poll()
+	      if (this$1.cm.state.focused) { this$1.slowPoll() }
+	    })
+	  },
+	
+	  // When an event has just come in that is likely to add or change
+	  // something in the input textarea, we poll faster, to ensure that
+	  // the change appears on the screen quickly.
+	  fastPoll: function() {
+	    var missed = false, input = this
+	    input.pollingFast = true
+	    function p() {
+	      var changed = input.poll()
+	      if (!changed && !missed) {missed = true; input.polling.set(60, p)}
+	      else {input.pollingFast = false; input.slowPoll()}
+	    }
+	    input.polling.set(20, p)
+	  },
+	
+	  // Read input from the textarea, and update the document to match.
+	  // When something is selected, it is present in the textarea, and
+	  // selected (unless it is huge, in which case a placeholder is
+	  // used). When nothing is selected, the cursor sits after previously
+	  // seen text (can be empty), which is stored in prevInput (we must
+	  // not reset the textarea when typing, because that breaks IME).
+	  poll: function() {
+	    var this$1 = this;
+	
+	    var cm = this.cm, input = this.textarea, prevInput = this.prevInput
+	    // Since this is called a *lot*, try to bail out as cheaply as
+	    // possible when it is clear that nothing happened. hasSelection
+	    // will be the case when there is a lot of text in the textarea,
+	    // in which case reading its value would be expensive.
+	    if (this.contextMenuPending || !cm.state.focused ||
+	        (hasSelection(input) && !prevInput && !this.composing) ||
+	        cm.isReadOnly() || cm.options.disableInput || cm.state.keySeq)
+	      { return false }
+	
+	    var text = input.value
+	    // If nothing changed, bail.
+	    if (text == prevInput && !cm.somethingSelected()) { return false }
+	    // Work around nonsensical selection resetting in IE9/10, and
+	    // inexplicable appearance of private area unicode characters on
+	    // some key combos in Mac (#2689).
+	    if (ie && ie_version >= 9 && this.hasSelection === text ||
+	        mac && /[\uf700-\uf7ff]/.test(text)) {
+	      cm.display.input.reset()
+	      return false
+	    }
+	
+	    if (cm.doc.sel == cm.display.selForContextMenu) {
+	      var first = text.charCodeAt(0)
+	      if (first == 0x200b && !prevInput) { prevInput = "\u200b" }
+	      if (first == 0x21da) { this.reset(); return this.cm.execCommand("undo") }
+	    }
+	    // Find the part of the input that is actually new
+	    var same = 0, l = Math.min(prevInput.length, text.length)
+	    while (same < l && prevInput.charCodeAt(same) == text.charCodeAt(same)) { ++same }
+	
+	    runInOp(cm, function () {
+	      applyTextInput(cm, text.slice(same), prevInput.length - same,
+	                     null, this$1.composing ? "*compose" : null)
+	
+	      // Don't leave long text in the textarea, since it makes further polling slow
+	      if (text.length > 1000 || text.indexOf("\n") > -1) { input.value = this$1.prevInput = "" }
+	      else { this$1.prevInput = text }
+	
+	      if (this$1.composing) {
+	        this$1.composing.range.clear()
+	        this$1.composing.range = cm.markText(this$1.composing.start, cm.getCursor("to"),
+	                                           {className: "CodeMirror-composing"})
+	      }
+	    })
+	    return true
+	  },
+	
+	  ensurePolled: function() {
+	    if (this.pollingFast && this.poll()) { this.pollingFast = false }
+	  },
+	
+	  onKeyPress: function() {
+	    if (ie && ie_version >= 9) { this.hasSelection = null }
+	    this.fastPoll()
+	  },
+	
+	  onContextMenu: function(e) {
+	    var input = this, cm = input.cm, display = cm.display, te = input.textarea
+	    var pos = posFromMouse(cm, e), scrollPos = display.scroller.scrollTop
+	    if (!pos || presto) { return } // Opera is difficult.
+	
+	    // Reset the current text selection only if the click is done outside of the selection
+	    // and 'resetSelectionOnContextMenu' option is true.
+	    var reset = cm.options.resetSelectionOnContextMenu
+	    if (reset && cm.doc.sel.contains(pos) == -1)
+	      { operation(cm, setSelection)(cm.doc, simpleSelection(pos), sel_dontScroll) }
+	
+	    var oldCSS = te.style.cssText, oldWrapperCSS = input.wrapper.style.cssText
+	    input.wrapper.style.cssText = "position: absolute"
+	    var wrapperBox = input.wrapper.getBoundingClientRect()
+	    te.style.cssText = "position: absolute; width: 30px; height: 30px;\n      top: " + (e.clientY - wrapperBox.top - 5) + "px; left: " + (e.clientX - wrapperBox.left - 5) + "px;\n      z-index: 1000; background: " + (ie ? "rgba(255, 255, 255, .05)" : "transparent") + ";\n      outline: none; border-width: 0; outline: none; overflow: hidden; opacity: .05; filter: alpha(opacity=5);"
+	    var oldScrollY
+	    if (webkit) { oldScrollY = window.scrollY } // Work around Chrome issue (#2712)
+	    display.input.focus()
+	    if (webkit) { window.scrollTo(null, oldScrollY) }
+	    display.input.reset()
+	    // Adds "Select all" to context menu in FF
+	    if (!cm.somethingSelected()) { te.value = input.prevInput = " " }
+	    input.contextMenuPending = true
+	    display.selForContextMenu = cm.doc.sel
+	    clearTimeout(display.detectingSelectAll)
+	
+	    // Select-all will be greyed out if there's nothing to select, so
+	    // this adds a zero-width space so that we can later check whether
+	    // it got selected.
+	    function prepareSelectAllHack() {
+	      if (te.selectionStart != null) {
+	        var selected = cm.somethingSelected()
+	        var extval = "\u200b" + (selected ? te.value : "")
+	        te.value = "\u21da" // Used to catch context-menu undo
+	        te.value = extval
+	        input.prevInput = selected ? "" : "\u200b"
+	        te.selectionStart = 1; te.selectionEnd = extval.length
+	        // Re-set this, in case some other handler touched the
+	        // selection in the meantime.
+	        display.selForContextMenu = cm.doc.sel
+	      }
+	    }
+	    function rehide() {
+	      input.contextMenuPending = false
+	      input.wrapper.style.cssText = oldWrapperCSS
+	      te.style.cssText = oldCSS
+	      if (ie && ie_version < 9) { display.scrollbars.setScrollTop(display.scroller.scrollTop = scrollPos) }
+	
+	      // Try to detect the user choosing select-all
+	      if (te.selectionStart != null) {
+	        if (!ie || (ie && ie_version < 9)) { prepareSelectAllHack() }
+	        var i = 0, poll = function () {
+	          if (display.selForContextMenu == cm.doc.sel && te.selectionStart == 0 &&
+	              te.selectionEnd > 0 && input.prevInput == "\u200b")
+	            { operation(cm, selectAll)(cm) }
+	          else if (i++ < 10) { display.detectingSelectAll = setTimeout(poll, 500) }
+	          else { display.input.reset() }
+	        }
+	        display.detectingSelectAll = setTimeout(poll, 200)
+	      }
+	    }
+	
+	    if (ie && ie_version >= 9) { prepareSelectAllHack() }
+	    if (captureRightClick) {
+	      e_stop(e)
+	      var mouseup = function () {
+	        off(window, "mouseup", mouseup)
+	        setTimeout(rehide, 20)
+	      }
+	      on(window, "mouseup", mouseup)
+	    } else {
+	      setTimeout(rehide, 50)
+	    }
+	  },
+	
+	  readOnlyChanged: function(val) {
+	    if (!val) { this.reset() }
+	  },
+	
+	  setUneditable: nothing,
+	
+	  needsContentAttribute: false
+	}, TextareaInput.prototype)
 	
 	function fromTextArea(textarea, options) {
 	  options = options ? copyObj(options) : {}
@@ -20038,7 +20034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	addLegacyProps(CodeMirror)
 	
-	CodeMirror.version = "5.22.0"
+	CodeMirror.version = "5.21.0"
 	
 	return CodeMirror;
 	
@@ -24988,7 +24984,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  The MIT License (MIT)
 	
-	  Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors.
+	  Copyright (c) 2007-2013 Einar Lielmanis and contributors.
 	
 	  Permission is hereby granted, free of charge, to any person
 	  obtaining a copy of this software and associated documentation files
@@ -25048,64 +25044,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	// http://www.w3.org/TR/css3-syntax/
 	
 	(function() {
-	
-	    function mergeOpts(allOptions, targetType) {
-	        var finalOpts = {};
-	        var name;
-	
-	        for (name in allOptions) {
-	            if (name !== targetType) {
-	                finalOpts[name] = allOptions[name];
-	            }
-	        }
-	
-	
-	        //merge in the per type settings for the targetType
-	        if (targetType in allOptions) {
-	            for (name in allOptions[targetType]) {
-	                finalOpts[name] = allOptions[targetType][name];
-	            }
-	        }
-	        return finalOpts;
-	    }
-	
-	    var lineBreak = /\r\n|[\n\r\u2028\u2029]/;
-	    var allLineBreaks = new RegExp(lineBreak.source, 'g');
-	
 	    function css_beautify(source_text, options) {
 	        options = options || {};
-	
-	        // Allow the setting of language/file-type specific options
-	        // with inheritance of overall settings
-	        options = mergeOpts(options, 'css');
-	
 	        source_text = source_text || '';
+	        // HACK: newline parsing inconsistent. This brute force normalizes the input.
+	        source_text = source_text.replace(/\r\n|[\r\u2028\u2029]/g, '\n');
 	
-	        var indentSize = options.indent_size ? parseInt(options.indent_size, 10) : 4;
+	        var indentSize = options.indent_size || 4;
 	        var indentCharacter = options.indent_char || ' ';
 	        var selectorSeparatorNewline = (options.selector_separator_newline === undefined) ? true : options.selector_separator_newline;
 	        var end_with_newline = (options.end_with_newline === undefined) ? false : options.end_with_newline;
 	        var newline_between_rules = (options.newline_between_rules === undefined) ? true : options.newline_between_rules;
 	        var space_around_combinator = (options.space_around_combinator === undefined) ? false : options.space_around_combinator;
 	        space_around_combinator = space_around_combinator || ((options.space_around_selector_separator === undefined) ? false : options.space_around_selector_separator);
-	        var eol = options.eol ? options.eol : 'auto';
+	        var eol = options.eol ? options.eol : '\n';
+	
+	        // compatibility
+	        if (typeof indentSize === "string") {
+	            indentSize = parseInt(indentSize, 10);
+	        }
 	
 	        if (options.indent_with_tabs) {
 	            indentCharacter = '\t';
 	            indentSize = 1;
 	        }
 	
-	        if (eol === 'auto') {
-	            eol = '\n';
-	            if (source_text && lineBreak.test(source_text || '')) {
-	                eol = source_text.match(lineBreak)[0];
-	            }
-	        }
-	
 	        eol = eol.replace(/\\r/, '\r').replace(/\\n/, '\n');
 	
-	        // HACK: newline parsing inconsistent. This brute force normalizes the input.
-	        source_text = source_text.replace(allLineBreaks, '\n');
 	
 	        // tokenizer
 	        var whiteRe = /^\s+$/;
@@ -25393,11 +25358,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    !lookBack("(")) {
 	                    // 'property: value' delimiter
 	                    // which could be in a conditional group query
+	                    insidePropertyValue = true;
 	                    output.push(':');
-	                    if (!insidePropertyValue) {
-	                        insidePropertyValue = true;
-	                        print.singleSpace();
-	                    }
+	                    print.singleSpace();
 	                } else {
 	                    // sass/less parent reference don't use a space
 	                    // sass nested pseudo-class don't use a space
@@ -25547,7 +25510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  The MIT License (MIT)
 	
-	  Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors.
+	  Copyright (c) 2007-2013 Einar Lielmanis and contributors.
 	
 	  Permission is hereby granted, free of charge, to any person
 	  obtaining a copy of this software and associated documentation files
@@ -25605,9 +25568,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    space_after_anon_function (default false) - should the space before an anonymous function's parens be added, "function()" vs "function ()",
 	          NOTE: This option is overriden by jslint_happy (i.e. if jslint_happy is true, space_after_anon_function is true by design)
 	
-	    brace_style (default "collapse") - "collapse" | "expand" | "end-expand" | "none" | any of the former + ",preserve-inline"
+	    brace_style (default "collapse") - "collapse-preserve-inline" | "collapse" | "expand" | "end-expand" | "none"
 	            put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line, or attempt to keep them where they are.
-	            preserve-inline will try to preserve inline blocks of curly braces
 	
 	    space_before_conditional (default true) - should the space before conditional statement be added, "if(true)" vs "if (true)",
 	
@@ -25648,25 +25610,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	(function() {
-	
-	    function mergeOpts(allOptions, targetType) {
-	        var finalOpts = {};
-	        var name;
-	
-	        for (name in allOptions) {
-	            if (name !== targetType) {
-	                finalOpts[name] = allOptions[name];
-	            }
-	        }
-	
-	        //merge in the per type settings for the targetType
-	        if (targetType in allOptions) {
-	            for (name in allOptions[targetType]) {
-	                finalOpts[name] = allOptions[targetType][name];
-	            }
-	        }
-	        return finalOpts;
-	    }
 	
 	    function js_beautify(js_source_text, options) {
 	
@@ -25861,29 +25804,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // Some interpreters have unexpected results with foo = baz || bar;
 	            options = options ? options : {};
-	
-	            // Allow the setting of language/file-type specific options
-	            // with inheritance of overall settings
-	            options = mergeOpts(options, 'js');
-	
 	            opt = {};
 	
-	            // compatibility, re
-	            if (options.brace_style === "expand-strict") { //graceful handling of deprecated option
-	                options.brace_style = "expand";
-	            } else if (options.brace_style === "collapse-preserve-inline") { //graceful handling of deprecated option
-	                options.brace_style = "collapse,preserve-inline";
-	            } else if (options.braces_on_own_line !== undefined) { //graceful handling of deprecated option
-	                options.brace_style = options.braces_on_own_line ? "expand" : "collapse";
-	            } else if (!options.brace_style) //Nothing exists to set it
-	            {
-	                options.brace_style = "collapse";
+	            // compatibility
+	            if (options.braces_on_own_line !== undefined) { //graceful handling of deprecated option
+	                opt.brace_style = options.braces_on_own_line ? "expand" : "collapse";
 	            }
+	            opt.brace_style = options.brace_style ? options.brace_style : (opt.brace_style ? opt.brace_style : "collapse");
 	
-	
-	            var brace_style_split = options.brace_style.split(/[^a-zA-Z0-9_\-]+/);
-	            opt.brace_style = brace_style_split[0];
-	            opt.brace_preserve_inline = brace_style_split[1] ? brace_style_split[1] : false;
+	            // graceful handling of deprecated option
+	            if (opt.brace_style === "expand-strict") {
+	                opt.brace_style = "expand";
+	            }
 	
 	            opt.indent_size = options.indent_size ? parseInt(options.indent_size, 10) : 4;
 	            opt.indent_char = options.indent_char ? options.indent_char : ' ';
@@ -25967,21 +25899,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.beautify = function() {
 	
 	                /*jshint onevar:true */
-	                var sweet_code;
+	                var local_token, sweet_code;
 	                Tokenizer = new tokenizer(js_source_text, opt, indent_string);
 	                tokens = Tokenizer.tokenize();
 	                token_pos = 0;
 	
-	                current_token = get_token();
-	                while (current_token) {
-	                    handlers[current_token.type]();
+	                function get_local_token() {
+	                    local_token = get_token();
+	                    return local_token;
+	                }
+	
+	                while (get_local_token()) {
+	                    for (var i = 0; i < local_token.comments_before.length; i++) {
+	                        // The cleanest handling of inline comments is to treat them as though they aren't there.
+	                        // Just continue formatting and the behavior should be logical.
+	                        // Also ignore unknown tokens.  Again, this should result in better behavior.
+	                        handle_token(local_token.comments_before[i]);
+	                    }
+	                    handle_token(local_token);
 	
 	                    last_last_text = flags.last_text;
-	                    last_type = current_token.type;
-	                    flags.last_text = current_token.text;
+	                    last_type = local_token.type;
+	                    flags.last_text = local_token.text;
 	
 	                    token_pos += 1;
-	                    current_token = get_token();
 	                }
 	
 	                sweet_code = output.get_code();
@@ -25996,24 +25937,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return sweet_code;
 	            };
 	
-	            function handle_whitespace_and_comments(local_token, preserve_statement_flags) {
+	            function handle_token(local_token) {
 	                var newlines = local_token.newlines;
 	                var keep_whitespace = opt.keep_array_indentation && is_array(flags.mode);
-	                var temp_token = current_token;
-	
-	                for (var h = 0; h < local_token.comments_before.length; h++) {
-	                    // The cleanest handling of inline comments is to treat them as though they aren't there.
-	                    // Just continue formatting and the behavior should be logical.
-	                    // Also ignore unknown tokens.  Again, this should result in better behavior.
-	                    current_token = local_token.comments_before[h];
-	                    handle_whitespace_and_comments(current_token, preserve_statement_flags);
-	                    handlers[current_token.type](preserve_statement_flags);
-	                }
-	                current_token = temp_token;
 	
 	                if (keep_whitespace) {
 	                    for (var i = 0; i < newlines; i += 1) {
-	                        print_newline(i > 0, preserve_statement_flags);
+	                        print_newline(i > 0);
 	                    }
 	                } else {
 	                    if (opt.max_preserve_newlines && newlines > opt.max_preserve_newlines) {
@@ -26022,14 +25952,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    if (opt.preserve_newlines) {
 	                        if (local_token.newlines > 1) {
-	                            print_newline(false, preserve_statement_flags);
+	                            print_newline();
 	                            for (var j = 1; j < newlines; j += 1) {
-	                                print_newline(true, preserve_statement_flags);
+	                                print_newline(true);
 	                            }
 	                        }
 	                    }
 	                }
 	
+	                current_token = local_token;
+	                handlers[current_token.type]();
 	            }
 	
 	            // we could use just string.split, but
@@ -26092,10 +26024,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            function print_newline(force_newline, preserve_statement_flags) {
 	                if (!preserve_statement_flags) {
 	                    if (flags.last_text !== ';' && flags.last_text !== ',' && flags.last_text !== '=' && last_type !== 'TK_OPERATOR') {
-	                        var next_token = get_token(1);
-	                        while (flags.mode === MODE.Statement &&
-	                            !(flags.if_block && next_token && next_token.type === 'TK_RESERVED' && next_token.text === 'else') &&
-	                            !flags.do_block) {
+	                        while (flags.mode === MODE.Statement && !flags.if_block && !flags.do_block) {
 	                            restore_mode();
 	                        }
 	                    }
@@ -26199,8 +26128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    (last_type === 'TK_RESERVED' && in_array(flags.last_text, ['var', 'let', 'const']) && current_token.type === 'TK_WORD') ||
 	                    (last_type === 'TK_RESERVED' && flags.last_text === 'do') ||
 	                    (last_type === 'TK_RESERVED' && in_array(flags.last_text, ['return', 'throw']) && !current_token.wanted_newline) ||
-	                    (last_type === 'TK_RESERVED' && flags.last_text === 'else' &&
-	                        !(current_token.type === 'TK_RESERVED' && current_token.text === 'if' && !current_token.comments_before.length)) ||
+	                    (last_type === 'TK_RESERVED' && flags.last_text === 'else' && !(current_token.type === 'TK_RESERVED' && current_token.text === 'if')) ||
 	                    (last_type === 'TK_END_EXPR' && (previous_flags.mode === MODE.ForInitializer || previous_flags.mode === MODE.Conditional)) ||
 	                    (last_type === 'TK_WORD' && flags.mode === MODE.BlockStatement &&
 	                        !flags.in_case &&
@@ -26214,7 +26142,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    set_mode(MODE.Statement);
 	                    indent();
 	
-	                    handle_whitespace_and_comments(current_token, true);
+	                    if (last_type === 'TK_RESERVED' && in_array(flags.last_text, ['var', 'let', 'const']) && current_token.type === 'TK_WORD') {
+	                        flags.declaration_statement = true;
+	                    }
 	
 	                    // Issue #276:
 	                    // If starting a new statement with [if, for, while, do], push to a new line.
@@ -26263,9 +26193,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            function handle_start_expr() {
-	                // The conditional starts the statement if appropriate.
-	                if (!start_of_statement()) {
-	                    handle_whitespace_and_comments(current_token);
+	                if (start_of_statement()) {
+	                    // The conditional starts the statement if appropriate.
 	                }
 	
 	                var next_mode = MODE.Expression;
@@ -26373,8 +26302,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    restore_mode();
 	                }
 	
-	                handle_whitespace_and_comments(current_token);
-	
 	                if (flags.multiline_frame) {
 	                    allow_wrap_or_preserved_newline(current_token.text === ']' && is_array(flags.mode) && !opt.keep_array_indentation);
 	                }
@@ -26407,14 +26334,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            function handle_start_block() {
-	                handle_whitespace_and_comments(current_token);
-	
 	                // Check if this is should be treated as a ObjectLiteral
 	                var next_token = get_token(1);
 	                var second_token = get_token(2);
 	                if (second_token && (
 	                        (in_array(second_token.text, [':', ',']) && in_array(next_token.type, ['TK_STRING', 'TK_WORD', 'TK_RESERVED'])) ||
-	                        (in_array(next_token.text, ['get', 'set', '...']) && in_array(second_token.type, ['TK_WORD', 'TK_RESERVED']))
+	                        (in_array(next_token.text, ['get', 'set']) && in_array(second_token.type, ['TK_WORD', 'TK_RESERVED']))
 	                    )) {
 	                    // We don't support TypeScript,but we didn't break it for a very long time.
 	                    // We'll try to keep not breaking it.
@@ -26442,26 +26367,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var empty_anonymous_function = empty_braces && flags.last_word === 'function' &&
 	                    last_type === 'TK_END_EXPR';
 	
-	                if (opt.brace_preserve_inline) // check for inline, set inline_frame if so
-	                {
-	                    // search forward for a newline wanted inside this block
-	                    var index = 0;
-	                    var check_token = null;
-	                    flags.inline_frame = true;
-	                    do {
-	                        index += 1;
-	                        check_token = get_token(index);
-	                        if (check_token.wanted_newline) {
-	                            flags.inline_frame = false;
-	                            break;
-	                        }
-	                    } while (check_token.type !== 'TK_EOF' &&
-	                        !(check_token.type === 'TK_END_BLOCK' && check_token.opened === current_token));
-	                }
 	
-	                if ((opt.brace_style === "expand" ||
-	                        (opt.brace_style === "none" && current_token.wanted_newline)) &&
-	                    !flags.inline_frame) {
+	                if (opt.brace_style === "expand" ||
+	                    (opt.brace_style === "none" && current_token.wanted_newline)) {
 	                    if (last_type !== 'TK_OPERATOR' &&
 	                        (empty_anonymous_function ||
 	                            last_type === 'TK_EQUALS' ||
@@ -26470,20 +26378,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    } else {
 	                        print_newline(false, true);
 	                    }
-	                } else { // collapse || inline_frame
+	                } else { // collapse
+	                    if (opt.brace_style === 'collapse-preserve-inline') {
+	                        // search forward for a newline wanted inside this block
+	                        var index = 0;
+	                        var check_token = null;
+	                        flags.inline_frame = true;
+	                        do {
+	                            index += 1;
+	                            check_token = get_token(index);
+	                            if (check_token.wanted_newline) {
+	                                flags.inline_frame = false;
+	                                break;
+	                            }
+	                        } while (check_token.type !== 'TK_EOF' &&
+	                            !(check_token.type === 'TK_END_BLOCK' && check_token.opened === current_token));
+	                    }
+	
 	                    if (is_array(previous_flags.mode) && (last_type === 'TK_START_EXPR' || last_type === 'TK_COMMA')) {
+	                        // if we're preserving inline,
+	                        // allow newline between comma and next brace.
 	                        if (last_type === 'TK_COMMA' || opt.space_in_paren) {
 	                            output.space_before_token = true;
 	                        }
 	
-	                        if (last_type === 'TK_COMMA' || (last_type === 'TK_START_EXPR' && flags.inline_frame)) {
+	                        if (opt.brace_style === 'collapse-preserve-inline' &&
+	                            (last_type === 'TK_COMMA' || (last_type === 'TK_START_EXPR' && flags.inline_frame))) {
 	                            allow_wrap_or_preserved_newline();
 	                            previous_flags.multiline_frame = previous_flags.multiline_frame || flags.multiline_frame;
 	                            flags.multiline_frame = false;
 	                        }
-	                    }
-	                    if (last_type !== 'TK_OPERATOR' && last_type !== 'TK_START_EXPR') {
-	                        if (last_type === 'TK_START_BLOCK' && !flags.inline_frame) {
+	                    } else if (last_type !== 'TK_OPERATOR' && last_type !== 'TK_START_EXPR') {
+	                        if (last_type === 'TK_START_BLOCK') {
 	                            print_newline();
 	                        } else {
 	                            output.space_before_token = true;
@@ -26496,24 +26422,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            function handle_end_block() {
 	                // statements must all be closed when their container closes
-	                handle_whitespace_and_comments(current_token);
-	
 	                while (flags.mode === MODE.Statement) {
 	                    restore_mode();
 	                }
-	
 	                var empty_braces = last_type === 'TK_START_BLOCK';
 	
-	                if (flags.inline_frame && !empty_braces) { // try inline_frame (only set if opt.braces-preserve-inline) first
-	                    output.space_before_token = true;
-	                } else if (opt.brace_style === "expand") {
+	                if (opt.brace_style === "expand") {
 	                    if (!empty_braces) {
 	                        print_newline();
 	                    }
 	                } else {
 	                    // skip {}
 	                    if (!empty_braces) {
-	                        if (is_array(flags.mode) && opt.keep_array_indentation) {
+	                        if (flags.inline_frame) {
+	                            output.space_before_token = true;
+	                        } else if (is_array(flags.mode) && opt.keep_array_indentation) {
 	                            // we REALLY need a newline here, but newliner would skip that
 	                            opt.keep_array_indentation = false;
 	                            print_newline();
@@ -26544,17 +26467,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                if (start_of_statement()) {
 	                    // The conditional starts the statement if appropriate.
-	                    if (last_type === 'TK_RESERVED' && in_array(flags.last_text, ['var', 'let', 'const']) && current_token.type === 'TK_WORD') {
-	                        flags.declaration_statement = true;
-	                    }
 	                } else if (current_token.wanted_newline && !is_expression(flags.mode) &&
 	                    (last_type !== 'TK_OPERATOR' || (flags.last_text === '--' || flags.last_text === '++')) &&
 	                    last_type !== 'TK_EQUALS' &&
 	                    (opt.preserve_newlines || !(last_type === 'TK_RESERVED' && in_array(flags.last_text, ['var', 'let', 'const', 'set', 'get'])))) {
-	                    handle_whitespace_and_comments(current_token);
+	
 	                    print_newline();
-	                } else {
-	                    handle_whitespace_and_comments(current_token);
 	                }
 	
 	                if (flags.do_block && !flags.do_while) {
@@ -26601,15 +26519,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return;
 	                }
 	
-	                if (last_type === 'TK_COMMA' || last_type === 'TK_START_EXPR' || last_type === 'TK_EQUALS' || last_type === 'TK_OPERATOR') {
-	                    if (!start_of_object_property()) {
-	                        allow_wrap_or_preserved_newline();
-	                    }
-	                }
-	
 	                if (current_token.type === 'TK_RESERVED' && current_token.text === 'function') {
-	                    if (in_array(flags.last_text, ['}', ';']) ||
-	                        (output.just_added_newline() && !(in_array(flags.last_text, ['(', '[', '{', ':', '=', ',']) || last_type === 'TK_OPERATOR'))) {
+	                    if (in_array(flags.last_text, ['}', ';']) || (output.just_added_newline() && !in_array(flags.last_text, ['[', '{', ':', '=', ',']))) {
 	                        // make sure there is a nice clean space of at least one blank line
 	                        // before a new function definition
 	                        if (!output.just_added_blankline() && !current_token.comments_before.length) {
@@ -26633,7 +26544,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    } else {
 	                        print_newline();
 	                    }
+	                }
 	
+	                if (last_type === 'TK_COMMA' || last_type === 'TK_START_EXPR' || last_type === 'TK_EQUALS' || last_type === 'TK_OPERATOR') {
+	                    if (!start_of_object_property()) {
+	                        allow_wrap_or_preserved_newline();
+	                    }
+	                }
+	
+	                if (current_token.type === 'TK_RESERVED' && in_array(current_token.text, ['function', 'get', 'set'])) {
 	                    print_token();
 	                    flags.last_word = current_token.text;
 	                    return;
@@ -26643,9 +26562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                if (last_type === 'TK_END_BLOCK') {
 	
-	                    if (previous_flags.inline_frame) {
-	                        prefix = 'SPACE';
-	                    } else if (!(current_token.type === 'TK_RESERVED' && in_array(current_token.text, ['else', 'catch', 'finally', 'from']))) {
+	                    if (!(current_token.type === 'TK_RESERVED' && in_array(current_token.text, ['else', 'catch', 'finally', 'from']))) {
 	                        prefix = 'NEWLINE';
 	                    } else {
 	                        if (opt.brace_style === "expand" ||
@@ -26690,11 +26607,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (current_token.type === 'TK_RESERVED' && in_array(current_token.text, ['else', 'catch', 'finally'])) {
-	                    if ((!(last_type === 'TK_END_BLOCK' && previous_flags.mode === MODE.BlockStatement) ||
-	                            opt.brace_style === "expand" ||
-	                            opt.brace_style === "end-expand" ||
-	                            (opt.brace_style === "none" && current_token.wanted_newline)) &&
-	                        !flags.inline_frame) {
+	                    if (!(last_type === 'TK_END_BLOCK' && previous_flags.mode === MODE.BlockStatement) ||
+	                        opt.brace_style === "expand" ||
+	                        opt.brace_style === "end-expand" ||
+	                        (opt.brace_style === "none" && current_token.wanted_newline)) {
 	                        print_newline();
 	                    } else {
 	                        output.trim(true);
@@ -26749,14 +26665,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // The conditional starts the statement if appropriate.
 	                    // Semicolon can be the start (and end) of a statement
 	                    output.space_before_token = false;
-	                } else {
-	                    handle_whitespace_and_comments(current_token);
 	                }
-	
-	                var next_token = get_token(1);
-	                while (flags.mode === MODE.Statement &&
-	                    !(flags.if_block && next_token && next_token.type === 'TK_RESERVED' && next_token.text === 'else') &&
-	                    !flags.do_block) {
+	                while (flags.mode === MODE.Statement && !flags.if_block && !flags.do_block) {
 	                    restore_mode();
 	                }
 	
@@ -26772,17 +26682,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // The conditional starts the statement if appropriate.
 	                    // One difference - strings want at least a space before
 	                    output.space_before_token = true;
-	                } else {
-	                    handle_whitespace_and_comments(current_token);
-	                    if (last_type === 'TK_RESERVED' || last_type === 'TK_WORD' || flags.inline_frame) {
-	                        output.space_before_token = true;
-	                    } else if (last_type === 'TK_COMMA' || last_type === 'TK_START_EXPR' || last_type === 'TK_EQUALS' || last_type === 'TK_OPERATOR') {
-	                        if (!start_of_object_property()) {
-	                            allow_wrap_or_preserved_newline();
-	                        }
-	                    } else {
-	                        print_newline();
+	                } else if (last_type === 'TK_RESERVED' || last_type === 'TK_WORD' || flags.inline_frame) {
+	                    output.space_before_token = true;
+	                } else if (last_type === 'TK_COMMA' || last_type === 'TK_START_EXPR' || last_type === 'TK_EQUALS' || last_type === 'TK_OPERATOR') {
+	                    if (!start_of_object_property()) {
+	                        allow_wrap_or_preserved_newline();
 	                    }
+	                } else {
+	                    print_newline();
 	                }
 	                print_token();
 	            }
@@ -26790,8 +26697,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            function handle_equals() {
 	                if (start_of_statement()) {
 	                    // The conditional starts the statement if appropriate.
-	                } else {
-	                    handle_whitespace_and_comments(current_token);
 	                }
 	
 	                if (flags.declaration_statement) {
@@ -26804,8 +26709,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            function handle_comma() {
-	                handle_whitespace_and_comments(current_token, true);
-	
 	                print_token();
 	                output.space_before_token = true;
 	                if (flags.declaration_statement) {
@@ -26840,21 +26743,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            function handle_operator() {
-	                var isGeneratorAsterisk = current_token.text === '*' &&
-	                    ((last_type === 'TK_RESERVED' && in_array(flags.last_text, ['function', 'yield'])) ||
-	                        (in_array(last_type, ['TK_START_BLOCK', 'TK_COMMA', 'TK_END_BLOCK', 'TK_SEMICOLON']))
-	                    );
-	                var isUnary = in_array(current_token.text, ['-', '+']) && (
-	                    in_array(last_type, ['TK_START_BLOCK', 'TK_START_EXPR', 'TK_EQUALS', 'TK_OPERATOR']) ||
-	                    in_array(flags.last_text, Tokenizer.line_starters) ||
-	                    flags.last_text === ','
-	                );
-	
 	                if (start_of_statement()) {
 	                    // The conditional starts the statement if appropriate.
-	                } else {
-	                    var preserve_statement_flags = !isGeneratorAsterisk;
-	                    handle_whitespace_and_comments(current_token, preserve_statement_flags);
 	                }
 	
 	                if (last_type === 'TK_RESERVED' && is_special_word(flags.last_text)) {
@@ -26894,6 +26784,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var space_before = true;
 	                var space_after = true;
 	                var in_ternary = false;
+	                var isGeneratorAsterisk = current_token.text === '*' &&
+	                    ((last_type === 'TK_RESERVED' && in_array(flags.last_text, ['function', 'yield'])) ||
+	                        (flags.mode === MODE.ObjectLiteral && in_array(last_type, ['TK_START_BLOCK', 'TK_COMMA'])));
+	                var isUnary = in_array(current_token.text, ['-', '+']) && (
+	                    in_array(last_type, ['TK_START_BLOCK', 'TK_START_EXPR', 'TK_EQUALS', 'TK_OPERATOR']) ||
+	                    in_array(flags.last_text, Tokenizer.line_starters) ||
+	                    flags.last_text === ','
+	                );
+	
 	                if (current_token.text === ':') {
 	                    if (flags.ternary_depth === 0) {
 	                        // Colon is invalid javascript outside of ternary and object, but do our best to guess what was meant.
@@ -26963,16 +26862,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                }
 	
-	                if (isGeneratorAsterisk) {
-	                    allow_wrap_or_preserved_newline();
-	                    space_before = false;
-	                    var next_token = get_token(1);
-	                    space_after = next_token && in_array(next_token.type, ['TK_WORD', 'TK_RESERVED']);
-	                } else if (current_token.text === '...') {
-	                    allow_wrap_or_preserved_newline();
-	                    space_before = last_type === 'TK_START_BLOCK';
-	                    space_after = false;
-	                } else if (in_array(current_token.text, ['--', '++', '!', '~']) || isUnary) {
+	                if (in_array(current_token.text, ['--', '++', '!', '~']) || isUnary) {
 	                    // unary operators (and binary +/- pretending to be unary) special cases
 	
 	                    space_before = false;
@@ -27014,14 +26904,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        // foo(); --bar;
 	                        print_newline();
 	                    }
+	                } else if (isGeneratorAsterisk) {
+	                    allow_wrap_or_preserved_newline();
+	                    space_before = false;
+	                    space_after = false;
 	                }
-	
 	                output.space_before_token = output.space_before_token || space_before;
 	                print_token();
 	                output.space_before_token = space_after;
 	            }
 	
-	            function handle_block_comment(preserve_statement_flags) {
+	            function handle_block_comment() {
 	                if (output.raw) {
 	                    output.add_raw_token(current_token);
 	                    if (current_token.directives && current_token.directives.preserve === 'end') {
@@ -27032,7 +26925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (current_token.directives) {
-	                    print_newline(false, preserve_statement_flags);
+	                    print_newline(false, true);
 	                    print_token();
 	                    if (current_token.directives.preserve === 'start') {
 	                        output.raw = true;
@@ -27057,7 +26950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var lastIndentLength = lastIndent.length;
 	
 	                // block comment starts with a new line
-	                print_newline(false, preserve_statement_flags);
+	                print_newline(false, true);
 	                if (lines.length > 1) {
 	                    javadoc = all_lines_start_with(lines.slice(1), '*');
 	                    starless = each_line_matches_indent(lines.slice(1), lastIndent);
@@ -27080,26 +26973,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                // for comments of more than one line, make sure there's a new line after
-	                print_newline(false, preserve_statement_flags);
+	                print_newline(false, true);
 	            }
 	
-	            function handle_comment(preserve_statement_flags) {
+	            function handle_comment() {
 	                if (current_token.wanted_newline) {
-	                    print_newline(false, preserve_statement_flags);
+	                    print_newline(false, true);
 	                } else {
 	                    output.trim(true);
 	                }
 	
 	                output.space_before_token = true;
 	                print_token();
-	                print_newline(false, preserve_statement_flags);
+	                print_newline(false, true);
 	            }
 	
 	            function handle_dot() {
 	                if (start_of_statement()) {
 	                    // The conditional starts the statement if appropriate.
-	                } else {
-	                    handle_whitespace_and_comments(current_token, true);
 	                }
 	
 	                if (last_type === 'TK_RESERVED' && is_special_word(flags.last_text)) {
@@ -27113,11 +27004,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                print_token();
 	            }
 	
-	            function handle_unknown(preserve_statement_flags) {
+	            function handle_unknown() {
 	                print_token();
 	
 	                if (current_token.text[current_token.text.length - 1] === '\n') {
-	                    print_newline(false, preserve_statement_flags);
+	                    print_newline();
 	                }
 	            }
 	
@@ -27126,7 +27017,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                while (flags.mode === MODE.Statement) {
 	                    restore_mode();
 	                }
-	                handle_whitespace_and_comments(current_token);
 	            }
 	        }
 	
@@ -27409,15 +27299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var Token = function(type, text, newlines, whitespace_before, parent) {
 	            this.type = type;
 	            this.text = text;
-	
-	            // comments_before are
-	            // comments that have a new line before them
-	            // and may or may not have a newline after
-	            // this is a set of comments before
-	            this.comments_before = /* inline comment*/ [];
-	
-	
-	            this.comments_after = []; // no new line before and newline after
+	            this.comments_before = [];
 	            this.newlines = newlines || 0;
 	            this.wanted_newline = newlines > 0;
 	            this.whitespace_before = whitespace_before || '';
@@ -27437,11 +27319,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.positionable_operators = '!= !== % & && * ** + - / : < << <= == === > >= >> >>> ? ^ | ||'.split(' ');
 	            var punct = this.positionable_operators.concat(
 	                // non-positionable operators - these do not follow operator position settings
-	                '! %= &= *= **= ++ += , -- -= /= :: <<= = => >>= >>>= ^= |= ~ ...'.split(' '));
+	                '! %= &= *= **= ++ += , -- -= /= :: <<= = => >>= >>>= ^= |= ~'.split(' '));
 	
 	            // words which should always start on new line.
 	            this.line_starters = 'continue,try,throw,return,var,let,const,if,switch,case,default,for,while,break,function,import,export'.split(',');
-	            var reserved_words = this.line_starters.concat(['do', 'in', 'of', 'else', 'get', 'set', 'new', 'catch', 'finally', 'typeof', 'yield', 'async', 'await', 'from', 'as']);
+	            var reserved_words = this.line_starters.concat(['do', 'in', 'else', 'get', 'set', 'new', 'catch', 'finally', 'typeof', 'yield', 'async', 'await', 'from', 'as']);
 	
 	            //  /* ... */ comment ends with nearest */ or end of file
 	            var block_comment_pattern = /([\s\S]*?)((?:\*\/)|$)/g;
@@ -27601,10 +27483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        if (allow_decimal && input.peek() === '.') {
 	                            c += input.next();
 	                            allow_decimal = false;
-	                        }
-	
-	                        // a = 1.e-7 is valid, so we test for . then e in one loop
-	                        if (allow_e && input.testChar(/[Ee]/)) {
+	                        } else if (allow_e && input.testChar(/[Ee]/)) {
 	                            c += input.next();
 	
 	                            if (input.testChar(/[+-]/)) {
@@ -27632,7 +27511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (!(last_token.type === 'TK_DOT' ||
 	                            (last_token.type === 'TK_RESERVED' && in_array(last_token.text, ['set', 'get']))) &&
 	                        in_array(c, reserved_words)) {
-	                        if (c === 'in' || c === 'of') { // hack for 'in' and 'of' operators
+	                        if (c === 'in') { // hack for 'in' operator
 	                            return [c, 'TK_OPERATOR'];
 	                        }
 	                        return [c, 'TK_RESERVED'];
@@ -27811,10 +27690,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    } else {
 	                                        parse_string('`', allow_unescaped_newlines, '${');
 	                                    }
-	
-	                                    if (input.hasNext()) {
-	                                        resulting_string += input.next();
-	                                    }
 	                                }
 	                            }
 	                        };
@@ -27908,10 +27783,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                if (c === '.') {
-	                    if (input.peek() === '.' && input.peek(1) === '.') {
-	                        c += input.next() + input.next();
-	                        return [c, 'TK_OPERATOR'];
-	                    }
 	                    return [c, 'TK_DOT'];
 	                }
 	
@@ -28542,7 +28413,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            navBarCollapsable: options.navBarCollapsable !== undefined && options.navBarCollapsable !== null ? options.navBarCollapsable : true
 	        };
 	
-	        var isNavBarOpen = options.navBarCollapsed != undefined && options.navBarCollapsed != null ? options.navBarCollapsed : false;
+	        var isNavBarOpen = options.navBarCollapsed != undefined && options.navBarCollapsed != null ? !options.navBarCollapsed : false;
+	
 	        if (isNavBarOpen) {
 	            this.setNavBarCollapsed(false);
 	        } else {
@@ -28635,9 +28507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!this.pieces.components[piece.type]) throw new Error("Can't add piece with unsupported type \"" + piece.type + "\"");
 	
 	            this.store.dispatch((0, _pieces.addPiece)(piece));
-	            if (this.store.getState().pieces.editorActive) {
-	                this.store.dispatch((0, _pieces.pieceGet)(piece.id));
-	            }
+	            this.store.dispatch((0, _pieces.pieceGet)(piece.id));
 	        }
 	
 	        /**
@@ -30386,11 +30256,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(4);
+	var _prodInvariant = __webpack_require__(4),
+	    _assign = __webpack_require__(5);
 	
 	var invariant = __webpack_require__(1);
 	
 	var genericComponentClass = null;
+	// This registry keeps track of wrapper classes around host tags.
+	var tagToComponentClass = {};
 	var textComponentClass = null;
 	
 	var ReactHostComponentInjection = {
@@ -30403,6 +30276,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // rendered as props.
 	  injectTextComponentClass: function (componentClass) {
 	    textComponentClass = componentClass;
+	  },
+	  // This accepts a keyed object with classes as values. Each key represents a
+	  // tag. That particular tag will use this class instead of the generic one.
+	  injectComponentClasses: function (componentClasses) {
+	    _assign(tagToComponentClass, componentClasses);
 	  }
 	};
 	
@@ -31552,17 +31430,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    instance = ReactEmptyComponent.create(instantiateReactComponent);
 	  } else if (typeof node === 'object') {
 	    var element = node;
-	    var type = element.type;
-	    if (typeof type !== 'function' && typeof type !== 'string') {
-	      var info = '';
-	      if (true) {
-	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
-	        }
-	      }
-	      info += getDeclarationErrorAddendum(element._owner);
-	       true ?  true ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info) : _prodInvariant('130', type == null ? type : typeof type, info) : void 0;
-	    }
+	    !(element && (typeof element.type === 'function' || typeof element.type === 'string')) ?  true ? invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : _prodInvariant('130', element.type == null ? element.type : typeof element.type, getDeclarationErrorAddendum(element._owner)) : void 0;
 	
 	    // Special case string values
 	    if (typeof element.type === 'string') {
@@ -32468,14 +32336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // We warn in this case but don't throw. We expect the element creation to
 	    // succeed and there will likely be errors in render.
 	    if (!validType) {
-	      if (typeof type !== 'function' && typeof type !== 'string') {
-	        var info = '';
-	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
-	        }
-	        info += getDeclarationErrorAddendum();
-	         true ? warning(false, 'React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', type == null ? type : typeof type, info) : void 0;
-	      }
+	       true ? warning(false, 'React.createElement: type should not be null, undefined, boolean, or ' + 'number. It should be a string (for DOM elements) or a ReactClass ' + '(for composite components).%s', getDeclarationErrorAddendum()) : void 0;
 	    }
 	
 	    var element = ReactElement.createElement.apply(this, arguments);
@@ -37359,7 +37220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "transition-property", "transition-timing-function", "unicode-bidi",
 	    "user-select", "vertical-align", "visibility", "voice-balance", "voice-duration",
 	    "voice-family", "voice-pitch", "voice-range", "voice-rate", "voice-stress",
-	    "voice-volume", "volume", "white-space", "widows", "width", "will-change", "word-break",
+	    "voice-volume", "volume", "white-space", "widows", "width", "word-break",
 	    "word-spacing", "word-wrap", "z-index",
 	    // SVG-specific
 	    "clip-path", "clip-rule", "mask", "enable-background", "filter", "flood-color",
@@ -37433,7 +37294,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "cell", "center", "checkbox", "circle", "cjk-decimal", "cjk-earthly-branch",
 	    "cjk-heavenly-stem", "cjk-ideographic", "clear", "clip", "close-quote",
 	    "col-resize", "collapse", "color", "color-burn", "color-dodge", "column", "column-reverse",
-	    "compact", "condensed", "contain", "content", "contents",
+	    "compact", "condensed", "contain", "content",
 	    "content-box", "context-menu", "continuous", "copy", "counter", "counters", "cover", "crop",
 	    "cross", "crosshair", "currentcolor", "cursive", "cyclic", "darken", "dashed", "decimal",
 	    "decimal-leading-zero", "default", "default-button", "dense", "destination-atop",
@@ -37476,7 +37337,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "mix", "mongolian", "monospace", "move", "multiple", "multiply", "myanmar", "n-resize",
 	    "narrower", "ne-resize", "nesw-resize", "no-close-quote", "no-drop",
 	    "no-open-quote", "no-repeat", "none", "normal", "not-allowed", "nowrap",
-	    "ns-resize", "numbers", "numeric", "nw-resize", "nwse-resize", "oblique", "octal", "opacity", "open-quote",
+	    "ns-resize", "numbers", "numeric", "nw-resize", "nwse-resize", "oblique", "octal", "open-quote",
 	    "optimizeLegibility", "optimizeSpeed", "oriya", "oromo", "outset",
 	    "outside", "outside-shape", "overlay", "overline", "padding", "padding-box",
 	    "painted", "page", "paused", "persian", "perspective", "plus-darker", "plus-lighter",
@@ -37488,7 +37349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "rgb", "rgba", "ridge", "right", "rotate", "rotate3d", "rotateX", "rotateY",
 	    "rotateZ", "round", "row", "row-resize", "row-reverse", "rtl", "run-in", "running",
 	    "s-resize", "sans-serif", "saturation", "scale", "scale3d", "scaleX", "scaleY", "scaleZ", "screen",
-	    "scroll", "scrollbar", "scroll-position", "se-resize", "searchfield",
+	    "scroll", "scrollbar", "se-resize", "searchfield",
 	    "searchfield-cancel-button", "searchfield-decoration",
 	    "searchfield-results-button", "searchfield-results-decoration",
 	    "semi-condensed", "semi-expanded", "separate", "serif", "show", "sidama",
@@ -37506,9 +37367,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    "thick", "thin", "threeddarkshadow", "threedface", "threedhighlight",
 	    "threedlightshadow", "threedshadow", "tibetan", "tigre", "tigrinya-er",
 	    "tigrinya-er-abegede", "tigrinya-et", "tigrinya-et-abegede", "to", "top",
-	    "trad-chinese-formal", "trad-chinese-informal", "transform",
+	    "trad-chinese-formal", "trad-chinese-informal",
 	    "translate", "translate3d", "translateX", "translateY", "translateZ",
-	    "transparent", "ultra-condensed", "ultra-expanded", "underline", "unset", "up",
+	    "transparent", "ultra-condensed", "ultra-expanded", "underline", "up",
 	    "upper-alpha", "upper-armenian", "upper-greek", "upper-hexadecimal",
 	    "upper-latin", "upper-norwegian", "upper-roman", "uppercase", "urdu", "url",
 	    "var", "vertical", "vertical-text", "visible", "visibleFill", "visiblePainted",
@@ -37836,7 +37697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	"use strict";
 	
 	function expressionAllowed(stream, state, backUp) {
-	  return /^(?:operator|sof|keyword c|case|new|export|default|[\[{}\(,;:]|=>)$/.test(state.lastType) ||
+	  return /^(?:operator|sof|keyword c|case|new|[\[{}\(,;:]|=>)$/.test(state.lastType) ||
 	    (state.lastType == "quasi" && /\{\s*$/.test(stream.string.slice(0, stream.pos - (backUp || 0))))
 	}
 	
@@ -37970,8 +37831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      stream.skipToEnd();
 	      return ret("error", "error");
 	    } else if (isOperatorChar.test(ch)) {
-	      if (ch != ">" || !state.lexical || state.lexical.type != ">")
-	        stream.eatWhile(isOperatorChar);
+	      stream.eatWhile(isOperatorChar);
 	      return ret("operator", "operator", stream.current());
 	    } else if (wordRE.test(ch)) {
 	      stream.eatWhile(wordRE);
@@ -38364,7 +38224,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	  function typeexpr(type) {
 	    if (type == "variable") {cx.marked = "variable-3"; return cont(afterType);}
-	    if (type == "string" || type == "number" || type == "atom") return cont(afterType);
 	    if (type == "{") return cont(commasep(typeprop, "}"))
 	    if (type == "(") return cont(commasep(typearg, ")"), maybeReturnType)
 	  }
@@ -38384,8 +38243,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    else if (type == ":") return cont(typeexpr)
 	  }
 	  function afterType(type, value) {
-	    if (value == "<") return cont(pushlex(">"), commasep(typeexpr, ">"), poplex, afterType)
-	    if (value == "|" || type == ".") return cont(typeexpr)
+	    if (value == "<") return cont(commasep(typeexpr, ">"), afterType)
 	    if (type == "[") return cont(expect("]"), afterType)
 	  }
 	  function vardef() {
@@ -38482,28 +38340,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (type == ":") return cont(typeexpr, maybeAssign)
 	    return pass(functiondef)
 	  }
-	  function afterExport(type, value) {
+	  function afterExport(_type, value) {
 	    if (value == "*") { cx.marked = "keyword"; return cont(maybeFrom, expect(";")); }
 	    if (value == "default") { cx.marked = "keyword"; return cont(expression, expect(";")); }
-	    if (type == "{") return cont(commasep(exportField, "}"), maybeFrom, expect(";"));
 	    return pass(statement);
-	  }
-	  function exportField(type, value) {
-	    if (value == "as") { cx.marked = "keyword"; return cont(expect("variable")); }
-	    if (type == "variable") return pass(expressionNoComma, exportField);
 	  }
 	  function afterImport(type) {
 	    if (type == "string") return cont();
-	    return pass(importSpec, maybeMoreImports, maybeFrom);
+	    return pass(importSpec, maybeFrom);
 	  }
 	  function importSpec(type, value) {
 	    if (type == "{") return contCommasep(importSpec, "}");
 	    if (type == "variable") register(value);
 	    if (value == "*") cx.marked = "keyword";
 	    return cont(maybeAs);
-	  }
-	  function maybeMoreImports(type) {
-	    if (type == ",") return cont(importSpec, maybeMoreImports)
 	  }
 	  function maybeAs(_type, value) {
 	    if (value == "as") { cx.marked = "keyword"; return cont(importSpec); }
@@ -39028,7 +38878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, "/* BASICS */\n\n.CodeMirror {\n  /* Set height, width, borders, and global font properties here */\n  font-family: monospace;\n  height: 300px;\n  color: black;\n}\n\n/* PADDING */\n\n.CodeMirror-lines {\n  padding: 4px 0; /* Vertical padding around content */\n}\n.CodeMirror pre {\n  padding: 0 4px; /* Horizontal padding of content */\n}\n\n.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {\n  background-color: white; /* The little square between H and V scrollbars */\n}\n\n/* GUTTER */\n\n.CodeMirror-gutters {\n  border-right: 1px solid #ddd;\n  background-color: #f7f7f7;\n  white-space: nowrap;\n}\n.CodeMirror-linenumbers {}\n.CodeMirror-linenumber {\n  padding: 0 3px 0 5px;\n  min-width: 20px;\n  text-align: right;\n  color: #999;\n  white-space: nowrap;\n}\n\n.CodeMirror-guttermarker { color: black; }\n.CodeMirror-guttermarker-subtle { color: #999; }\n\n/* CURSOR */\n\n.CodeMirror-cursor {\n  border-left: 1px solid black;\n  border-right: none;\n  width: 0;\n}\n/* Shown when moving in bi-directional text */\n.CodeMirror div.CodeMirror-secondarycursor {\n  border-left: 1px solid silver;\n}\n.cm-fat-cursor .CodeMirror-cursor {\n  width: auto;\n  border: 0 !important;\n  background: #7e7;\n}\n.cm-fat-cursor div.CodeMirror-cursors {\n  z-index: 1;\n}\n\n.cm-animate-fat-cursor {\n  width: auto;\n  border: 0;\n  animation: blink 1.06s steps(1) infinite;\n  background-color: #7e7;\n}\n@keyframes blink {\n  0% {}\n  50% { background-color: transparent; }\n  100% {}\n}\n\n/* Can style cursor different in overwrite (non-insert) mode */\n.CodeMirror-overwrite .CodeMirror-cursor {}\n\n.cm-tab { display: inline-block; text-decoration: inherit; }\n\n.CodeMirror-rulers {\n  position: absolute;\n  left: 0; right: 0; top: -50px; bottom: -20px;\n  overflow: hidden;\n}\n.CodeMirror-ruler {\n  border-left: 1px solid #ccc;\n  top: 0; bottom: 0;\n  position: absolute;\n}\n\n/* DEFAULT THEME */\n\n.cm-s-default .cm-header {color: blue;}\n.cm-s-default .cm-quote {color: #090;}\n.cm-negative {color: #d44;}\n.cm-positive {color: #292;}\n.cm-header, .cm-strong {font-weight: bold;}\n.cm-em {font-style: italic;}\n.cm-link {text-decoration: underline;}\n.cm-strikethrough {text-decoration: line-through;}\n\n.cm-s-default .cm-keyword {color: #708;}\n.cm-s-default .cm-atom {color: #219;}\n.cm-s-default .cm-number {color: #164;}\n.cm-s-default .cm-def {color: #00f;}\n.cm-s-default .cm-variable,\n.cm-s-default .cm-punctuation,\n.cm-s-default .cm-property,\n.cm-s-default .cm-operator {}\n.cm-s-default .cm-variable-2 {color: #05a;}\n.cm-s-default .cm-variable-3 {color: #085;}\n.cm-s-default .cm-comment {color: #a50;}\n.cm-s-default .cm-string {color: #a11;}\n.cm-s-default .cm-string-2 {color: #f50;}\n.cm-s-default .cm-meta {color: #555;}\n.cm-s-default .cm-qualifier {color: #555;}\n.cm-s-default .cm-builtin {color: #30a;}\n.cm-s-default .cm-bracket {color: #997;}\n.cm-s-default .cm-tag {color: #170;}\n.cm-s-default .cm-attribute {color: #00c;}\n.cm-s-default .cm-hr {color: #999;}\n.cm-s-default .cm-link {color: #00c;}\n\n.cm-s-default .cm-error {color: #f00;}\n.cm-invalidchar {color: #f00;}\n\n.CodeMirror-composing { border-bottom: 2px solid; }\n\n/* Default styles for common addons */\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}\n.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }\n.CodeMirror-activeline-background {background: #e8f2ff;}\n\n/* STOP */\n\n/* The rest of this file contains styles related to the mechanics of\n   the editor. You probably shouldn't touch them. */\n\n.CodeMirror {\n  position: relative;\n  overflow: hidden;\n  background: white;\n}\n\n.CodeMirror-scroll {\n  overflow: scroll !important; /* Things will break if this is overridden */\n  /* 30px is the magic margin used to hide the element's real scrollbars */\n  /* See overflow: hidden in .CodeMirror */\n  margin-bottom: -30px; margin-right: -30px;\n  padding-bottom: 30px;\n  height: 100%;\n  outline: none; /* Prevent dragging from highlighting the element */\n  position: relative;\n}\n.CodeMirror-sizer {\n  position: relative;\n  border-right: 30px solid transparent;\n}\n\n/* The fake, visible scrollbars. Used to force redraw during scrolling\n   before actual scrolling happens, thus preventing shaking and\n   flickering artifacts. */\n.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {\n  position: absolute;\n  z-index: 6;\n  display: none;\n}\n.CodeMirror-vscrollbar {\n  right: 0; top: 0;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n.CodeMirror-hscrollbar {\n  bottom: 0; left: 0;\n  overflow-y: hidden;\n  overflow-x: scroll;\n}\n.CodeMirror-scrollbar-filler {\n  right: 0; bottom: 0;\n}\n.CodeMirror-gutter-filler {\n  left: 0; bottom: 0;\n}\n\n.CodeMirror-gutters {\n  position: absolute; left: 0; top: 0;\n  min-height: 100%;\n  z-index: 3;\n}\n.CodeMirror-gutter {\n  white-space: normal;\n  height: 100%;\n  display: inline-block;\n  vertical-align: top;\n  margin-bottom: -30px;\n}\n.CodeMirror-gutter-wrapper {\n  position: absolute;\n  z-index: 4;\n  background: none !important;\n  border: none !important;\n}\n.CodeMirror-gutter-background {\n  position: absolute;\n  top: 0; bottom: 0;\n  z-index: 4;\n}\n.CodeMirror-gutter-elt {\n  position: absolute;\n  cursor: default;\n  z-index: 4;\n}\n.CodeMirror-gutter-wrapper {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n      user-select: none;\n}\n\n.CodeMirror-lines {\n  cursor: text;\n  min-height: 1px; /* prevents collapsing before first draw */\n}\n.CodeMirror pre {\n  /* Reset some styles that the rest of the page might have set */ border-radius: 0;\n  border-width: 0;\n  background: transparent;\n  font-family: inherit;\n  font-size: inherit;\n  margin: 0;\n  white-space: pre;\n  word-wrap: normal;\n  line-height: inherit;\n  color: inherit;\n  z-index: 2;\n  position: relative;\n  overflow: visible;\n  -webkit-tap-highlight-color: transparent;\n  font-variant-ligatures: contextual;\n}\n.CodeMirror-wrap pre {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  word-break: normal;\n}\n\n.CodeMirror-linebackground {\n  position: absolute;\n  left: 0; right: 0; top: 0; bottom: 0;\n  z-index: 0;\n}\n\n.CodeMirror-linewidget {\n  position: relative;\n  z-index: 2;\n  overflow: auto;\n}\n\n.CodeMirror-widget {}\n\n.CodeMirror-code {\n  outline: none;\n}\n\n/* Force content-box sizing for the elements where we expect it */\n.CodeMirror-scroll,\n.CodeMirror-sizer,\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber {\n  box-sizing: content-box;\n}\n\n.CodeMirror-measure {\n  position: absolute;\n  width: 100%;\n  height: 0;\n  overflow: hidden;\n  visibility: hidden;\n}\n\n.CodeMirror-cursor {\n  position: absolute;\n  pointer-events: none;\n}\n.CodeMirror-measure pre { position: static; }\n\ndiv.CodeMirror-cursors {\n  visibility: hidden;\n  position: relative;\n  z-index: 3;\n}\ndiv.CodeMirror-dragcursors {\n  visibility: visible;\n}\n\n.CodeMirror-focused div.CodeMirror-cursors {\n  visibility: visible;\n}\n\n.CodeMirror-selected { background: #d9d9d9; }\n.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }\n.CodeMirror-crosshair { cursor: crosshair; }\n.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }\n.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }\n.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }\n\n.cm-searching {\n  background: #ffa;\n  background: rgba(255, 255, 0, .4);\n}\n\n/* Used to force a border model for a node */\n.cm-force-border { padding-right: .1px; }\n\n@media print {\n  /* Hide the cursor when printing */\n  .CodeMirror div.CodeMirror-cursors {\n    visibility: hidden;\n  }\n}\n\n/* See issue #2901 */\n.cm-tab-wrap-hack:after { content: ''; }\n\n/* Help users use markselection to safely style text background */\nspan.CodeMirror-selectedtext { background: none; }\n", ""]);
+	exports.push([module.id, "/* BASICS */\n\n.CodeMirror {\n  /* Set height, width, borders, and global font properties here */\n  font-family: monospace;\n  height: 300px;\n  color: black;\n}\n\n/* PADDING */\n\n.CodeMirror-lines {\n  padding: 4px 0; /* Vertical padding around content */\n}\n.CodeMirror pre {\n  padding: 0 4px; /* Horizontal padding of content */\n}\n\n.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {\n  background-color: white; /* The little square between H and V scrollbars */\n}\n\n/* GUTTER */\n\n.CodeMirror-gutters {\n  border-right: 1px solid #ddd;\n  background-color: #f7f7f7;\n  white-space: nowrap;\n}\n.CodeMirror-linenumbers {}\n.CodeMirror-linenumber {\n  padding: 0 3px 0 5px;\n  min-width: 20px;\n  text-align: right;\n  color: #999;\n  white-space: nowrap;\n}\n\n.CodeMirror-guttermarker { color: black; }\n.CodeMirror-guttermarker-subtle { color: #999; }\n\n/* CURSOR */\n\n.CodeMirror-cursor {\n  border-left: 1px solid black;\n  border-right: none;\n  width: 0;\n}\n/* Shown when moving in bi-directional text */\n.CodeMirror div.CodeMirror-secondarycursor {\n  border-left: 1px solid silver;\n}\n.cm-fat-cursor .CodeMirror-cursor {\n  width: auto;\n  border: 0 !important;\n  background: #7e7;\n}\n.cm-fat-cursor div.CodeMirror-cursors {\n  z-index: 1;\n}\n\n.cm-animate-fat-cursor {\n  width: auto;\n  border: 0;\n  animation: blink 1.06s steps(1) infinite;\n  background-color: #7e7;\n}\n@keyframes blink {\n  0% {}\n  50% { background-color: transparent; }\n  100% {}\n}\n\n/* Can style cursor different in overwrite (non-insert) mode */\n.CodeMirror-overwrite .CodeMirror-cursor {}\n\n.cm-tab { display: inline-block; text-decoration: inherit; }\n\n.CodeMirror-rulers {\n  position: absolute;\n  left: 0; right: 0; top: -50px; bottom: -20px;\n  overflow: hidden;\n}\n.CodeMirror-ruler {\n  border-left: 1px solid #ccc;\n  top: 0; bottom: 0;\n  position: absolute;\n}\n\n/* DEFAULT THEME */\n\n.cm-s-default .cm-header {color: blue;}\n.cm-s-default .cm-quote {color: #090;}\n.cm-negative {color: #d44;}\n.cm-positive {color: #292;}\n.cm-header, .cm-strong {font-weight: bold;}\n.cm-em {font-style: italic;}\n.cm-link {text-decoration: underline;}\n.cm-strikethrough {text-decoration: line-through;}\n\n.cm-s-default .cm-keyword {color: #708;}\n.cm-s-default .cm-atom {color: #219;}\n.cm-s-default .cm-number {color: #164;}\n.cm-s-default .cm-def {color: #00f;}\n.cm-s-default .cm-variable,\n.cm-s-default .cm-punctuation,\n.cm-s-default .cm-property,\n.cm-s-default .cm-operator {}\n.cm-s-default .cm-variable-2 {color: #05a;}\n.cm-s-default .cm-variable-3 {color: #085;}\n.cm-s-default .cm-comment {color: #a50;}\n.cm-s-default .cm-string {color: #a11;}\n.cm-s-default .cm-string-2 {color: #f50;}\n.cm-s-default .cm-meta {color: #555;}\n.cm-s-default .cm-qualifier {color: #555;}\n.cm-s-default .cm-builtin {color: #30a;}\n.cm-s-default .cm-bracket {color: #997;}\n.cm-s-default .cm-tag {color: #170;}\n.cm-s-default .cm-attribute {color: #00c;}\n.cm-s-default .cm-hr {color: #999;}\n.cm-s-default .cm-link {color: #00c;}\n\n.cm-s-default .cm-error {color: #f00;}\n.cm-invalidchar {color: #f00;}\n\n.CodeMirror-composing { border-bottom: 2px solid; }\n\n/* Default styles for common addons */\n\ndiv.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}\ndiv.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}\n.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }\n.CodeMirror-activeline-background {background: #e8f2ff;}\n\n/* STOP */\n\n/* The rest of this file contains styles related to the mechanics of\n   the editor. You probably shouldn't touch them. */\n\n.CodeMirror {\n  position: relative;\n  overflow: hidden;\n  background: white;\n}\n\n.CodeMirror-scroll {\n  overflow: scroll !important; /* Things will break if this is overridden */\n  /* 30px is the magic margin used to hide the element's real scrollbars */\n  /* See overflow: hidden in .CodeMirror */\n  margin-bottom: -30px; margin-right: -30px;\n  padding-bottom: 30px;\n  height: 100%;\n  outline: none; /* Prevent dragging from highlighting the element */\n  position: relative;\n}\n.CodeMirror-sizer {\n  position: relative;\n  border-right: 30px solid transparent;\n}\n\n/* The fake, visible scrollbars. Used to force redraw during scrolling\n   before actual scrolling happens, thus preventing shaking and\n   flickering artifacts. */\n.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {\n  position: absolute;\n  z-index: 6;\n  display: none;\n}\n.CodeMirror-vscrollbar {\n  right: 0; top: 0;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n.CodeMirror-hscrollbar {\n  bottom: 0; left: 0;\n  overflow-y: hidden;\n  overflow-x: scroll;\n}\n.CodeMirror-scrollbar-filler {\n  right: 0; bottom: 0;\n}\n.CodeMirror-gutter-filler {\n  left: 0; bottom: 0;\n}\n\n.CodeMirror-gutters {\n  position: absolute; left: 0; top: 0;\n  min-height: 100%;\n  z-index: 3;\n}\n.CodeMirror-gutter {\n  white-space: normal;\n  height: 100%;\n  display: inline-block;\n  vertical-align: top;\n  margin-bottom: -30px;\n}\n.CodeMirror-gutter-wrapper {\n  position: absolute;\n  z-index: 4;\n  background: none !important;\n  border: none !important;\n}\n.CodeMirror-gutter-background {\n  position: absolute;\n  top: 0; bottom: 0;\n  z-index: 4;\n}\n.CodeMirror-gutter-elt {\n  position: absolute;\n  cursor: default;\n  z-index: 4;\n}\n.CodeMirror-gutter-wrapper {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n      user-select: none;\n}\n\n.CodeMirror-lines {\n  cursor: text;\n  min-height: 1px; /* prevents collapsing before first draw */\n}\n.CodeMirror pre {\n  /* Reset some styles that the rest of the page might have set */ border-radius: 0;\n  border-width: 0;\n  background: transparent;\n  font-family: inherit;\n  font-size: inherit;\n  margin: 0;\n  white-space: pre;\n  word-wrap: normal;\n  line-height: inherit;\n  color: inherit;\n  z-index: 2;\n  position: relative;\n  overflow: visible;\n  -webkit-tap-highlight-color: transparent;\n  font-variant-ligatures: none;\n}\n.CodeMirror-wrap pre {\n  word-wrap: break-word;\n  white-space: pre-wrap;\n  word-break: normal;\n}\n\n.CodeMirror-linebackground {\n  position: absolute;\n  left: 0; right: 0; top: 0; bottom: 0;\n  z-index: 0;\n}\n\n.CodeMirror-linewidget {\n  position: relative;\n  z-index: 2;\n  overflow: auto;\n}\n\n.CodeMirror-widget {}\n\n.CodeMirror-code {\n  outline: none;\n}\n\n/* Force content-box sizing for the elements where we expect it */\n.CodeMirror-scroll,\n.CodeMirror-sizer,\n.CodeMirror-gutter,\n.CodeMirror-gutters,\n.CodeMirror-linenumber {\n  box-sizing: content-box;\n}\n\n.CodeMirror-measure {\n  position: absolute;\n  width: 100%;\n  height: 0;\n  overflow: hidden;\n  visibility: hidden;\n}\n\n.CodeMirror-cursor {\n  position: absolute;\n  pointer-events: none;\n}\n.CodeMirror-measure pre { position: static; }\n\ndiv.CodeMirror-cursors {\n  visibility: hidden;\n  position: relative;\n  z-index: 3;\n}\ndiv.CodeMirror-dragcursors {\n  visibility: visible;\n}\n\n.CodeMirror-focused div.CodeMirror-cursors {\n  visibility: visible;\n}\n\n.CodeMirror-selected { background: #d9d9d9; }\n.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }\n.CodeMirror-crosshair { cursor: crosshair; }\n.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }\n.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }\n.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }\n\n.cm-searching {\n  background: #ffa;\n  background: rgba(255, 255, 0, .4);\n}\n\n/* Used to force a border model for a node */\n.cm-force-border { padding-right: .1px; }\n\n@media print {\n  /* Hide the cursor when printing */\n  .CodeMirror div.CodeMirror-cursors {\n    visibility: hidden;\n  }\n}\n\n/* See issue #2901 */\n.cm-tab-wrap-hack:after { content: ''; }\n\n/* Help users use markselection to safely style text background */\nspan.CodeMirror-selectedtext { background: none; }\n", ""]);
 	
 	// exports
 
@@ -39070,7 +38920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".r_bar {\n  box-sizing: border-box;\n  position: fixed;\n  top: 0;\n  left: 0;\n  color: #212121;\n  z-index: 1000;\n  width: 320px;\n  border-radius: 2px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif;\n  background-color: #ffffff;\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n}\n.r_bar .r_list-header {\n  margin-bottom: 10px;\n}\n.r_bar .r_list {\n  max-height: 400px;\n  overflow: auto;\n}\n.r_bar .r_item-row {\n  padding: 2px 0;\n}\n.r_bar .r_item-right {\n  float: right;\n}\n.r_bar .r_item-value {\n  color: gray;\n  font-size: 0.8em;\n}\n.r_bar .r_piece-name {\n  display: inline-block;\n  height: 20px;\n}\n.r_bar .r_item-message {\n  font-size: small;\n  padding: 5px 0 5px 10px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  margin-top: 3px;\n  margin-bottom: 5px;\n}\n.r_bar .r_item-message.r_item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.r_bar .r_item-message.r_item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.r_bar .r_item-message.r_item-error {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.r_bar-header {\n  padding: 0 5px 0 10px;\n  height: 30px;\n  line-height: 28px;\n  cursor: pointer;\n  color: #ffffff;\n  border-top-left-radius: 2px;\n  border-top-right-radius: 2px;\n  background-color: #455a64;\n}\n.r_bar-header-button {\n  float: right;\n  width: 25px;\n  height: 27px;\n  padding: 1px;\n  font-size: 18px;\n  background: none;\n  border: none;\n  box-sizing: border-box;\n  cursor: pointer;\n  color: #ffffff;\n}\n.r_tabs-header {\n  display: none;\n  width: 100%;\n  background-color: #37474f;\n}\n.r_tab-content {\n  padding: 10px;\n  position: relative;\n}\n.r_tab {\n  cursor: pointer;\n  -ms-flex: 1 1;\n      flex: 1 1;\n  padding: 5px 0;\n  color: #eceff1;\n  text-align: center;\n}\n.r_tab.r_active {\n  background-color: #455a64;\n}\n@font-face {\r\n  font-family: 'r_';\r\n  src: url('../font/r_.eot?82604131');\r\n  src: url('../font/r_.eot?82604131#iefix') format('embedded-opentype'),\r\n       url('../font/r_.svg?82604131#r_') format('svg');\r\n  font-weight: normal;\r\n  font-style: normal;\r\n}\r\n@font-face {\r\n  font-family: 'r_';\r\n  src: url('data:application/octet-stream;base64,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') format('woff'),\r\n       url('data:application/octet-stream;base64,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RyNhsAlDKyMgPCAuIzixKwEUKy2wQSyxCAQlQrAAFrAEJbAEJSAuRyNHI2EgsAQjQrAJQysgsGBQWCCwQFFYswIgAyAbswImAxpZQkIjIEewBEOwAmIgsABQWLBAYFlmsAFjYCCwASsgiophILACQ2BkI7ADQ2FkUFiwAkNhG7ADQ2BZsAMlsAJiILAAUFiwQGBZZrABY2GwAiVGYTgjIDwjOBshICBGI0ewASsjYTghWbErARQrLbBCLLA1Ky6xKwEUKy2wQyywNishIyAgPLAEI0IjOLErARQrsARDLrArKy2wRCywABUgR7AAI0KyAAEBFRQTLrAxKi2wRSywABUgR7AAI0KyAAEBFRQTLrAxKi2wRiyxAAEUE7AyKi2wRyywNCotsEgssAAWRSMgLiBGiiNhOLErARQrLbBJLLAII0KwSCstsEossgAAQSstsEsssgABQSstsEwssgEAQSstsE0ssgEBQSstsE4ssgAAQistsE8ssgABQistsFAssgEAQistsFEssgEBQistsFIssgAAPistsFMssgABPistsFQssgEAPistsFUssgEBPistsFYssgAAQCstsFcssgABQCstsFgssgEAQCstsFkssgEBQCstsFossgAAQystsFsssgABQystsFwssgEAQystsF0ssgEBQystsF4ssgAAPystsF8ssgABPystsGAssgEAPystsGEssgEBPystsGIssDcrLrErARQrLbBjLLA3K7A7Ky2wZCywNyuwPCstsGUssAAWsDcrsD0rLbBmLLA4Ky6xKwEUKy2wZyywOCuwOystsGgssDgrsDwrLbBpLLA4K7A9Ky2waiywOSsusSsBFCstsGsssDkrsDsrLbBsLLA5K7A8Ky2wbSywOSuwPSstsG4ssDorLrErARQrLbBvLLA6K7A7Ky2wcCywOiuwPCstsHEssDorsD0rLbByLLMJBAIDRVghGyMhWUIrsAhlsAMkUHiwARUwLQBLuADIUlixAQGOWbABuQgACABjcLEABUKyAAEAKrEABUKzCgIBCCqxAAVCsw4AAQgqsQAGQroCwAABAAkqsQAHQroAQAABAAkqsQMARLEkAYhRWLBAiFixA2REsSYBiFFYugiAAAEEQIhjVFixAwBEWVlZWbMMAgEMKrgB/4WwBI2xAgBEAAA=') format('truetype');\r\n}\r\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\r\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\r\n/*\r\n@media screen and (-webkit-min-device-pixel-ratio:0) {\r\n  @font-face {\r\n    font-family: 'r_';\r\n    src: url('../font/r_.svg?82604131#r_') format('svg');\r\n  }\r\n}\r\n*/\r\n \r\n [class^=\"r_icon-\"]:before, [class*=\" r_icon-\"]:before {\r\n  font-family: \"r_\";\r\n  font-style: normal;\r\n  font-weight: normal;\r\n  speak: none;\r\n \r\n  display: inline-block;\r\n  text-decoration: inherit;\r\n  width: 1em;\r\n  margin-right: .2em;\r\n  text-align: center;\r\n  /* opacity: .8; */\r\n \r\n  /* For safety - reset parent styles, that can break glyph codes*/\r\n  font-variant: normal;\r\n  text-transform: none;\r\n     \r\n  /* fix buttons height, for twitter bootstrap */\r\n  line-height: 1em;\r\n \r\n  /* Animation center compensation - margins should be symmetric */\r\n  /* remove if not needed */\r\n  margin-left: .2em;\r\n \r\n  /* you can be more comfortable with increased icons size */\r\n  /* font-size: 120%; */\r\n \r\n  /* Uncomment for 3D effect */\r\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */\r\n}\r\n.r_icon-pencil:before { content: '\\E800'; } /* '' */\r\n.r_icon-trash-empty:before { content: '\\E801'; } /* '' */\r\n.r_icon-down-dir:before { content: '\\E802'; } /* '' */\r\n.r_icon-up-dir:before { content: '\\E803'; } /* '' */\r\n.r_icon-ccw:before { content: '\\E804'; } /* '' */\r\n.r_icon-arrows-cw:before { content: '\\E805'; } /* '' */\r\n.r_icon-floppy:before { content: '\\E806'; } /* '' */\r\n.r_icon-file-code:before { content: '\\E807'; } /* '' */\r\n.r_icon-code:before { content: '\\E808'; } /* '' */\n.r_btn {\n  cursor: pointer;\n}\nredaxtor {\n  display: block;\n}\n.r_editor.r_edit {\n  outline: #546e7a dashed 1px;\n}\n.r_editor.r_edit:hover {\n  outline: none;\n  box-shadow: 0px 0px 0px 1px #546e7a, 0px 0px 10px 0px #90a4ae;\n}\n.r_editor iframe {\n  pointer-events: none;\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n@keyframes redaxtor-bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  60% {\n    opacity: 1;\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n  to {\n    opacity: 1;\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes redaxtor-bounceOut {\n  20% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  50%,\n  55% {\n    opacity: 1;\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  to {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n}\n@keyframes redaxtor-fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes redaxtor-fadeOut {\n  from {\n    opacity: 1;\n  }\n  to {\n    opacity: 0;\n  }\n}\n@keyframes redaxtor-bounceInDown {\n  from,\n  60%,\n  75%,\n  90%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes redaxtor-bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%,\n  45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n.r_toast-container {\n  width: 310px;\n  position: fixed;\n  z-index: 99999999;\n}\n.r_toast-container.top-left,\n.r_toast-container.top-right {\n  top: 15px;\n}\n.r_toast-container.bottom-left,\n.r_toast-container.bottom-right {\n  bottom: 15px;\n}\n.r_toast-container.top-left {\n  left: 15px;\n}\n.r_toast-container.top-right {\n  right: 15px;\n}\n.r_toast-container.bottom-left {\n  left: 15px;\n}\n.r_toast-container.bottom-right {\n  right: 15px;\n}\n.r_toast-container .toastr {\n  background-color: #fcfcfc;\n  width: 100%;\n  min-height: 40px;\n  margin-bottom: 10px;\n  border-radius: 4px;\n  position: relative;\n  color: #333;\n  padding: 10px 0;\n  opacity: .9;\n}\n.r_toast-container .toastr button.close-toastr {\n  border: none;\n  background: none;\n  color: white;\n  position: absolute;\n  right: 10px;\n  top: 8px;\n}\n.r_toast-container .toastr.animated {\n  animation-duration: 1s;\n  animation-fill-mode: both;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-duration: .5s;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-name: redaxtor-bounceIn;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-name: redaxtor-bounceOut;\n}\n.r_toast-container .toastr.animated.fadeIn {\n  animation-name: redaxtor-fadeIn;\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.fadeOut {\n  animation-name: redaxtor-fadeOut;\n  animation-duration: .3s;\n}\n.r_toast-container .toastr.animated.bounceInDown {\n  animation-name: redaxtor-bounceInDown;\n}\n.r_toast-container .toastr.animated.bounceOutUp {\n  animation-name: redaxtor-bounceOutUp;\n}\n.r_toast-container .toastr:before {\n  position: absolute;\n  top: 50%;\n  left: 12px;\n  margin-top: -11px;\n  font-size: 22px;\n}\n.r_toast-container .toastr:hover {\n  cursor: pointer;\n  opacity: 1;\n}\n.r_toast-container .toastr .message-holder {\n  width: 80%;\n  margin-left: 15%;\n  position: relative;\n  font-family: Arial, Helvetica, sans-serif, sans-serif;\n  font-size: 1em;\n  text-align: left;\n}\n.r_toast-container .toastr .message-holder p {\n  padding: 5px;\n  margin: 0;\n}\n.r_toast-container .toastr .message-holder .title {\n  font-size: 1.1em;\n  font-weight: bold;\n}\n.r_toast-container .toastr.info,\n.r_toast-container .toastr.success,\n.r_toast-container .toastr.warning,\n.r_toast-container .toastr.error {\n  color: white;\n}\n.r_toast-container .toastr.info {\n  background-color: #58abc3;\n}\n.r_toast-container .toastr.success {\n  background-color: #60bb71;\n}\n.r_toast-container .toastr.warning {\n  background-color: #f7a336;\n}\n.r_toast-container .toastr.error {\n  background-color: #db6a64;\n}\n.r_toast-container .toastr.message {\n  opacity: 1;\n  border: 1px solid #dbdbdb;\n}\n.r_toast-container .toastr.message .message-holder {\n  width: 100%;\n  margin-left: 0;\n}\n.r_toast-container .toastr.message .message-holder .title {\n  width: 90%;\n  height: 50px;\n  text-align: center;\n  font-size: 1.2em;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n  line-height: 45px;\n  padding: 0 15px;\n}\n.r_toast-container .toastr.message .message-holder .message {\n  border-radius: 5px;\n  width: 100%;\n  max-height: 400px;\n  overflow: hidden;\n  overflow-y: auto;\n  border-top: 1px solid #f1f1f1;\n  background-color: white;\n  padding: 15px;\n  font-size: 1.1em;\n}\n.r_toast-container .toastr.message .message-holder .message img {\n  display: block;\n  margin: 10px auto;\n  max-width: 100%;\n}\n.r_portal {\n  border: 1px solid gray;\n  background: #fff;\n  z-index: 100000;\n  padding: 10px;\n}\n.r_bar .react-toggle {\n  display: inline-block;\n  position: relative;\n  cursor: pointer;\n  background-color: transparent;\n  border: 0;\n  padding: 0;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  -webkit-tap-highlight-color: transparent;\n  right: 10px;\n  position: absolute;\n}\n.r_bar .r_list-subheader .react-toggle {\n  transform: scale(0.8);\n}\n.r_bar .react-toggle-screenreader-only {\n  border: 0;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  margin: -1px;\n  overflow: hidden;\n  padding: 0;\n  position: absolute;\n  width: 1px;\n}\n.r_bar .react-toggle--disabled {\n  opacity: 0.5;\n  transition: opacity 0.25s;\n}\n.r_bar .react-toggle-track {\n  width: 50px;\n  height: 24px;\n  padding: 0;\n  border-radius: 30px;\n  background-color: #4D4D4D;\n  transition: all 0.2s ease;\n}\n.r_bar .react-toggle:hover .react-toggle-track {\n  background-color: #000000;\n}\n.r_bar .react-toggle--checked .react-toggle-track {\n  background-color: #19AB27;\n}\n.r_bar .react-toggle.react-toggle--checked:hover .react-toggle-track {\n  background-color: #128D15;\n}\n.r_bar .react-toggle-track-check {\n  position: absolute;\n  width: 14px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  left: 8px;\n  opacity: 0;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-check {\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle-track-x {\n  position: absolute;\n  width: 10px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  right: 10px;\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-x {\n  opacity: 0;\n}\n.r_bar .react-toggle-thumb {\n  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  position: absolute;\n  top: 1px;\n  left: 1px;\n  width: 22px;\n  height: 22px;\n  border: 1px solid #4D4D4D;\n  border-radius: 50%;\n  background-color: #FAFAFA;\n  box-sizing: border-box;\n  transition: all 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-thumb {\n  left: 27px;\n  border-color: #19AB27;\n}\n.r_bar .react-toggle--focus .react-toggle-thumb {\n  box-shadow: 0px 0px 2px 3px #0099E0;\n}\n.r_bar .react-toggle:active .react-toggle-thumb {\n  box-shadow: 0px 0px 5px 5px #0099E0;\n}\n/*# sourceMappingURL=redaxtor.css.map */", ""]);
+	exports.push([module.id, ".r_bar {\n  box-sizing: border-box;\n  position: fixed;\n  top: 0;\n  left: 0;\n  color: #212121;\n  z-index: 1000;\n  width: 320px;\n  border-radius: 2px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif;\n  background-color: #ffffff;\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n}\n.r_bar .r_list-header {\n  margin-bottom: 10px;\n}\n.r_bar .r_list {\n  max-height: 400px;\n  overflow: auto;\n}\n.r_bar .r_item-row {\n  padding: 2px 0;\n}\n.r_bar .r_item-right {\n  float: right;\n}\n.r_bar .r_item-value {\n  color: gray;\n  font-size: 0.8em;\n}\n.r_bar .r_piece-name {\n  display: inline-block;\n  height: 20px;\n}\n.r_bar .r_item-message {\n  font-size: small;\n  padding: 5px 0 5px 10px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  margin-top: 3px;\n  margin-bottom: 5px;\n}\n.r_bar .r_item-message.r_item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.r_bar .r_item-message.r_item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.r_bar .r_item-message.r_item-error {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.r_bar-header {\n  padding: 0 5px 0 10px;\n  height: 30px;\n  line-height: 28px;\n  cursor: pointer;\n  color: #ffffff;\n  border-top-left-radius: 2px;\n  border-top-right-radius: 2px;\n  background-color: #455a64;\n}\n.r_bar-header-button {\n  float: right;\n  width: 25px;\n  height: 27px;\n  padding: 1px;\n  font-size: 18px;\n  background: none;\n  border: none;\n  box-sizing: border-box;\n  cursor: pointer;\n  color: #ffffff;\n}\n.r_tabs-header {\n  display: none;\n  width: 100%;\n  background-color: #37474f;\n}\n.r_tab-content {\n  padding: 10px;\n  position: relative;\n}\n.r_tab {\n  cursor: pointer;\n  -ms-flex: 1 1;\n      flex: 1 1;\n  padding: 5px 0;\n  color: #eceff1;\n  text-align: center;\n}\n.r_tab.r_active {\n  background-color: #455a64;\n}\n@font-face {\n  font-family: 'r_';\n  src: url('../font/r_.eot?82604131');\n  src: url('../font/r_.eot?82604131#iefix') format('embedded-opentype'),\n       url('../font/r_.svg?82604131#r_') format('svg');\n  font-weight: normal;\n  font-style: normal;\n}\n@font-face {\n  font-family: 'r_';\n  src: url('data:application/octet-stream;base64,d09GRgABAAAAABFMAA8AAAAAHBAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABWAAAADsAAABUIIwleU9TLzIAAAGUAAAAQwAAAFY+IEjTY21hcAAAAdgAAAByAAAB4OlPPOJjdnQgAAACTAAAABMAAAAgBtX/BGZwZ20AAAJgAAAFkAAAC3CKkZBZZ2FzcAAAB/AAAAAIAAAACAAAABBnbHlmAAAH+AAABk4AAAikcnkfsmhlYWQAAA5IAAAAMgAAADYMIqw7aGhlYQAADnwAAAAgAAAAJAdqA6JobXR4AAAOnAAAAB8AAAAoIFv//2xvY2EAAA68AAAAFgAAABYLbAlUbWF4cAAADtQAAAAgAAAAIAEZDApuYW1lAAAO9AAAAXUAAAKF8MGEanBvc3QAABBsAAAAYQAAAIDDMXowcHJlcAAAENAAAAB6AAAAhuVBK7x4nGNgZGBg4GIwYLBjYMpJLMlj4HNx8wlhkGJgYYAAkDwymzEnMz2RgQPGA8qxgGkOIGaDiAIAKVkFSAB4nGNgZLZhnMDAysDAVMW0h4GBoQdCMz5gMGRkAooysDIzYAUBaa4pDA4vGF5wMAf9z2KIYg5imAYUZgTJAQDTMgtxAHic7ZHLDYQwDAUnG/MJohROFMRpy9iC3QU8G5exkeZJfrJyGAMT0MUhDNqXRrxLbcu+s2VvnLlj0ft630oiNVvmR7umH2cWVoaqmf/bM381jbD2kh4LucOLuIcXYdaLuJUXcowXso0X8q7bvDAeA0YZQQAAeJxjYEADEhDIHPQ/C4QBEmwD3QB4nK1WaXfTRhQdeUmchCwlCy1qYcTEabBGJmzBgAlBsmMgXZytlaCLFDvpvvGJ3+Bf82Tac+g3flrvGy8kkLTncJqTo3fnzdXM22USWpLYC+uRlJsvxdTWJo3sPAnphk3LUXwoO3shZYrJ3wVREK2W2rcdh0REIlC1rrBEEPseWZpkfOhRRsu2pFdNyi096S5b40G9Vd9+GjrKsTuhpGYzdGg9siVVGFWiSKY9UtKmZaj6K0krvL/CzFfNUMKITiJpvBnG0EjeG2e0ymg1tuMoimyy3ChSJJrhQRR5lNUS5+SKCQzKB82Q8sqnEeXD/Iis2KOcVrBLttP8vi95p3c5P7Ffb1G25EAfyI7s4Ox0JV+EW1th3LST7ShUEXbXd0Js2exU/2aP8ppGA7crMr3QjGCpfIUQKz+hzP4hWS2cT/mSR6NaspETQetlTuxLPoHW44gpcc0YWdDd0QkR1P2SMwz2mD4e/PHeKZYLEwJ4HMt6RyWcCBMpYXM0SdowcmAlZYsqqfWumDjldVrEW8J+7drRl85o41B3YjxbDx1bOVHJ8WhSp5lMndpJzaMpDaKUdCZ4zK8DKD+iSV5tYzWJlUfTOGbGhEQiAi3cS1NBLDuxpCkEzaMZvbkbprl2LVqkyQP13KP39OZWuLnTU9oO9LNGf1anYjrYC9PpaeQv8Wna5SJF6frpGX5M4kHWAjKRLTbDlIMHb/0O0svXlhyF1wbY7u3zK6h91kTwpAH7G9AeT9UpCUyFmFWIVkBirWtZlsnVrBapyNR3Q5pWvqzTBIpyHBfHvoxx/V8zM5aYEr7fidOzIy49c+1LCNMcfJt1PZrXqcVyAXFmeU6nWZbv6zTH8gOd5lme1+kIS1unoyw/1GmB5Uc6HWN5QQuadN/BkIsw5AIOkDCEpQNDWF6CISwVDGG5CENYFmEIyyUYwvJjGMJyGYawvKxl1dRTSePamVgGbEJgYo4eucxF5WoquVRCu2hUakOeEm6VVBTPqn9loF488oY5sBZIl8iaXzHOlY9G5fjWFS1vGjtXwLHqbx+O9jnxUtaLhT8F/9XWVCW9Ys3Dk6vwG4aebCeqNql4dE2Xz1U9uv5fVFRYC/QbSIVYKMqybHBnIoSPOp2GaqCVQ8xszDy063XLmp/D/TcxQhZQ/fg3FBoL3INOWUlZ7eCs1dfbstw7g3I4EyxJMTfz+lb4IiOz0n6RWcqej3wecAWMSmXYagOtFbzZJzEPmd4kzwRxW1E2SNrYzgSJDRzzgHnznQQmYeqqDeRO4YYN+AVhbsF5J1yieqMsh+5F7PMopPxbp+JE9qhojMCz2Rthr+9Cym9xDCQ0+aV+DFQVoakYNRXQNFJuqAZfxtm6bULGDvQjKnbDsqziw8cW95WSbRmEfKSI1aOjn9Zeok6q3H5mFJfvnb4FwSA1MX9733RxkMq7WskyR20DU7calVPXmkPjVYfq5lH1vePsEzlrmm66Jx56X9Oq28HFXCyw9m0O0lImF9T1YYUNosvFpVDqZTRJ77gHGBYY0O9Qio3/q/rYfJ4rVYXRcSTfTtS30edgDPwP2H9H9QPQ92Pocg0uz/eaE59u9OFsma6iF+un6Dcwa625WboG3NB0A+IhR62OuMoNfKcGcXqkuRzpIeBj3RXiAcAmgMXgE921jOZTAKP5jDk+wOfMYdBkDoMt5jDYZs4awA5zGOwyh8Eecxh8wZx1gC+ZwyBkDoOIOQyeMCcAeMocBl8xh8HXzGHwDXPuA3zLHAYxcxgkzGGwr+nWMMwtXtBdoLZBVaADU09Y3MPiUFNlyP6OF4b9vUHM/sEgpv6o6faQ+hMvDPVng5j6i0FM/VXTnSH1N14Y6u8GMfUPg5j6TL8Yy2UGv4x8lwoHlF1sPufvifcP28VAuQABAAH//wAPeJyFVU1sW8cRntnfx0fqkU98fE+2aEr8tyWXcvkbRzJNx3JEW2Iay0Yt15WroIpbWBHUFkZPhQ81UKSX5lY0RhL0VARo0yS+NMmhPbVA0Ivtgy/ysShkFG0uOrHWU2dJ2SkQFF0Su7PzZmd3vv1mFgTA/se8x/ZBgQeHoAA/6wQZZPKI72jB2SHOOHBEBLGw+NHoqyudMkgmt4BxtgX0aQuAPn5XIQqByzSguAICxeJ4p/RVS9j6quHVzihAdnIsSMQjFh1DeVqmpoNWWadqKazncxpVyqtVW9gsB5hvoBfHcqtZnUD/r9U7tS5+JyZF+ECMSIEzPLMTntjhPW91Z9Wb9e94unanNrfAVEyEDwX1WBE/3AlnnuDdI6nVJ99Ope74QE0NcBjlUYjDBMzALJyF78F657Ur55iyjmUPuRFUgGxBckaCQtgUjIFWoDfAgYjlRNbiI8yK2Uyhpa6Djkb1ZdA6ugJRHV16ff2169euXlr+xtL5hTOnvYJXMi2fkEem0fXUNOZKDbfenMWqH/yfedLNul4Ga9lqG7FWLpXzigAzNmSYz+ZKZTefK51CY91qY6tW9SeQOszYVsGyB91bX4q/sPVQ1HY3jFkWw/vMssKf98eF/FgJ/IdtNevF8ESxjg1j97ty5Lh/L5iKlD+wbPxD+CejxDOm/x9yuM7cvS9inm177PUzElFeoh33vqjMv1RhycEhVlNpzHirNjGEGpvDfxKoQcejOeKC6Yk9cKPhMelPGwKo3AyW6k0CwWezdj+ajvajvoO7jo+fOyTTP+3TzeL+Pvmbxc/Jn9txnntKVY2noqfK2VwFT+OATmzWi4exuMdifTtj9+3fkjcvE+3btAEY9hqOXCWOfB3andkp5LJ4hFGSLIDgyAVuEkE4sg2QwIXka8Bo78tAPFkhAZaONYJ8UFDyMIXgMLqkcqlOW/uUcLVqm1dYTunAH1x2uVFvTmCb9BnGr87/6NffXPv9nJBLyhXHfnz2xe+/OsUqS29srR/tucmgH/fwuNudu7t85b1bL+F16ueXzytH9CSqxouVpZu3bi5VjhZ7ia/5Tn8sOdo92Z6/9d4A6kFM1yimAizAaudbZ4tMRWZQqgA5s5DCWiB2KyuiNjVpmZJsU1CYivENQFMbYBMobaWl1syEXwbOTbwcll4+VyoWm8VSwyvYhuheykETtVbP+Fn1VRwz2Ko2W/QbsDs1ZHvzNJbyhAf9zLTVMFj4AeW9zxcLf3v74q/muuaKnb7js0jv6Hrrwk/LakzENizb8RJD7fIPFkkZyNiWjmHh729fvGsWjaHk+MvP2ie70cFyPx3tFabwQtt+YSSGnxxoesO5EgeWAOL5/XPIEgfOwcXOK9NT+ZywBC6MoKDMZy+DrVFYtlgjVLiyiAVUN6hgXJfEg0gEls0IkRWIQGSpc+qFRlCquclZ101ECaMg28jKmlsvzWAFdeogoRt5t9YYsl3zRr1EiKgg5fmU2035POuHBhOE5yP8ILyEu92YfFemrUwQ/tHPYLc7mcIH/iQ+sq0NwmPYr2eCvVEi4KTPZNCMv5Pw9aNHuGsd1u+oGO74k5P+zl5zMGLmnsnpe2atvdc3KvYvf3LMeTfefFZDbxI+y5CEw5CHFizCNeh1LnjIxNnjTCvKFMU1V3oTtORabhD/DJPWgN6EFUr1WNdCKQ19YATOj4/XqqXieH48nyx5jWZEHpqm4FIUsD4IuEUBB/ROEFylpCl75UbWTQ6SmYpEYNg1qBStrB9HBw2op7FsyEVZxyvYSrbRAKa5g2VeS/jP0cBdvxm/8FDqD9VfdkgTXvqzSMi05jduCKbSypG3qVaesqzbwtFpxcSBPsEfawt7GLPyw1Gz24n62N7tgVf+Exr8ROmhqz7UTz9ic5OpJ09/g7uap6Sj3nyT3KaEfj9K7X3F5H8pmQqvoKPwPnmVLKbDEySYLIP9T4XPPqPXuwAnIdMZr7jMFE16tKnWMTRls360HIwKU/Ao9cpUOFv4JUYe8iEyz8CIHFRXg5SpT9WALHElTYcJnyqFQiZEWqntbYXz95mjcpbCB3QkE/AbZOGotJTb21ISSsb6HE3pVo2s6FNCPN5WDntlb0ZbPMJjFrtPDmzmhG+F/x4u2n5M1rRF+FQm4D/X5FbNAAB4nGNgZGBgAOLCDubSeH6brwzczC+AIgxXyk18YfT///+zWMSYg4BcDgYmkCgAO6ALgQAAeJxjYGRgYA76n8XAwKL/////fyxiDEARFMAFAJUWBhN4nGN+wcDAHAnEggwMTNYg/P8/mI+EWfQZGAB9GgV3AAAAAAAAhAFIAXABlgIAApYDJgPgBFIAAAABAAAACgBoAAYAAAAAAAIAIAAwAHMAAAB1C3AAAAAAeJx1j0tLw0AUhU/6krYoqOB6VtpSSB9ghS6kWGhXInTRbUjTvEqaKZNpoe78Af5F/4YLN54kg4hgwk2+e+69584AuMIHLJTPPaNkCxVmJVdwhgfDVWaPhmvkqeE62ngy3KD+bLiFHl4Mt3GNVzpYtSazLd4NW3T6NFzBBb4MV1GzmoZr5HPDddxYl4Yb1O8Mt7CyeobbuLXeZnJ/UnEYadGZdcVoMByL9UlISnHqJsI96EiqTExFIFPtJ4m0PblTztIPD4mrlKOcla+yWKZiaA+Us/BTX7na3+Qu2TEcaR2IQMmdmJt5sVdy63vajrTeT/r9376YQWKPExRihIigIdCh2uV/hAGGGJPW7BDsLLtipHCRUHFx4ERUVDLmU0bALKXqsyMh2/D43bHDwZJqyJmEk6pQ8lhRzefjYlJwp83NeWXBSlpU3cJx83OWDEc6jahqbsy3qmKLwPzPfsH75bUtFY+6XdxSU52gz/ef834DqShvWQAAAHicbcVbCoAgEEbh+btY2lpclIxGguVghrT7iF77Hs6hjj6G/hl06DFghMKEGRoGCykJB8e01OLOzYZd6j373A7rY1GXvOuZm3al5HZabmpNWeTWa0zBcvZheEP0AN1xGY0AAAB4nGPw3sFwIihiIyNjX+QGxp0cDBwMyQUbGVidNjEwMmiBGJu5mBg5ICw+BjCLzWkX0wGgNCeQze60i8EBwmZmcNmowtgRGLHBoSNiI3OKy0Y1EG8XRwMDI4tDR3JIBEhJJBBs5mFi5NHawfi/dQNL70YmBhcADHYj9AAA') format('woff'),\n       url('data:application/octet-stream;base64,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RyNhsAlDKyMgPCAuIzixKwEUKy2wQSyxCAQlQrAAFrAEJbAEJSAuRyNHI2EgsAQjQrAJQysgsGBQWCCwQFFYswIgAyAbswImAxpZQkIjIEewBEOwAmIgsABQWLBAYFlmsAFjYCCwASsgiophILACQ2BkI7ADQ2FkUFiwAkNhG7ADQ2BZsAMlsAJiILAAUFiwQGBZZrABY2GwAiVGYTgjIDwjOBshICBGI0ewASsjYTghWbErARQrLbBCLLA1Ky6xKwEUKy2wQyywNishIyAgPLAEI0IjOLErARQrsARDLrArKy2wRCywABUgR7AAI0KyAAEBFRQTLrAxKi2wRSywABUgR7AAI0KyAAEBFRQTLrAxKi2wRiyxAAEUE7AyKi2wRyywNCotsEgssAAWRSMgLiBGiiNhOLErARQrLbBJLLAII0KwSCstsEossgAAQSstsEsssgABQSstsEwssgEAQSstsE0ssgEBQSstsE4ssgAAQistsE8ssgABQistsFAssgEAQistsFEssgEBQistsFIssgAAPistsFMssgABPistsFQssgEAPistsFUssgEBPistsFYssgAAQCstsFcssgABQCstsFgssgEAQCstsFkssgEBQCstsFossgAAQystsFsssgABQystsFwssgEAQystsF0ssgEBQystsF4ssgAAPystsF8ssgABPystsGAssgEAPystsGEssgEBPystsGIssDcrLrErARQrLbBjLLA3K7A7Ky2wZCywNyuwPCstsGUssAAWsDcrsD0rLbBmLLA4Ky6xKwEUKy2wZyywOCuwOystsGgssDgrsDwrLbBpLLA4K7A9Ky2waiywOSsusSsBFCstsGsssDkrsDsrLbBsLLA5K7A8Ky2wbSywOSuwPSstsG4ssDorLrErARQrLbBvLLA6K7A7Ky2wcCywOiuwPCstsHEssDorsD0rLbByLLMJBAIDRVghGyMhWUIrsAhlsAMkUHiwARUwLQBLuADIUlixAQGOWbABuQgACABjcLEABUKyAAEAKrEABUKzCgIBCCqxAAVCsw4AAQgqsQAGQroCwAABAAkqsQAHQroAQAABAAkqsQMARLEkAYhRWLBAiFixA2REsSYBiFFYugiAAAEEQIhjVFixAwBEWVlZWbMMAgEMKrgB/4WwBI2xAgBEAAA=') format('truetype');\n}\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'r_';\n    src: url('../font/r_.svg?82604131#r_') format('svg');\n  }\n}\n*/\n \n [class^=\"r_icon-\"]:before, [class*=\" r_icon-\"]:before {\n  font-family: \"r_\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n \n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n \n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n     \n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n \n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n \n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n \n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */\n}\n.r_icon-pencil:before { content: '\\E800'; } /* '' */\n.r_icon-trash-empty:before { content: '\\E801'; } /* '' */\n.r_icon-down-dir:before { content: '\\E802'; } /* '' */\n.r_icon-up-dir:before { content: '\\E803'; } /* '' */\n.r_icon-ccw:before { content: '\\E804'; } /* '' */\n.r_icon-arrows-cw:before { content: '\\E805'; } /* '' */\n.r_icon-floppy:before { content: '\\E806'; } /* '' */\n.r_icon-file-code:before { content: '\\E807'; } /* '' */\n.r_icon-code:before { content: '\\E808'; } /* '' */\n.r_btn {\n  cursor: pointer;\n}\nredaxtor {\n  display: block;\n}\n.r_editor.r_edit {\n  outline: #546e7a dashed 1px;\n}\n.r_editor.r_edit:hover {\n  outline: none;\n  box-shadow: 0px 0px 0px 1px #546e7a, 0px 0px 10px 0px #90a4ae;\n}\n.r_editor iframe {\n  pointer-events: none;\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n@keyframes redaxtor-bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  60% {\n    opacity: 1;\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n  to {\n    opacity: 1;\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes redaxtor-bounceOut {\n  20% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  50%,\n  55% {\n    opacity: 1;\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  to {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n}\n@keyframes redaxtor-fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes redaxtor-fadeOut {\n  from {\n    opacity: 1;\n  }\n  to {\n    opacity: 0;\n  }\n}\n@keyframes redaxtor-bounceInDown {\n  from,\n  60%,\n  75%,\n  90%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes redaxtor-bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%,\n  45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n.r_toast-container {\n  width: 310px;\n  position: fixed;\n  z-index: 99999999;\n}\n.r_toast-container.top-left,\n.r_toast-container.top-right {\n  top: 15px;\n}\n.r_toast-container.bottom-left,\n.r_toast-container.bottom-right {\n  bottom: 15px;\n}\n.r_toast-container.top-left {\n  left: 15px;\n}\n.r_toast-container.top-right {\n  right: 15px;\n}\n.r_toast-container.bottom-left {\n  left: 15px;\n}\n.r_toast-container.bottom-right {\n  right: 15px;\n}\n.r_toast-container .toastr {\n  background-color: #fcfcfc;\n  width: 100%;\n  min-height: 40px;\n  margin-bottom: 10px;\n  border-radius: 4px;\n  position: relative;\n  color: #333;\n  padding: 10px 0;\n  opacity: .9;\n}\n.r_toast-container .toastr button.close-toastr {\n  border: none;\n  background: none;\n  color: white;\n  position: absolute;\n  right: 10px;\n  top: 8px;\n}\n.r_toast-container .toastr.animated {\n  animation-duration: 1s;\n  animation-fill-mode: both;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-duration: .5s;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-name: redaxtor-bounceIn;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-name: redaxtor-bounceOut;\n}\n.r_toast-container .toastr.animated.fadeIn {\n  animation-name: redaxtor-fadeIn;\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.fadeOut {\n  animation-name: redaxtor-fadeOut;\n  animation-duration: .3s;\n}\n.r_toast-container .toastr.animated.bounceInDown {\n  animation-name: redaxtor-bounceInDown;\n}\n.r_toast-container .toastr.animated.bounceOutUp {\n  animation-name: redaxtor-bounceOutUp;\n}\n.r_toast-container .toastr:before {\n  position: absolute;\n  top: 50%;\n  left: 12px;\n  margin-top: -11px;\n  font-size: 22px;\n}\n.r_toast-container .toastr:hover {\n  cursor: pointer;\n  opacity: 1;\n}\n.r_toast-container .toastr .message-holder {\n  width: 80%;\n  margin-left: 15%;\n  position: relative;\n  font-family: Arial, Helvetica, sans-serif, sans-serif;\n  font-size: 1em;\n  text-align: left;\n}\n.r_toast-container .toastr .message-holder p {\n  padding: 5px;\n  margin: 0;\n}\n.r_toast-container .toastr .message-holder .title {\n  font-size: 1.1em;\n  font-weight: bold;\n}\n.r_toast-container .toastr.info,\n.r_toast-container .toastr.success,\n.r_toast-container .toastr.warning,\n.r_toast-container .toastr.error {\n  color: white;\n}\n.r_toast-container .toastr.info {\n  background-color: #58abc3;\n}\n.r_toast-container .toastr.success {\n  background-color: #60bb71;\n}\n.r_toast-container .toastr.warning {\n  background-color: #f7a336;\n}\n.r_toast-container .toastr.error {\n  background-color: #db6a64;\n}\n.r_toast-container .toastr.message {\n  opacity: 1;\n  border: 1px solid #dbdbdb;\n}\n.r_toast-container .toastr.message .message-holder {\n  width: 100%;\n  margin-left: 0;\n}\n.r_toast-container .toastr.message .message-holder .title {\n  width: 90%;\n  height: 50px;\n  text-align: center;\n  font-size: 1.2em;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n  line-height: 45px;\n  padding: 0 15px;\n}\n.r_toast-container .toastr.message .message-holder .message {\n  border-radius: 5px;\n  width: 100%;\n  max-height: 400px;\n  overflow: hidden;\n  overflow-y: auto;\n  border-top: 1px solid #f1f1f1;\n  background-color: white;\n  padding: 15px;\n  font-size: 1.1em;\n}\n.r_toast-container .toastr.message .message-holder .message img {\n  display: block;\n  margin: 10px auto;\n  max-width: 100%;\n}\n.r_portal {\n  border: 1px solid gray;\n  background: #fff;\n  z-index: 100000;\n  padding: 10px;\n}\n.r_bar .react-toggle {\n  display: inline-block;\n  position: relative;\n  cursor: pointer;\n  background-color: transparent;\n  border: 0;\n  padding: 0;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  -webkit-tap-highlight-color: transparent;\n  right: 10px;\n  position: absolute;\n}\n.r_bar .r_list-subheader .react-toggle {\n  transform: scale(0.8);\n}\n.r_bar .react-toggle-screenreader-only {\n  border: 0;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  margin: -1px;\n  overflow: hidden;\n  padding: 0;\n  position: absolute;\n  width: 1px;\n}\n.r_bar .react-toggle--disabled {\n  opacity: 0.5;\n  transition: opacity 0.25s;\n}\n.r_bar .react-toggle-track {\n  width: 50px;\n  height: 24px;\n  padding: 0;\n  border-radius: 30px;\n  background-color: #4D4D4D;\n  transition: all 0.2s ease;\n}\n.r_bar .react-toggle:hover .react-toggle-track {\n  background-color: #000000;\n}\n.r_bar .react-toggle--checked .react-toggle-track {\n  background-color: #19AB27;\n}\n.r_bar .react-toggle.react-toggle--checked:hover .react-toggle-track {\n  background-color: #128D15;\n}\n.r_bar .react-toggle-track-check {\n  position: absolute;\n  width: 14px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  left: 8px;\n  opacity: 0;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-check {\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle-track-x {\n  position: absolute;\n  width: 10px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  right: 10px;\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-x {\n  opacity: 0;\n}\n.r_bar .react-toggle-thumb {\n  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  position: absolute;\n  top: 1px;\n  left: 1px;\n  width: 22px;\n  height: 22px;\n  border: 1px solid #4D4D4D;\n  border-radius: 50%;\n  background-color: #FAFAFA;\n  box-sizing: border-box;\n  transition: all 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-thumb {\n  left: 27px;\n  border-color: #19AB27;\n}\n.r_bar .react-toggle--focus .react-toggle-thumb {\n  box-shadow: 0px 0px 2px 3px #0099E0;\n}\n.r_bar .react-toggle:active .react-toggle-thumb {\n  box-shadow: 0px 0px 5px 5px #0099E0;\n}\n/*# sourceMappingURL=redaxtor.css.map */", ""]);
 	
 	// exports
 
@@ -41712,7 +41562,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (value == null) {
 	    return value === undefined ? undefinedTag : nullTag;
 	  }
-	  return (symToStringTag && symToStringTag in Object(value))
+	  value = Object(value);
+	  return (symToStringTag && symToStringTag in value)
 	    ? getRawTag(value)
 	    : objectToString(value);
 	}
@@ -43953,7 +43804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Since plain JS classes are defined without any special initialization
 	      // logic, we can not catch common errors early. Therefore, we have to
 	      // catch them here, at initialization time, instead.
-	       true ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
+	       true ? warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
 	       true ? warning(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component') : void 0;
 	       true ? warning(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component') : void 0;
 	       true ? warning(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component') : void 0;
@@ -45423,18 +45274,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    } else {
 	      var contentToUse = CONTENT_TYPES[typeof props.children] ? props.children : null;
 	      var childrenToUse = contentToUse != null ? null : props.children;
-	      // TODO: Validate that text is allowed as a child of this node
 	      if (contentToUse != null) {
-	        // Avoid setting textContent when the text is empty. In IE11 setting
-	        // textContent on a text area will cause the placeholder to not
-	        // show within the textarea until it has been focused and blurred again.
-	        // https://github.com/facebook/react/issues/6731#issuecomment-254874553
-	        if (contentToUse !== '') {
-	          if (true) {
-	            setAndValidateContentChildDev.call(this, contentToUse);
-	          }
-	          DOMLazyTree.queueText(lazyTree, contentToUse);
+	        // TODO: Validate that text is allowed as a child of this node
+	        if (true) {
+	          setAndValidateContentChildDev.call(this, contentToUse);
 	        }
+	        DOMLazyTree.queueText(lazyTree, contentToUse);
 	      } else if (childrenToUse != null) {
 	        var mountImages = this.mountChildren(childrenToUse, transaction, context);
 	        for (var i = 0; i < mountImages.length; i++) {
@@ -46066,17 +45911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    } else {
 	      if (props.value == null && props.defaultValue != null) {
-	        // In Chrome, assigning defaultValue to certain input types triggers input validation.
-	        // For number inputs, the display value loses trailing decimal points. For email inputs,
-	        // Chrome raises "The specified value <x> is not a valid email address".
-	        //
-	        // Here we check to see if the defaultValue has actually changed, avoiding these problems
-	        // when the user is inputting text
-	        //
-	        // https://github.com/facebook/react/issues/7253
-	        if (node.defaultValue !== '' + props.defaultValue) {
-	          node.defaultValue = '' + props.defaultValue;
-	        }
+	        node.defaultValue = '' + props.defaultValue;
 	      }
 	      if (props.checked == null && props.defaultChecked != null) {
 	        node.defaultChecked = !!props.defaultChecked;
@@ -46983,15 +46818,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // This is in postMount because we need access to the DOM node, which is not
 	    // available until after the component has mounted.
 	    var node = ReactDOMComponentTree.getNodeFromInstance(inst);
-	    var textContent = node.textContent;
 	
-	    // Only set node.value if textContent is equal to the expected
-	    // initial value. In IE10/IE11 there is a bug where the placeholder attribute
-	    // will populate textContent as well.
-	    // https://developer.microsoft.com/microsoft-edge/platform/issues/101525/
-	    if (textContent === inst._wrapperState.initialValue) {
-	      node.value = textContent;
-	    }
+	    // Warning: node.value may be the empty string at this point (IE11) if placeholder is set.
+	    node.value = node.textContent; // Detach value from defaultValue
 	  }
 	};
 	
@@ -49287,7 +49116,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict';
 	
-	module.exports = '15.4.2';
+	module.exports = '15.4.1';
 
 /***/ },
 /* 249 */
@@ -51416,6 +51245,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	
 	  close: function() {
+	    if (!this.ownerHandlesClose())
+	      return;
 	    if (this.props.closeTimeoutMS > 0)
 	      this.closeWithTimeout();
 	    else
@@ -53650,6 +53481,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 	
+	var fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
+	  var Klass = this;
+	  if (Klass.instancePool.length) {
+	    var instance = Klass.instancePool.pop();
+	    Klass.call(instance, a1, a2, a3, a4, a5);
+	    return instance;
+	  } else {
+	    return new Klass(a1, a2, a3, a4, a5);
+	  }
+	};
+	
 	var standardReleaser = function (instance) {
 	  var Klass = this;
 	  !(instance instanceof Klass) ?  true ? invariant(false, 'Trying to release an instance into a pool of a different type.') : _prodInvariant('25') : void 0;
@@ -53689,7 +53531,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  oneArgumentPooler: oneArgumentPooler,
 	  twoArgumentPooler: twoArgumentPooler,
 	  threeArgumentPooler: threeArgumentPooler,
-	  fourArgumentPooler: fourArgumentPooler
+	  fourArgumentPooler: fourArgumentPooler,
+	  fiveArgumentPooler: fiveArgumentPooler
 	};
 	
 	module.exports = PooledClass;
@@ -55361,7 +55204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict';
 	
-	module.exports = '15.4.2';
+	module.exports = '15.4.1';
 
 /***/ },
 /* 302 */
@@ -56042,8 +55885,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./medium-editor.css", function() {
-				var newContent = require("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./medium-editor.css");
+			module.hot.accept("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./medium-editor.css", function() {
+				var newContent = require("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./medium-editor.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -56068,8 +55911,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./redaxtor-medium.css", function() {
-				var newContent = require("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./redaxtor-medium.css");
+			module.hot.accept("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./redaxtor-medium.css", function() {
+				var newContent = require("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./redaxtor-medium.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -56094,8 +55937,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./redaxtor.css", function() {
-				var newContent = require("!!./../../redaxtor-bundler/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler/node_modules/postcss-loader/index.js!./redaxtor.css");
+			module.hot.accept("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./redaxtor.css", function() {
+				var newContent = require("!!./../../redaxtor-bundler-tool/node_modules/css-loader/index.js?-url!./../../redaxtor-bundler-tool/node_modules/postcss-loader/index.js!./redaxtor.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -56144,34 +55987,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
-	  The MIT License (MIT)
-	
-	  Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors.
-	
-	  Permission is hereby granted, free of charge, to any person
-	  obtaining a copy of this software and associated documentation files
-	  (the "Software"), to deal in the Software without restriction,
-	  including without limitation the rights to use, copy, modify, merge,
-	  publish, distribute, sublicense, and/or sell copies of the Software,
-	  and to permit persons to whom the Software is furnished to do so,
-	  subject to the following conditions:
-	
-	  The above copyright notice and this permission notice shall be
-	  included in all copies or substantial portions of the Software.
-	
-	  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-	  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-	  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-	  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-	  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	  SOFTWARE.
-	
-	*/
-	
-	/**
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	The following batches are equivalent:
 	
 	var beautify_js = require('js-beautify');
@@ -56235,7 +56051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  The MIT License (MIT)
 	
-	  Copyright (c) 2007-2017 Einar Lielmanis, Liam Newman, and contributors.
+	  Copyright (c) 2007-2013 Einar Lielmanis and contributors.
 	
 	  Permission is hereby granted, free of charge, to any person
 	  obtaining a copy of this software and associated documentation files
@@ -56279,7 +56095,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    brace_style (default "collapse") - "collapse" | "expand" | "end-expand" | "none"
 	            put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line, or attempt to keep them where they are.
 	    unformatted (defaults to inline tags) - list of tags, that shouldn't be reformatted
-	    content_unformatted (defaults to pre tag) - list of tags, that its content shouldn't be reformatted
 	    indent_scripts (default normal)  - "keep"|"separate"|"normal"
 	    preserve_newlines (default true) - whether existing line breaks before elements should be preserved
 	                                        Only works before elements, not inside tags or for text.
@@ -56317,28 +56132,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return s.replace(/\s+$/g, '');
 	    }
 	
-	    function mergeOpts(allOptions, targetType) {
-	        var finalOpts = {};
-	        var name;
-	
-	        for (name in allOptions) {
-	            if (name !== targetType) {
-	                finalOpts[name] = allOptions[name];
-	            }
-	        }
-	
-	        //merge in the per type settings for the targetType
-	        if (targetType in allOptions) {
-	            for (name in allOptions[targetType]) {
-	                finalOpts[name] = allOptions[targetType][name];
-	            }
-	        }
-	        return finalOpts;
-	    }
-	
-	    var lineBreak = /\r\n|[\n\r\u2028\u2029]/;
-	    var allLineBreaks = new RegExp(lineBreak.source, 'g');
-	
 	    function style_html(html_source, options, js_beautify, css_beautify) {
 	        //Wrapper function to invoke all the necessary constructors and deal with the output.
 	
@@ -56351,24 +56144,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            wrap_line_length,
 	            brace_style,
 	            unformatted,
-	            content_unformatted,
 	            preserve_newlines,
 	            max_preserve_newlines,
 	            indent_handlebars,
 	            wrap_attributes,
 	            wrap_attributes_indent_size,
-	            is_wrap_attributes_force,
-	            is_wrap_attributes_force_expand_multiline,
-	            is_wrap_attributes_force_aligned,
 	            end_with_newline,
 	            extra_liners,
 	            eol;
 	
 	        options = options || {};
-	
-	        // Allow the setting of language/file-type specific options
-	        // with inheritance of overall settings
-	        options = mergeOpts(options, 'html');
 	
 	        // backwards compatibility to 1.3.4
 	        if ((options.wrap_line_length === undefined || parseInt(options.wrap_line_length, 10) === 0) &&
@@ -56392,9 +56177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            'span', 'strong', 'sub', 'sup', 'svg', 'template', 'textarea', 'time', 'u', 'var',
 	            'video', 'wbr', 'text',
 	            // prexisting - not sure of full effect of removing, leaving in
-	            'acronym', 'address', 'big', 'dt', 'ins', 'strike', 'tt',
-	        ];
-	        content_unformatted = options.content_unformatted || [
+	            'acronym', 'address', 'big', 'dt', 'ins', 'small', 'strike', 'tt',
 	            'pre',
 	        ];
 	        preserve_newlines = (options.preserve_newlines === undefined) ? true : options.preserve_newlines;
@@ -56404,31 +56187,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        indent_handlebars = (options.indent_handlebars === undefined) ? false : options.indent_handlebars;
 	        wrap_attributes = (options.wrap_attributes === undefined) ? 'auto' : options.wrap_attributes;
 	        wrap_attributes_indent_size = (isNaN(parseInt(options.wrap_attributes_indent_size, 10))) ? indent_size : parseInt(options.wrap_attributes_indent_size, 10);
-	        is_wrap_attributes_force = wrap_attributes.substr(0, 'force'.length) === 'force';
-	        is_wrap_attributes_force_expand_multiline = (wrap_attributes === 'force-expand-multiline');
-	        is_wrap_attributes_force_aligned = (wrap_attributes === 'force-aligned');
 	        end_with_newline = (options.end_with_newline === undefined) ? false : options.end_with_newline;
 	        extra_liners = (typeof options.extra_liners === 'object') && options.extra_liners ?
 	            options.extra_liners.concat() : (typeof options.extra_liners === 'string') ?
 	            options.extra_liners.split(',') : 'head,body,/html'.split(',');
-	        eol = options.eol ? options.eol : 'auto';
+	        eol = options.eol ? options.eol : '\n';
 	
 	        if (options.indent_with_tabs) {
 	            indent_character = '\t';
 	            indent_size = 1;
 	        }
 	
-	        if (eol === 'auto') {
-	            eol = '\n';
-	            if (html_source && lineBreak.test(html_source || '')) {
-	                eol = html_source.match(lineBreak)[0];
-	            }
-	        }
-	
 	        eol = eol.replace(/\\r/, '\r').replace(/\\n/, '\n');
-	
-	        // HACK: newline parsing inconsistent. This brute force normalizes the input.
-	        html_source = html_source.replace(allLineBreaks, '\n');
 	
 	        function Parser() {
 	
@@ -56525,10 +56295,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            this.get_content = function() { //function to capture regular content between tags
 	                var input_char = '',
-	                    content = [],
-	                    handlebarsStarted = 0;
+	                    content = [];
 	
-	                while (this.input.charAt(this.pos) !== '<' || handlebarsStarted === 2) {
+	                while (this.input.charAt(this.pos) !== '<') {
 	                    if (this.pos >= this.input.length) {
 	                        return content.length ? content.join('') : ['', 'TK_EOF'];
 	                    }
@@ -56538,20 +56307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        continue;
 	                    }
 	
-	                    input_char = this.input.charAt(this.pos);
-	
 	                    if (indent_handlebars) {
-	                        if (input_char === '{') {
-	                            handlebarsStarted += 1;
-	                        } else if (handlebarsStarted < 2) {
-	                            handlebarsStarted = 0;
-	                        }
-	
-	                        if (input_char === '}' && handlebarsStarted > 0) {
-	                            if (handlebarsStarted-- === 0) {
-	                                break;
-	                            }
-	                        }
 	                        // Handlebars parsing is complicated.
 	                        // {{#foo}} and {{/foo}} are formatted tags.
 	                        // {{something}} should get treated as content, except:
@@ -56569,6 +56325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        }
 	                    }
 	
+	                    input_char = this.input.charAt(this.pos);
 	                    this.pos++;
 	                    this.line_char_count++;
 	                    content.push(input_char); //letter at-a-time (or string) inserted to an array
@@ -56650,13 +56407,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    comment = '',
 	                    space = false,
 	                    first_attr = true,
-	                    has_wrapped_attrs = false,
 	                    tag_start, tag_end,
 	                    tag_start_char,
 	                    orig_pos = this.pos,
-	                    orig_line_char_count = this.line_char_count,
-	                    is_tag_closed = false,
-	                    tail;
+	                    orig_line_char_count = this.line_char_count;
 	
 	                peek = peek !== undefined ? peek : false;
 	
@@ -56680,57 +56434,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (input_char === "'" || input_char === '"') {
 	                        input_char += this.get_unformatted(input_char);
 	                        space = true;
+	
 	                    }
 	
 	                    if (input_char === '=') { //no space before =
 	                        space = false;
 	                    }
-	                    tail = this.input.substr(this.pos - 1);
-	                    if (is_wrap_attributes_force_expand_multiline && has_wrapped_attrs && !is_tag_closed && (input_char === '>' || input_char === '/')) {
-	                        if (tail.match(/^\/?\s*>/)) {
-	                            space = false;
-	                            is_tag_closed = true;
-	                            this.print_newline(false, content);
-	                            this.print_indentation(content);
-	                        }
-	                    }
+	
 	                    if (content.length && content[content.length - 1] !== '=' && input_char !== '>' && space) {
 	                        //no space after = or before >
 	                        var wrapped = this.space_or_wrap(content);
-	                        var indentAttrs = wrapped && input_char !== '/' && !is_wrap_attributes_force;
+	                        var indentAttrs = wrapped && input_char !== '/' && wrap_attributes !== 'force';
 	                        space = false;
-	
-	                        if (is_wrap_attributes_force && input_char !== '/') {
-	                            var force_first_attr_wrap = false;
-	                            if (is_wrap_attributes_force_expand_multiline && first_attr) {
-	                                var is_only_attribute = tail.match(/^\S*(="([^"]|\\")*")?\s*\/?\s*>/) !== null;
-	                                force_first_attr_wrap = !is_only_attribute;
-	                            }
-	                            if (!first_attr || force_first_attr_wrap) {
-	                                this.print_newline(false, content);
-	                                this.print_indentation(content);
-	                                indentAttrs = true;
-	                            }
+	                        if (!first_attr && wrap_attributes === 'force' && input_char !== '/') {
+	                            this.print_newline(false, content);
+	                            this.print_indentation(content);
+	                            indentAttrs = true;
 	                        }
 	                        if (indentAttrs) {
-	                            has_wrapped_attrs = true;
-	
-	                            //indent attributes an auto, forced, or forced-align line-wrap
-	                            var alignment_size = wrap_attributes_indent_size;
-	                            if (is_wrap_attributes_force_aligned) {
-	                                alignment_size = content.indexOf(' ') + 1;
-	                            }
-	
-	                            for (var count = 0; count < alignment_size; count++) {
+	                            //indent attributes an auto or forced line-wrap
+	                            for (var count = 0; count < wrap_attributes_indent_size; count++) {
 	                                content.push(indent_character);
 	                            }
 	                        }
-	                        if (first_attr) {
-	                            for (var i = 0; i < content.length; i++) {
-	                                if (content[i] === ' ') {
-	                                    first_attr = false;
-	                                    break;
-	                                }
+	                        for (var i = 0; i < content.length; i++) {
+	                            if (content[i] === ' ') {
+	                                first_attr = false;
+	                                break;
 	                            }
 	                        }
 	                    }
@@ -56789,9 +56519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var tag_index;
 	                var tag_offset;
 	
-	                if (tag_complete.indexOf('\n') !== -1) { //if there's a line break, thats where the tag name ends
-	                    tag_index = tag_complete.indexOf('\n');
-	                } else if (tag_complete.indexOf(' ') !== -1) { //if there's whitespace, thats where the tag name ends
+	                if (tag_complete.indexOf(' ') !== -1) { //if there's whitespace, thats where the tag name ends
 	                    tag_index = tag_complete.indexOf(' ');
 	                } else if (tag_complete.charAt(0) === '{') {
 	                    tag_index = tag_complete.indexOf('}');
@@ -56816,9 +56544,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        this.indent_content = true;
 	                        this.traverse_whitespace();
 	                    }
-	                } else if (this.is_unformatted(tag_check, unformatted) ||
-	                    this.is_unformatted(tag_check, content_unformatted)) {
-	                    // do not reformat the "unformatted" or "content_unformatted" tags
+	                } else if (this.is_unformatted(tag_check, unformatted)) { // do not reformat the "unformatted" tags
 	                    comment = this.get_unformatted('</' + tag_check + '>', tag_complete); //...delegate to get_unformatted function
 	                    content.push(comment);
 	                    tag_end = this.pos - 1;
@@ -56910,14 +56636,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        } else if (comment.indexOf('<!--') === 0) { // <!-- comment ...
 	                            delimiter = '-->';
 	                            matched = true;
-	                        } else if (comment.indexOf('{{!--') === 0) { // {{!-- handlebars comment
-	                            delimiter = '--}}';
-	                            matched = true;
 	                        } else if (comment.indexOf('{{!') === 0) { // {{! handlebars comment
-	                            if (comment.length === 5 && comment.indexOf('{{!--') === -1) {
-	                                delimiter = '}}';
-	                                matched = true;
-	                            }
+	                            delimiter = '}}';
+	                            matched = true;
 	                        } else if (comment.indexOf('<?') === 0) { // {{! handlebars comment
 	                            delimiter = '?>';
 	                            matched = true;
