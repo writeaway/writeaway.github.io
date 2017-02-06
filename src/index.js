@@ -22,6 +22,50 @@ class RedaxtorBundle extends Redaxtor {
         options.pieces.components = components;
         RedaxtorBundle.checkHtmlPiecesCompartibility(document);
         super(options);
+
+        if(options.editorActive == undefined || options.editorActive == null) {
+            this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive') == 'true');
+        }
+        if(options.navBarCollapsed == undefined || options.navBarCollapsed == null) {
+            this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed') == 'true');
+        }
+
+        this.onUnload = this.beforeUnload.bind(this);
+        window.addEventListener("beforeunload", this.onUnload)
+    }
+
+    /**
+     * beforeUnload listner
+     * @param event
+     */
+    beforeUnload(event) {
+        RedaxtorBundle.setCookie('r_editorActive', this.isEditorActive());
+        RedaxtorBundle.setCookie('r_navBarCollapsed', this.isNavBarCollapsed())
+    }
+
+    static setCookie(name, value) {
+        let options = {};
+
+        value = encodeURIComponent(value);
+
+        let updatedCookie = name + "=" + value;
+
+        for (let propName in options) {
+            updatedCookie += "; " + propName;
+            let propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+            }
+        }
+
+        document.cookie = updatedCookie;
+    }
+
+    static getCookie(name){
+        var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
     }
 
     /**
