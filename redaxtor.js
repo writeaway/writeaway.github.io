@@ -28271,7 +28271,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getImageList: false,
 	    uploadImage: false,
 	    getPieceData: function getPieceData(piece) {
-	        console.warn("Using default implementation for getting piece data. This should be overriden", piece);
 	        if (piece.type == "source" || piece.type == "html") {
 	            return Promise.resolve(_extends({}, piece, {
 	                data: {
@@ -33264,6 +33263,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.editor = new _mediumEditor2.default(node, this.options);
 	        this.element = this.editor.elements[0];
+	        if (!this.element) {
+	            console.error('Could not create MediumEditor on node for unknown reason ', node);
+	            return;
+	        }
 	        this.onFocusBinded = this.onFocus.bind(this);
 	        this.onBlurBinded = this.onBlur.bind(this);
 	        this.saveBinded = this.save.bind(this);
