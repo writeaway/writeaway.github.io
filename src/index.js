@@ -20,6 +20,7 @@ var components = {
 class RedaxtorBundle extends Redaxtor {
     constructor(options) {
         options.pieces.components = components;
+        options.pieceNameGroupSeparator = ':';
         RedaxtorBundle.checkHtmlPiecesCompartibility(document);
         super(options);
 
