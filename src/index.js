@@ -8,6 +8,7 @@ var RedaxtorSeo = require('../../redaxtor-seo/src/index');
 require('../../redaxtor/dist/redaxtor.css');
 require('../../redaxtor-medium/dist/medium-editor.css');
 require('../../redaxtor-medium/dist/redaxtor-medium.css');
+require('../../redaxtor-seo/src/google-preview.less');
 
 require('../node_modules/codemirror/lib/codemirror.css');
 require('../seo.css');
@@ -37,10 +38,10 @@ class RedaxtorBundle extends Redaxtor {
                     || (document.querySelector('title') && document.querySelector('title').innerHTML)
                     || "",
                     description: (data && data.description)
-                    || (document.querySelector('meta[name="description"]') && document.querySelector('meta[name="description"]').innerHTML)
+                    || (document.querySelector('meta[name="description"]') && document.querySelector('meta[name="description"]').getAttribute("content"))
                     || "",
                     keywords: (data && data.keywords)
-                    || (document.querySelector('meta[name="keywords"]') && document.querySelector('meta[name="keywords"]').innerHTML)
+                    || (document.querySelector('meta[name="keywords"]') && document.querySelector('meta[name="keywords"]').getAttribute("content"))
                     || ""
                 }
             });
