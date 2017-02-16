@@ -9,6 +9,10 @@
     display: none;
 }
 .edit-seo-div.r_editor.r_edit {
-    display: block;
-    outline: none;
+    /* display: block;
+    outline: none; */
+}
+
+.r_item-type-seo {
+    font-weight: bold;
 }

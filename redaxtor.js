@@ -9543,6 +9543,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PIECES_ENABLE_EDIT: "PIECES_ENABLE_EDIT",
 	    PIECES_DISABLE_EDIT: "PIECES_DISABLE_EDIT",
 	    PIECES_SET_SOURCE_ID: "PIECES_SET_SOURCE_ID",
+	    PIECES_ACTIVATION_SENT_PIECE: "PIECES_ACTIVATION_SENT_PIECE",
+	    PIECES_ACTIVATE_PIECE: "PIECES_ACTIVATE_PIECE",
 	    PIECE_UPDATE: "PIECE_UPDATE",
 	    PIECE_RESET: "PIECE_RESET",
 	    PIECE_ADD: "PIECE_ADD",
@@ -22447,7 +22449,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.setPieceMessage = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.pieceMessageSetted = exports.setPieceData = exports.removePiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
+	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.setPieceMessage = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.pieceMessageSetted = exports.setPieceData = exports.removePiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.onActivationSentPiece = exports.activatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
 	
 	var _react = __webpack_require__(3);
 	
@@ -22516,6 +22518,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var setSourceId = exports.setSourceId = function setSourceId(id) {
 	    return { type: _constants2.default.PIECES_SET_SOURCE_ID, id: id };
+	};
+	
+	var activatePiece = exports.activatePiece = function activatePiece(id) {
+	    return { type: _constants2.default.PIECES_ACTIVATE_PIECE, id: id };
+	};
+	
+	var onActivationSentPiece = exports.onActivationSentPiece = function onActivationSentPiece(id) {
+	    return { type: _constants2.default.PIECES_ACTIVATION_SENT_PIECE, id: id };
 	};
 	
 	var updatePiece = exports.updatePiece = function updatePiece(id, piece, notChanged) {
@@ -36172,7 +36182,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this;
 	    }
 	
+	    /**
+	     * That is a common public method that should activate component editor if it presents
+	     */
+	
+	
 	    _createClass(CodeMirror, [{
+	        key: 'activateEditor',
+	        value: function activateEditor() {
+	            if (this.props.editorActive && !this.state.sourceEditorActive) {
+	                this.setState({ sourceEditorActive: true });
+	            }
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(newProps) {
+	            if (newProps.manualActivation) {
+	                this.props.onManualActivation(this.props.id);
+	                this.activateEditor();
+	            }
+	        }
+	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            console.log('Code mirror ' + this.props.id + ' unmounted');
@@ -36391,6 +36421,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function componentDidMount() {
 	            _index.imageManagerApi.init({ api: this.props.api });
 	            this.check();
+	        }
+	    }, {
+	        key: 'activateEditor',
+	
+	
+	        /**
+	         * That is a common public method that should activate component editor if it presents
+	         */
+	        value: function activateEditor() {
+	            if (this.props.editorActive && !_index.imageManagerApi.get().state.isVisible) {
+	                this.onToggleImagePopup();
+	            }
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(newProps) {
+	            if (newProps.manualActivation) {
+	                this.props.onManualActivation(this.props.id);
+	                this.activateEditor();
+	            }
 	        }
 	    }, {
 	        key: 'onToggleImagePopup',
@@ -36747,11 +36797,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this;
 	    }
 	
+	    /**
+	     * That is a common public method that should activate component editor if it presents
+	     */
+	
+	
 	    _createClass(RedaxtorImageTag, [{
+	        key: 'activateEditor',
+	        value: function activateEditor() {
+	            if (this.props.editorActive && !_index.imageManagerApi.get().state.isVisible) {
+	                this.onToggleImagePopup();
+	            }
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(newProps) {
+	            if (newProps.manualActivation) {
+	                this.props.onManualActivation(this.props.id);
+	                this.activateEditor();
+	            }
+	        }
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            _index.imageManagerApi.init({ api: this.props.api });
-	
 	            this.check();
 	        }
 	    }, {
@@ -38730,7 +38799,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this;
 	    }
 	
+	    /**
+	     * That is a common public method that should activate component editor if it presents
+	     */
+	
+	
 	    _createClass(RedaxtorSeo, [{
+	        key: 'activateEditor',
+	        value: function activateEditor() {
+	            if (this.props.editorActive && !this.state.sourceEditorActive) {
+	                this.setState({ sourceEditorActive: true });
+	            }
+	        }
+	    }, {
 	        key: 'onClick',
 	        value: function onClick(e) {
 	            e.preventDefault();
@@ -38754,6 +38835,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Props are always superior to state
 	
 	            this.setState((_setState = {}, _defineProperty(_setState, TITLE_FIELD, nextProps.data[TITLE_FIELD] || ""), _defineProperty(_setState, KEYWORDS_FIELD, nextProps.data[KEYWORDS_FIELD] || ""), _defineProperty(_setState, DESCRIPTION_FIELD, nextProps.data[DESCRIPTION_FIELD] || ""), _defineProperty(_setState, HEADER_HTML_FIELD, nextProps.data[HEADER_HTML_FIELD] || ""), _setState));
+	
+	            if (nextProps.manualActivation) {
+	                this.props.onManualActivation(this.props.id);
+	                this.activateEditor();
+	            };
 	        }
 	    }, {
 	        key: 'shouldComponentUpdate',
@@ -39675,7 +39761,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }),
 	                _react2.default.createElement(_PiecesList2.default, { editorActive: this.props.editorActive, pieces: this.props.byId || {},
 	                    source: this.props['editorEnabled:source'] && this.props.components.source,
-	                    setSourceId: this.props.setSourceId, pieceNameGroupSeparator: this.props.options.pieceNameGroupSeparator,
+	                    allProps: this.props // TODO: This is ugly
+	                    , setSourceId: this.props.setSourceId,
+	                    activatePiece: this.props.activatePiece,
+	                    pieceNameGroupSeparator: this.props.options.pieceNameGroupSeparator,
 	                    savePiece: this.props.savePiece, updatePiece: this.props.updatePiece })
 	            );
 	        }
@@ -39767,13 +39856,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                source = _props.source;
 	
 	            var id = piece.id;
+	            var hasActionOpen = true;
+	            //console.log(piece, this.props);
 	
 	            var name = piece.name ? piece.name.split(this.props.pieceNameGroupSeparator) : [id];
 	            var prevName = this.props.prevPieceName ? this.props.prevPieceName.split(this.props.pieceNameGroupSeparator) : [];
-	
+	            var noOmit = true;
 	            return _react2.default.createElement(
 	                "div",
-	                { className: "r_item-row" },
+	                { className: "r_item-row r_item-type-" + piece.type },
 	                _react2.default.createElement(
 	                    "div",
 	                    null,
@@ -39781,7 +39872,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "span",
 	                        { className: "r_item_name" },
 	                        name.map(function (namePart, index) {
-	                            var omit = name.length > 1 && prevName.length > 1 && namePart == prevName[index] ? 'omit' : '';
+	                            var omit = '';
+	                            if (noOmit && name.length > 1 && prevName.length > 1 && namePart == prevName[index]) {
+	                                omit = 'omit';
+	                            } else {
+	                                noOmit = false; // Skip rest once met unmatch
+	                            }
 	                            return _react2.default.createElement(
 	                                "span",
 	                                { className: "level-" + (name.length > 1 ? index : 1) + " " + omit, key: index },
@@ -39796,7 +39892,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        source && editorActive && piece.data && piece.data.html && _react2.default.createElement("i", { className: "r_icon-code r_btn", onClick: function onClick() {
 	                                return _this2.props.setSourceId(id);
 	                            } }),
-	                        piece.changed && _react2.default.createElement("i", { className: "r_icon-floppy r_btn", onClick: this.props.savePiece })
+	                        piece.changed && _react2.default.createElement("i", { className: "r_icon-floppy r_btn", onClick: this.props.savePiece }),
+	                        editorActive && piece.data && !piece.data.html && hasActionOpen && _react2.default.createElement("i", { className: "r_icon-pencil r_btn", onClick: function onClick() {
+	                                return _this2.props.activatePiece(id);
+	                            } })
 	                    )
 	                ),
 	                piece.message && _react2.default.createElement(
@@ -39834,18 +39933,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	                "div",
 	                { className: "r_list" },
 	                Object.keys(this.props.pieces).map(function (id) {
-	                    var prevPieceName = prevId ? _this4.props.pieces[prevId].name : '';
-	                    prevId = id;
+	                    if (_this4.props.allProps['editorEnabled:' + _this4.props.pieces[id].type]) {
+	                        var prevPieceName = prevId ? _this4.props.pieces[prevId].name : '';
+	                        prevId = id;
 	
-	                    return _react2.default.createElement(PieceLine, { key: id, piece: _this4.props.pieces[id],
-	                        savePiece: function savePiece() {
-	                            return _this4.props.savePiece(id);
-	                        },
-	                        source: _this4.props.source,
-	                        setSourceId: _this4.props.setSourceId,
-	                        pieceNameGroupSeparator: _this4.props.pieceNameGroupSeparator,
-	                        prevPieceName: prevPieceName,
-	                        editorActive: _this4.props.editorActive });
+	                        return _react2.default.createElement(PieceLine, { key: id, piece: _this4.props.pieces[id],
+	                            savePiece: function savePiece() {
+	                                return _this4.props.savePiece(id);
+	                            },
+	                            activatePiece: _this4.props.activatePiece,
+	                            source: _this4.props.source,
+	                            setSourceId: _this4.props.setSourceId,
+	                            pieceNameGroupSeparator: _this4.props.pieceNameGroupSeparator,
+	                            prevPieceName: prevPieceName,
+	                            editorActive: _this4.props.editorActive });
+	                    } else {
+	                        return false;
+	                    }
 	                })
 	            );
 	        }
@@ -40057,6 +40161,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
+	        onManualActivation: function onManualActivation(id) {
+	            return dispatch((0, _pieces.onActivationSentPiece)(id));
+	        },
 	        updatePiece: function updatePiece(id, piece) {
 	            return dispatch((0, _pieces.updatePiece)(id, piece));
 	        },
@@ -40364,6 +40471,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return _extends({}, piece, { fetched: false, fetching: false });
 	        case _constants2.default.PIECE_FETCHING_ERROR:
 	            return _extends({}, piece, { error: action.error, fetching: false });
+	        case _constants2.default.PIECES_ACTIVATE_PIECE:
+	            return _extends({}, piece, { manualActivation: true });
+	        case _constants2.default.PIECES_ACTIVATION_SENT_PIECE:
+	            return _extends({}, piece, { manualActivation: false });
 	        default:
 	            return piece;
 	    }
@@ -40396,8 +40507,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else {
 	                return _extends({}, pieces, { editorActive: false });
 	            }
-	        case _constants2.default.PIECES_SET_SOURCE_ID:
-	            return _extends({}, pieces, { sourceId: action.id });
 	
 	        case _constants2.default.PIECE_ADD:
 	            return _extends({}, pieces, {
@@ -40430,6 +40539,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        case _constants2.default.PIECE_SAVING_FAILED:
 	        case _constants2.default.PIECE_REMOVE:
 	        case _constants2.default.PIECE_SET_MESSAGE:
+	        case _constants2.default.PIECES_ACTIVATE_PIECE:
+	        case _constants2.default.PIECES_ACTIVATION_SENT_PIECE:
 	
 	        case _constants2.default.PIECE_FETCHING:
 	        case _constants2.default.PIECE_FETCHED:
@@ -42489,7 +42600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".edit-seo-div {\r\n    position: fixed;\r\n    bottom: 0;\r\n    right: 0;\r\n    padding: 5px;\r\n    background: white;\r\n    box-shadow: 0px 0px 3px rgba(0,0,0,0.5);\r\n    cursor: pointer;\r\n    display: none;\r\n}\r\n.edit-seo-div.r_editor.r_edit {\r\n    display: block;\r\n    outline: none;\r\n}", ""]);
+	exports.push([module.id, ".edit-seo-div {\r\n    position: fixed;\r\n    bottom: 0;\r\n    right: 0;\r\n    padding: 5px;\r\n    background: white;\r\n    box-shadow: 0px 0px 3px rgba(0,0,0,0.5);\r\n    cursor: pointer;\r\n    display: none;\r\n}\r\n.edit-seo-div.r_editor.r_edit {\r\n    /* display: block;\r\n    outline: none; */\r\n}\r\n\r\n.r_item-type-seo {\r\n    font-weight: bold;\r\n}", ""]);
 	
 	// exports
 
