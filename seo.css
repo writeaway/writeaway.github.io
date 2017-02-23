@@ -13,6 +13,6 @@
     outline: none; */
 }
 
-.r_item-type-seo {
+.r_reset .r_item-type-seo span{
     font-weight: bold;
 }
