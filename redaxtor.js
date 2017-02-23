@@ -277,7 +277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	
 	/**
 	 * Similar to invariant but only logs a warning if the condition is not met.
@@ -1047,6 +1047,15 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	module.exports = __webpack_require__(223);
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/**
 	 * Copyright 2016-present, Facebook, Inc.
 	 * All rights reserved.
@@ -1072,7 +1081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = { debugTool: debugTool };
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1113,15 +1122,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	module.exports = emptyFunction;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	module.exports = __webpack_require__(223);
-
 
 /***/ },
 /* 12 */
@@ -1433,7 +1433,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var PooledClass = __webpack_require__(21);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var warning = __webpack_require__(2);
 	
 	var didWarnForAddedNewProperty = false;
@@ -9562,6 +9562,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PIECE_SAVED: "PIECE_SAVED",
 	    PIECE_SAVING_FAILED: "PIECE_SAVING_FAILED",
 	
+	    PIECES_EDITOR_ACTIVE: "PIECES_EDITOR_ACTIVE",
+	    PIECES_HOVERED: "PIECES_HOVERED",
+	
 	    /* I18N */
 	    I18N_INIT: "I18N_INIT",
 	    I18N_FIND: "I18N_FIND",
@@ -10603,7 +10606,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	
 	var ReactRef = __webpack_require__(252);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	
 	var warning = __webpack_require__(2);
 	
@@ -22357,7 +22360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _ImageManager2 = _interopRequireDefault(_ImageManager);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -22372,22 +22375,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    api: null
 	};
 	
-	var lazyGetImageManager = function lazyGetImageManager(api) {
+	var lazyGetImageManager = function lazyGetImageManager(api, container) {
 	    if (lazy.imageManger) {
 	        return lazy.imageManager;
 	    }
 	    lazy.api = api;
-	    var popupNode = document.createElement("DIV");
+	    var popupNode = document.createElement("redaxtor-image-manager");
 	    lazy.imageManager = _reactDom2.default.render(_react2.default.createElement(_ImageManager2.default, { api: api }), popupNode);
-	    document.body.appendChild(popupNode);
+	    container.appendChild(popupNode);
 	    return lazy.imageManager;
 	};
 	
 	var init = function init(data) {
 	    if (lazy.imageManger && lazy.api != data.api) {
-	        console.error("Image manager is stand alone and can't be recreated with different API");
+	        console.error("Image manager is singleton-ish and can't be recreated with different API");
 	    }
-	    lazyGetImageManager(data.api);
+	    lazyGetImageManager(data.api, data.container || document.body);
 	};
 	
 	var get = function get() {
@@ -22449,13 +22452,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.setPieceMessage = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.pieceMessageSetted = exports.setPieceData = exports.removePiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.onActivationSentPiece = exports.activatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
+	exports.pieceUnmount = exports.pieceGet = exports.pieceFetchingError = exports.pieceFetchingFailed = exports.pieceFetched = exports.pieceFetching = exports.savePieces = exports.setPieceMessage = exports.savePiece = exports.pieceSavingFailed = exports.pieceSaved = exports.pieceSaving = exports.hasRemovedPiece = exports.pieceMessageSetted = exports.setPieceData = exports.removePiece = exports.onNodeUpdated = exports.onEditorActive = exports.hoverPiece = exports.addPiece = exports.resetPiece = exports.updatePiece = exports.onActivationSentPiece = exports.activatePiece = exports.setSourceId = exports.piecesToggleEdit = exports.piecesInit = exports.piecesDisableEdit = exports.piecesEnableEdit = undefined;
 	
 	var _react = __webpack_require__(3);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -22540,6 +22543,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return { type: _constants2.default.PIECE_ADD, id: piece.id, piece: piece };
 	};
 	
+	var hoverPiece = exports.hoverPiece = function hoverPiece(pieceId, rect) {
+	    return { type: _constants2.default.PIECES_HOVERED, id: pieceId, rect: rect };
+	};
+	
+	var onEditorActive = exports.onEditorActive = function onEditorActive(pieceId, active) {
+	    return { type: _constants2.default.PIECES_EDITOR_ACTIVE, id: pieceId, active: active };
+	};
+	
+	var onNodeUpdated = exports.onNodeUpdated = function onNodeUpdated(pieceId) {
+	    return function (dispatch, getState) {
+	        var piece = getState().pieces.byId[pieceId];
+	        var hoveredId = getState().pieces.hoveredId;
+	        var activeId = getState().pieces.activeId;
+	
+	        if (hoveredId == pieceId) {
+	            dispatch(hoverPiece(pieceId, piece.node.getBoundingClientRect()));
+	        }
+	    };
+	};
+	
 	var removePiece = exports.removePiece = function removePiece(id) {
 	    return { type: _constants2.default.PIECE_REMOVE, id: id };
 	};
@@ -22549,7 +22572,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var pieceMessageSetted = exports.pieceMessageSetted = function pieceMessageSetted(id, message, messageLevel) {
-	    return { type: _constants2.default.PIECE_SET_MESSAGE, id: id, message: message, messageLevel: messageLevel };
+	    return {
+	        type: _constants2.default.PIECE_SET_MESSAGE,
+	        id: id,
+	        message: message,
+	        messageLevel: messageLevel
+	    };
 	};
 	
 	var hasRemovedPiece = exports.hasRemovedPiece = function hasRemovedPiece(id) {
@@ -22659,30 +22687,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var pieceRender = function pieceRender(piece) {
-	    var ComponentClass = (0, _config.getConfig)().pieces.components[piece.type];
-	    if (ComponentClass.__renderType === "INSIDE") {
-	        piece.node.__rdxContainderNode = piece.node;
-	        return _reactDom2.default.render(_react2.default.createElement(
-	            _reactRedux.Provider,
-	            { store: (0, _store.getStore)() },
-	            _react2.default.createElement(_connectPieceContainer2.default, { id: piece.id,
-	                component: (0, _config.getConfig)().pieces.components[piece.type], targetNode: piece.node
-	            })
-	        ), piece.node);
+	    // let ComponentClass = getConfig().pieces.components[piece.type];
+	    var mainNode = document.querySelector("redaxtor-react-container");
+	    if (!mainNode) {
+	        mainNode = document.createElement("redaxtor-react-container");
+	        document.body.appendChild(mainNode);
 	    }
-	    if (ComponentClass.__renderType === "BEFORE") {
-	        var containerNode = document.createElement("redaxtor-editor");
-	        document.body.appendChild(containerNode);
-	        piece.node.__rdxContainderNode = containerNode;
-	        return _reactDom2.default.render(_react2.default.createElement(
-	            _reactRedux.Provider,
-	            { store: (0, _store.getStore)() },
-	            _react2.default.createElement(_connectPieceContainer2.default, { id: piece.id,
-	                component: (0, _config.getConfig)().pieces.components[piece.type], targetNode: piece.node
-	            })
-	        ), containerNode);
-	    }
-	    throw new Error("Component class has no __renderType specified or __renderType is not supported");
+	    var containerNode = document.createElement("redaxtor-editor");
+	    mainNode.appendChild(containerNode);
+	    piece.node.__rdxContainderNode = containerNode;
+	    return _reactDom2.default.render(_react2.default.createElement(
+	        _reactRedux.Provider,
+	        { store: (0, _store.getStore)() },
+	        _react2.default.createElement(_connectPieceContainer2.default, { id: piece.id,
+	            component: (0, _config.getConfig)().pieces.components[piece.type], targetNode: piece.node
+	        })
+	    ), containerNode, function (ref) {
+	        piece.node.__rdxRef = ref;
+	    });
 	};
 
 /***/ },
@@ -22889,7 +22911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DOMLazyTree = __webpack_require__(24);
 	var Danger = __webpack_require__(215);
 	var ReactDOMComponentTree = __webpack_require__(6);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	
 	var createMicrosoftUnsafeLocalFunction = __webpack_require__(58);
 	var setInnerHTML = __webpack_require__(43);
@@ -23706,7 +23728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var ReactCurrentOwner = __webpack_require__(13);
 	var ReactInstanceMap = __webpack_require__(35);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var ReactUpdates = __webpack_require__(12);
 	
 	var invariant = __webpack_require__(1);
@@ -24220,7 +24242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _assign = __webpack_require__(5);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var warning = __webpack_require__(2);
 	
 	var validateDOMNesting = emptyFunction;
@@ -31303,7 +31325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -31404,8 +31426,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /**
 	         * External server API
+	         * @type {RedaxtorAPI}
 	         */
 	        this.api = void 0;
+	
 	        /**
 	         * Editable DOM pieces editors
 	         */
@@ -31423,7 +31447,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.i18n = void 0;
 	
-	        var defaultState = { global: { navBarCollapsed: true } };
+	        var defaultState = {
+	            global: {
+	                navBarCollapsed: true
+	            }
+	        };
 	
 	        /**
 	         * Init API. Api is a const, we don't put it in storage, putting in const config instead
@@ -31488,7 +31516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options.ajax) (0, _callFetch.configureFetch)(options.ajax);
 	
 	        /**
-	         * options.piecesRoot - say where get pieces
+	         * options.piecesRoot - say where search for pieces
 	         */
 	        options.pieces && this.initPieces(options.piecesRoot || document);
 	
@@ -31513,19 +31541,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.showBar(barOptions);
 	
 	        /**
-	         * enable pieces editing if set option 'editorActive'
+	         * Enable pieces editing if set option 'editorActive'
 	         */
 	        if (options.editorActive) {
 	            this.store.dispatch((0, _pieces.piecesToggleEdit)());
 	        }
+	
+	        this.onHoverTrack = this._onHoverTrack.bind(this);
+	        document.addEventListener("mousemove", this.onHoverTrack);
 	    }
 	
 	    /**
-	     * Renders a top Redaxtor bar with controls and attach it to body
+	     * @private
 	     */
 	
 	
 	    _createClass(Redaxtor, [{
+	        key: "_onHoverTrack",
+	        value: function _onHoverTrack(e) {
+	            var state = this.store.getState();
+	            var pieces = state.pieces;
+	            var pieceHovered = state.pieces.hoveredId;
+	            var pieceActive = state.pieces.activeId;
+	            var foundId = null;
+	            var foundRect = null;
+	
+	            if (pieceActive) {
+	                return;
+	            }
+	            Object.keys(pieces.byId).forEach(function (pieceId) {
+	
+	                /**
+	                 * @type RedaxtorPiece
+	                 */
+	                var piece = pieces.byId[pieceId];
+	
+	                var enabled = pieces['editorEnabled:' + piece.type];
+	
+	                if (enabled) {
+	                    var rect = piece.node.getBoundingClientRect();
+	                    if (rect.top + window.scrollY <= e.pageY && rect.bottom + window.scrollY >= e.pageY && rect.left <= e.pageX && rect.right >= e.pageX) {
+	                        foundId = pieceId;
+	                        foundRect = rect;
+	                    }
+	                }
+	            });
+	
+	            if (pieceHovered != foundId) {
+	                this.store.dispatch((0, _pieces.hoverPiece)(foundId, foundRect));
+	            }
+	        }
+	
+	        /**
+	         * Renders a top Redaxtor bar with controls and attach it to body
+	         */
+	
+	    }, {
 	        key: "showBar",
 	        value: function showBar(options) {
 	            this.barNode = document.createElement("DIV");
@@ -31566,11 +31637,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Add a piece from specific node
 	         * @param node HTMLElement
-	         * @param options
+	         * @param options {RedaxtorPieceOptions}
 	         * @param options.id {string} Mandatory unique identification id of piece. Should present in options OR in `this.pieces.attributeId` attribute of node, i.e. `data-id`
 	         * @param options.type {string} Mandatory type of piece. Should present in options OR in `this.pieces.attribute` attribute of node, i.e. `data-piece`
-	         * @param options.name {string} Optional human readable name for list in editor. If not specified will be tried to be read from `this.pieces.attributeName` attribute of node
-	         * @param options.dataset {Object} Optional set of data associated with node that will be passed to save and get API calls. If not specified will be read directly from node dataset
+	         * @param options.name {string} Optional. Human readable name for list in editor. If not specified will be tried to be read from `this.pieces.attributeName` attribute of node
+	         * @param options.dataset {Object} Optional. Set of random data attributes associated with node that will be passed to save and get API calls. If not specified will be read directly from node dataset.
+	         * @param options.data {Object} Optional. Set of data associated with piece in format of piece component. If not specified will be fetched.
 	         */
 	
 	    }, {
@@ -31615,14 +31687,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	         * set new data to a piece by Id
+	         * Set new data to a piece by piece id
 	         * @param pieceId {string} id of piece
-	         * @param obj {Object} new data
+	         * @param data {Object} new data
 	         */
 	
 	    }, {
 	        key: "setData",
-	        value: function setData(pieceId, obj) {
+	        value: function setData(pieceId, data) {
 	            var state = this.store.getState();
 	            var currentPiece = state.pieces && state.pieces.byId && state.pieces.byId[pieceId];
 	            if (!currentPiece) {
@@ -31635,16 +31707,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	         * shows that editors active
-	         * @param [editorType] {string} editor
-	         * @returns {boolean} returns the flag
+	         * Checks if editor toggle is active
+	         * @param editorType {string} editor type. Optional. If not specified, returns state of "all" toggle
+	         * @returns {boolean}
 	         */
 	
 	    }, {
 	        key: "isEditorActive",
 	        value: function isEditorActive(editorType) {
 	            var state = this.store.getState();
-	            var editor = state.pieces['editorActive:' + editorType];
 	
 	            if (editorType) {
 	                return state.pieces['editorEnabled:' + editorType] != undefined ? state.pieces['editorEnabled:' + editorType] : false;
@@ -31654,7 +31725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	         * shows that navbar is collapsed
+	         * Check if navbar is collapsed
 	         * @returns {boolean}
 	         */
 	
@@ -31667,16 +31738,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /**
 	         * Set the active state for editors
-	         * @param  editorType {string} type of editor
-	         * @param  editorActive {boolean} new state
+	         * @param editorActive {boolean} new state
+	         * @param editorType {string} type of editor, optional. By default applies to "all" toggle.
 	         */
 	
 	    }, {
 	        key: "setEditorActive",
-	        value: function setEditorActive() {
-	            var editorActive = arguments.length == 1 ? arguments.length <= 0 ? undefined : arguments[0] : arguments.length <= 1 ? undefined : arguments[1];
-	            var editorType = arguments.length == 1 ? null : arguments.length <= 0 ? undefined : arguments[0];
-	
+	        value: function setEditorActive(editorActive, editorType) {
 	            var isActiveNow = this.isEditorActive(editorType);
 	            if (editorActive != isActiveNow) {
 	                this.store.dispatch((0, _pieces.piecesToggleEdit)(editorType));
@@ -31741,7 +31809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -32225,7 +32293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @typechecks
 	 */
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	
 	/**
 	 * Upstream version of event listener. Does not take into account specific
@@ -33080,7 +33148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var DOMProperty = __webpack_require__(17);
 	var ReactDOMComponentTree = __webpack_require__(6);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	
 	var quoteAttributeValueForBrowser = __webpack_require__(278);
 	var warning = __webpack_require__(2);
@@ -33825,7 +33893,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactDOMFeatureFlags = __webpack_require__(227);
 	var ReactFeatureFlags = __webpack_require__(96);
 	var ReactInstanceMap = __webpack_require__(35);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var ReactMarkupChecksum = __webpack_require__(247);
 	var ReactReconciler = __webpack_require__(25);
 	var ReactUpdateQueue = __webpack_require__(57);
@@ -36182,16 +36250,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this;
 	    }
 	
-	    /**
-	     * That is a common public method that should activate component editor if it presents
-	     */
-	
-	
 	    _createClass(CodeMirror, [{
+	        key: 'setEditorActive',
+	        value: function setEditorActive(active) {
+	            if (active != this.state.sourceEditorActive) {
+	                this.setState({ sourceEditorActive: active });
+	                this.props.onEditorActive && this.props.onEditorActive(this.props.id, active);
+	            }
+	        }
+	
+	        /**
+	         * That is a common public method that should activate component editor if it presents
+	         */
+	
+	    }, {
 	        key: 'activateEditor',
 	        value: function activateEditor() {
 	            if (this.props.editorActive && !this.state.sourceEditorActive) {
-	                this.setState({ sourceEditorActive: true });
+	                this.setEditorActive(true);
 	            }
 	        }
 	    }, {
@@ -36233,16 +36309,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return true;
 	        }
 	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            this.nodeWasUpdated && this.props.onNodeUpdated && this.props.onNodeUpdated(this.props.id);
+	        }
+	    }, {
 	        key: 'onSave',
 	        value: function onSave() {
 	            this.props.updatePiece && this.props.updatePiece(this.props.id, { data: { html: this.code, updateNode: this.props.data.updateNode } });
 	            this.props.savePiece && this.props.savePiece(this.props.id);
-	            this.setState({ sourceEditorActive: false });
+	            this.setEditorActive(false);
 	        }
 	    }, {
 	        key: 'onClose',
 	        value: function onClose() {
-	            this.props.node ? this.setState({ sourceEditorActive: false }) : this.props.onClose && this.props.onClose();
+	            this.props.node ? this.setEditorActive(false) : this.props.onClose && this.props.onClose();
 	        }
 	    }, {
 	        key: 'createEditor',
@@ -36278,6 +36359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	
+	            this.nodeWasUpdated = false;
 	            //render new data
 	            if (this.props.node) {
 	                var content = this.props.node.innerHTML;
@@ -36285,6 +36367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var needRender = data.updateNode != undefined && data.updateNode != null ? data.updateNode : true;
 	                if (content != data.html && needRender == true) {
 	                    this.props.node.innerHTML = data.html;
+	                    this.nodeWasUpdated = true;
 	                }
 	            }
 	        }
@@ -36292,7 +36375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'onClick',
 	        value: function onClick(e) {
 	            e.preventDefault();
-	            this.setState({ sourceEditorActive: true });
+	            this.setEditorActive(true);
 	        }
 	    }, {
 	        key: 'render',
@@ -36387,7 +36470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -36419,7 +36502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _createClass(RedaxtorBackgroundEditor, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            _index.imageManagerApi.init({ api: this.props.api });
+	            _index.imageManagerApi.init({ api: this.props.api, container: _reactDom2.default.findDOMNode(this) });
 	            this.check();
 	        }
 	    }, {
@@ -36718,6 +36801,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	             * Let blur event to settle. If blur was produced by editor button click it will be followed by focus soon and we don't really need to react on it
 	             * @type {number}
 	             */
+	
+	            /**
+	             * Prepare data so we dont loose it on editor destroy
+	             */
+	            var needSave = this.needSave();
+	            this.lastEditorContent = this.editor.getContent();
+	
 	            this.blurTimeout = setTimeout(function () {
 	                _this.updatePiece();
 	                if (_this.needSave()) {
@@ -36766,6 +36856,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _react = __webpack_require__(3);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(9);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
 	var _index = __webpack_require__(44);
 	
@@ -36820,7 +36914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            _index.imageManagerApi.init({ api: this.props.api });
+	            _index.imageManagerApi.init({ api: this.props.api, container: _reactDom2.default.findDOMNode(this) });
 	            this.check();
 	        }
 	    }, {
@@ -36963,7 +37057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -38570,7 +38664,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -39447,7 +39541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -39487,6 +39581,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dragging: false,
 	            isCollapsible: _this.props.options.navBarCollapsable
 	        };
+	
+	        _this._onMouseMove = _this.onMouseMove.bind(_this);
+	        _this._onMouseUp = _this.onMouseUp.bind(_this);
 	        return _this;
 	    }
 	
@@ -39500,23 +39597,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: "componentDidUpdate",
 	        value: function componentDidUpdate(props, state) {
 	            if (this.state.dragging && !state.dragging) {
-	                this._onMouseMove = this.onMouseMove.bind(this);
-	                this._onMouseUp = this.onMouseUp.bind(this);
 	                document.addEventListener('mousemove', this._onMouseMove);
 	                document.addEventListener('mouseup', this._onMouseUp);
 	            } else if (!this.state.dragging && state.dragging) {
 	                document.removeEventListener('mousemove', this._onMouseMove);
 	                document.removeEventListener('mouseup', this._onMouseUp);
 	            }
-	        }
-	    }, {
-	        key: "handleSaveI18N",
-	        value: function handleSaveI18N() {
-	            console.log("handleSaveI18N", this.props.I18N);
-	            // Object.keys(this.props.I18N).forEach(id => {
-	            //     const piece = this.props.pieces[id]
-	            //     console.log("Save piece:", piece);
-	            // })
 	        }
 	    }, {
 	        key: "onMouseDown",
@@ -39573,7 +39659,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!this.props.options.navBarCollapsable) {
 	                return;
 	            }
-	
 	            if (!this.state.dragged) {
 	                this.props.piecesToggleNavBar();
 	            } else {
@@ -39581,61 +39666,76 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: "getHoverRectStyles",
+	        value: function getHoverRectStyles() {
+	            var padding = 10;
+	            if (this.props.hoveredId) {
+	                return {
+	                    opacity: 1,
+	                    top: this.props.hoveredRect.top - padding + window.scrollY + "px",
+	                    left: this.props.hoveredRect.left - padding + "px",
+	                    width: this.props.hoveredRect.right - this.props.hoveredRect.left + 2 * padding + "px",
+	                    height: this.props.hoveredRect.bottom - this.props.hoveredRect.top + 2 * padding + "px"
+	                };
+	            } else {
+	                return {
+	                    opacity: 0,
+	                    top: window.scrollY + "px",
+	                    left: 0,
+	                    width: "100%",
+	                    height: "100%"
+	                };
+	            }
+	        }
+	    }, {
 	        key: "render",
 	        value: function render() {
-	            var _this2 = this;
-	
-	            var tabs = [];
-	            this.props.tabs.pieces && tabs.push(_react2.default.createElement(
-	                "div",
-	                { className: (0, _classnames2.default)({ "r_tab": true, "r_active": this.state.value === "pieces" }),
-	                    key: "pieces", value: "pieces",
-	                    onClick: function onClick() {
-	                        return _this2.setState({ value: "pieces" });
-	                    } },
-	                "Pieces"
-	            ));
-	
-	            // this.props.tabs.i18n &&
-	            // tabs.push(<div className={classNames({"r_tab": true, "r_active": this.state.value === "i18n"})} key="i18n"
-	            //                value="i18n"
-	            //                onClick={()=>this.setState({value: "i18n"})}>I18N
-	            // </div>);
-	
-	            // this.props.tabs.pages &&
-	            // tabs.push(<div className={classNames({"r_tab": true, "r_active": this.state.value === "pages"})}
-	            //                key="pages" value="pages"
-	            //                onClick={()=>this.setState({value: "pages"})}>Pages
-	            // </div>);
-	
-	            var isCollapse = this.props.navBarCollapsed != undefined && this.props.navBarCollapsed != null ? this.props.navBarCollapsed : true;
+	            var isCollapsed = this.props.navBarCollapsed != undefined && this.props.navBarCollapsed != null ? this.props.navBarCollapsed : true;
 	            var piecesOptions = {
 	                pieceNameGroupSeparator: this.props.options.pieceNameGroupSeparator
 	            };
+	            var hoverRectStyles = this.getHoverRectStyles();
+	            var hoverLabel = this.props.hoveredPiece ? this.props.hoveredPiece.name || this.props.hoveredPiece.id : false;
+	
 	            return _react2.default.createElement(
 	                "div",
 	                { style: { all: 'initial' } },
 	                _react2.default.createElement(
 	                    "div",
+	                    { ref: "overlay", className: "r_overlay" },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { className: "r_pointer-div", style: hoverRectStyles },
+	                        _react2.default.createElement(
+	                            "div",
+	                            { className: "r_pointer-div-label" },
+	                            hoverLabel
+	                        ),
+	                        _react2.default.createElement(
+	                            "div",
+	                            { className: "r_pointer-edit-icon" },
+	                            _react2.default.createElement(
+	                                "i",
+	                                { className: "r_icon-pencil r_btn" },
+	                                "\xA0"
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
 	                    { ref: "bar", className: "r_bar" },
 	                    _react2.default.createElement(_PanelHandler2.default, { isCollapsable: this.state.isCollapsible,
-	                        isOpen: !isCollapse,
+	                        isOpen: !isCollapsed,
 	                        onMouseDown: this.onMouseDown.bind(this),
 	                        toggleOpen: this.toggleOpen.bind(this), message: this.props.message }),
-	                    !isCollapse ? _react2.default.createElement(
+	                    !isCollapsed ? _react2.default.createElement(
 	                        "div",
 	                        { className: "r_tabs", value: this.state.value },
 	                        _react2.default.createElement(
 	                            "div",
-	                            { className: "r_tabs-header" },
-	                            tabs
-	                        ),
-	                        _react2.default.createElement(
-	                            "div",
 	                            { className: "r_tab-content" },
-	                            this.state.value === "pieces" && _react2.default.createElement(_PiecesContainer2.default, { components: this.props.components, options: piecesOptions }),
-	                            this.state.value === "i18n" && _react2.default.createElement(I18N, null),
-	                            this.state.value === "pages" && _react2.default.createElement(Pages, null)
+	                            this.state.value === "pieces" && _react2.default.createElement(_PiecesContainer2.default, { components: this.props.components, options: piecesOptions })
 	                        )
 	                    ) : null
 	                )
@@ -40097,7 +40197,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        message: state.message,
-	        navBarCollapsed: state.global.navBarCollapsed
+	        navBarCollapsed: state.global.navBarCollapsed,
+	        hoveredId: state.pieces.hoveredId,
+	        hoveredRect: state.pieces.hoveredRect,
+	        hoveredPiece: state.pieces.hoveredId ? state.pieces.byId[state.pieces.hoveredId] : null
 	    };
 	};
 	
@@ -40150,7 +40253,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            "r_editor": true,
 	            "r_edit": props.editorActive,
 	            "r_highlight": props.editorActive
-	        }), wrapper: 'redaxtor' }));
+	        }), wrapper: "redaxtor-" + props.type }));
 	};
 	
 	var mapStateToProps = function mapStateToProps(state, ownProps) {
@@ -40172,6 +40275,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        savePiece: function savePiece(id) {
 	            return dispatch((0, _pieces.savePiece)(id));
+	        },
+	        onEditorActive: function onEditorActive(id, active) {
+	            return dispatch((0, _pieces.onEditorActive)(id, active));
+	        },
+	        onNodeUpdated: function onNodeUpdated(id) {
+	            return dispatch((0, _pieces.onNodeUpdated)(id));
 	        },
 	        setPieceMessage: function setPieceMessage(id, message, messageLevel) {
 	            return dispatch((0, _pieces.setPieceMessage)(id, message, messageLevel));
@@ -40475,6 +40584,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return _extends({}, piece, { manualActivation: true });
 	        case _constants2.default.PIECES_ACTIVATION_SENT_PIECE:
 	            return _extends({}, piece, { manualActivation: false });
+	        case _constants2.default.PIECES_EDITOR_ACTIVE:
+	            return _extends({}, piece, { active: action.active });
 	        default:
 	            return piece;
 	    }
@@ -40483,7 +40594,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var piecesDefault = {
 	    editorActive: true,
 	    highlight: true,
-	    sourceId: null
+	    sourceId: null,
+	    hoveredId: null,
+	    activeId: null
 	};
 	
 	var pieces = function pieces() {
@@ -40549,6 +40662,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return _extends({}, pieces, {
 	                byId: _extends({}, pieces.byId, _defineProperty({}, action.id, piece(pieces.byId[action.id], action)))
 	            });
+	
+	        case _constants2.default.PIECES_EDITOR_ACTIVE:
+	            return _extends({}, pieces, {
+	                activeId: action.active ? action.id : null,
+	                byId: _extends({}, pieces.byId, _defineProperty({}, action.id, piece(pieces.byId[action.id], action)))
+	            });
+	
+	        case _constants2.default.PIECES_HOVERED:
+	            return _extends({}, pieces, {
+	                hoveredId: action.id,
+	                hoveredRect: action.rect
+	            });
+	
 	        default:
 	            return pieces;
 	    }
@@ -42642,7 +42768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".r_bar {\n  box-sizing: border-box;\n  position: fixed;\n  top: 0;\n  left: 0;\n  color: #212121;\n  z-index: 1000;\n  width: 320px;\n  border-radius: 2px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif;\n  background-color: #ffffff;\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n}\n.r_bar .r_list-header {\n  margin-bottom: 10px;\n}\n.r_bar .r_list {\n  max-height: 400px;\n  overflow: auto;\n}\n.r_bar .r_item-row {\n  padding: 2px 0;\n}\n.r_bar .r_item-right {\n  float: right;\n}\n.r_bar .r_item-value {\n  color: gray;\n  font-size: 0.8em;\n}\n.r_bar .r_piece-name {\n  display: inline-block;\n  height: 20px;\n}\n.r_bar .r_item_name .level-0 {\n  display: block;\n}\n.r_bar .r_item_name .level-0 + * {\n  margin-left: 10px;\n}\n.r_bar .r_item_name .omit {\n  display: none;\n}\n.r_bar .r_item-message {\n  font-size: small;\n  padding: 5px 0 5px 10px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  margin-top: 3px;\n  margin-bottom: 5px;\n}\n.r_bar .r_item-message.r_item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.r_bar .r_item-message.r_item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.r_bar .r_item-message.r_item-error {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.r_bar-header {\n  padding: 0 5px 0 10px;\n  height: 30px;\n  line-height: 28px;\n  cursor: pointer;\n  color: #ffffff;\n  border-top-left-radius: 2px;\n  border-top-right-radius: 2px;\n  background-color: #455a64;\n}\n.r_bar-header-button {\n  float: right;\n  width: 25px;\n  height: 27px;\n  padding: 1px;\n  font-size: 18px;\n  background: none;\n  border: none;\n  box-sizing: border-box;\n  cursor: pointer;\n  color: #ffffff;\n}\n.r_tabs-header {\n  display: none;\n  width: 100%;\n  background-color: #37474f;\n}\n.r_tab-content {\n  padding: 10px;\n  position: relative;\n}\n.r_tab {\n  cursor: pointer;\n  -ms-flex: 1 1;\n      flex: 1 1;\n  padding: 5px 0;\n  color: #eceff1;\n  text-align: center;\n}\n.r_tab.r_active {\n  background-color: #455a64;\n}\n@font-face {\n  font-family: 'r_';\n  src: url('../font/r_.eot?82604131');\n  src: url('../font/r_.eot?82604131#iefix') format('embedded-opentype'),\n       url('../font/r_.svg?82604131#r_') format('svg');\n  font-weight: normal;\n  font-style: normal;\n}\n@font-face {\n  font-family: 'r_';\n  src: url('data:application/octet-stream;base64,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') format('woff'),\n       url('data:application/octet-stream;base64,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RyNhsAlDKyMgPCAuIzixKwEUKy2wQSyxCAQlQrAAFrAEJbAEJSAuRyNHI2EgsAQjQrAJQysgsGBQWCCwQFFYswIgAyAbswImAxpZQkIjIEewBEOwAmIgsABQWLBAYFlmsAFjYCCwASsgiophILACQ2BkI7ADQ2FkUFiwAkNhG7ADQ2BZsAMlsAJiILAAUFiwQGBZZrABY2GwAiVGYTgjIDwjOBshICBGI0ewASsjYTghWbErARQrLbBCLLA1Ky6xKwEUKy2wQyywNishIyAgPLAEI0IjOLErARQrsARDLrArKy2wRCywABUgR7AAI0KyAAEBFRQTLrAxKi2wRSywABUgR7AAI0KyAAEBFRQTLrAxKi2wRiyxAAEUE7AyKi2wRyywNCotsEgssAAWRSMgLiBGiiNhOLErARQrLbBJLLAII0KwSCstsEossgAAQSstsEsssgABQSstsEwssgEAQSstsE0ssgEBQSstsE4ssgAAQistsE8ssgABQistsFAssgEAQistsFEssgEBQistsFIssgAAPistsFMssgABPistsFQssgEAPistsFUssgEBPistsFYssgAAQCstsFcssgABQCstsFgssgEAQCstsFkssgEBQCstsFossgAAQystsFsssgABQystsFwssgEAQystsF0ssgEBQystsF4ssgAAPystsF8ssgABPystsGAssgEAPystsGEssgEBPystsGIssDcrLrErARQrLbBjLLA3K7A7Ky2wZCywNyuwPCstsGUssAAWsDcrsD0rLbBmLLA4Ky6xKwEUKy2wZyywOCuwOystsGgssDgrsDwrLbBpLLA4K7A9Ky2waiywOSsusSsBFCstsGsssDkrsDsrLbBsLLA5K7A8Ky2wbSywOSuwPSstsG4ssDorLrErARQrLbBvLLA6K7A7Ky2wcCywOiuwPCstsHEssDorsD0rLbByLLMJBAIDRVghGyMhWUIrsAhlsAMkUHiwARUwLQBLuADIUlixAQGOWbABuQgACABjcLEABUKyAAEAKrEABUKzCgIBCCqxAAVCsw4AAQgqsQAGQroCwAABAAkqsQAHQroAQAABAAkqsQMARLEkAYhRWLBAiFixA2REsSYBiFFYugiAAAEEQIhjVFixAwBEWVlZWbMMAgEMKrgB/4WwBI2xAgBEAAA=') format('truetype');\n}\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'r_';\n    src: url('../font/r_.svg?82604131#r_') format('svg');\n  }\n}\n*/\n \n [class^=\"r_icon-\"]:before, [class*=\" r_icon-\"]:before {\n  font-family: \"r_\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n \n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n \n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n     \n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n \n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n \n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n \n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */\n}\n.r_icon-pencil:before { content: '\\E800'; } /* '' */\n.r_icon-trash-empty:before { content: '\\E801'; } /* '' */\n.r_icon-down-dir:before { content: '\\E802'; } /* '' */\n.r_icon-up-dir:before { content: '\\E803'; } /* '' */\n.r_icon-ccw:before { content: '\\E804'; } /* '' */\n.r_icon-arrows-cw:before { content: '\\E805'; } /* '' */\n.r_icon-floppy:before { content: '\\E806'; } /* '' */\n.r_icon-file-code:before { content: '\\E807'; } /* '' */\n.r_icon-code:before { content: '\\E808'; } /* '' */\n.r_btn {\n  cursor: pointer;\n}\nredaxtor {\n  display: block;\n}\n.r_editor.r_edit {\n  outline: rgba(80, 100, 120, 0.3) solid 1px;\n  transition: all 0.2s ease;\n}\n.r_editor.r_edit:hover {\n  outline: #546e7a solid 4px;\n}\n.r_editor iframe {\n  pointer-events: none;\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n@keyframes redaxtor-bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  60% {\n    opacity: 1;\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n  to {\n    opacity: 1;\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes redaxtor-bounceOut {\n  20% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  50%,\n  55% {\n    opacity: 1;\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  to {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n}\n@keyframes redaxtor-fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes redaxtor-fadeOut {\n  from {\n    opacity: 1;\n  }\n  to {\n    opacity: 0;\n  }\n}\n@keyframes redaxtor-bounceInDown {\n  from,\n  60%,\n  75%,\n  90%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes redaxtor-bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%,\n  45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n.r_toast-container {\n  width: 310px;\n  position: fixed;\n  z-index: 99999999;\n}\n.r_toast-container.top-left,\n.r_toast-container.top-right {\n  top: 15px;\n}\n.r_toast-container.bottom-left,\n.r_toast-container.bottom-right {\n  bottom: 15px;\n}\n.r_toast-container.top-left {\n  left: 15px;\n}\n.r_toast-container.top-right {\n  right: 15px;\n}\n.r_toast-container.bottom-left {\n  left: 15px;\n}\n.r_toast-container.bottom-right {\n  right: 15px;\n}\n.r_toast-container .toastr {\n  background-color: #fcfcfc;\n  width: 100%;\n  min-height: 40px;\n  margin-bottom: 10px;\n  border-radius: 4px;\n  position: relative;\n  color: #333;\n  padding: 10px 0;\n  opacity: .9;\n}\n.r_toast-container .toastr button.close-toastr {\n  border: none;\n  background: none;\n  color: white;\n  position: absolute;\n  right: 10px;\n  top: 8px;\n}\n.r_toast-container .toastr.animated {\n  animation-duration: 1s;\n  animation-fill-mode: both;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-duration: .5s;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-name: redaxtor-bounceIn;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-name: redaxtor-bounceOut;\n}\n.r_toast-container .toastr.animated.fadeIn {\n  animation-name: redaxtor-fadeIn;\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.fadeOut {\n  animation-name: redaxtor-fadeOut;\n  animation-duration: .3s;\n}\n.r_toast-container .toastr.animated.bounceInDown {\n  animation-name: redaxtor-bounceInDown;\n}\n.r_toast-container .toastr.animated.bounceOutUp {\n  animation-name: redaxtor-bounceOutUp;\n}\n.r_toast-container .toastr:before {\n  position: absolute;\n  top: 50%;\n  left: 12px;\n  margin-top: -11px;\n  font-size: 22px;\n}\n.r_toast-container .toastr:hover {\n  cursor: pointer;\n  opacity: 1;\n}\n.r_toast-container .toastr .message-holder {\n  width: 80%;\n  margin-left: 15%;\n  position: relative;\n  font-family: Arial, Helvetica, sans-serif, sans-serif;\n  font-size: 1em;\n  text-align: left;\n}\n.r_toast-container .toastr .message-holder p {\n  padding: 5px;\n  margin: 0;\n}\n.r_toast-container .toastr .message-holder .title {\n  font-size: 1.1em;\n  font-weight: bold;\n}\n.r_toast-container .toastr.info,\n.r_toast-container .toastr.success,\n.r_toast-container .toastr.warning,\n.r_toast-container .toastr.error {\n  color: white;\n}\n.r_toast-container .toastr.info {\n  background-color: #58abc3;\n}\n.r_toast-container .toastr.success {\n  background-color: #60bb71;\n}\n.r_toast-container .toastr.warning {\n  background-color: #f7a336;\n}\n.r_toast-container .toastr.error {\n  background-color: #db6a64;\n}\n.r_toast-container .toastr.message {\n  opacity: 1;\n  border: 1px solid #dbdbdb;\n}\n.r_toast-container .toastr.message .message-holder {\n  width: 100%;\n  margin-left: 0;\n}\n.r_toast-container .toastr.message .message-holder .title {\n  width: 90%;\n  height: 50px;\n  text-align: center;\n  font-size: 1.2em;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n  line-height: 45px;\n  padding: 0 15px;\n}\n.r_toast-container .toastr.message .message-holder .message {\n  border-radius: 5px;\n  width: 100%;\n  max-height: 400px;\n  overflow: hidden;\n  overflow-y: auto;\n  border-top: 1px solid #f1f1f1;\n  background-color: white;\n  padding: 15px;\n  font-size: 1.1em;\n}\n.r_toast-container .toastr.message .message-holder .message img {\n  display: block;\n  margin: 10px auto;\n  max-width: 100%;\n}\n.r_portal {\n  border: 1px solid gray;\n  background: #fff;\n  z-index: 100000;\n  padding: 10px;\n}\n.r_bar .react-toggle {\n  display: inline-block;\n  position: relative;\n  cursor: pointer;\n  background-color: transparent;\n  border: 0;\n  padding: 0;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  -webkit-tap-highlight-color: transparent;\n  right: 10px;\n  position: absolute;\n}\n.r_bar .r_list-subheader .react-toggle {\n  transform: scale(0.8);\n}\n.r_bar .react-toggle-screenreader-only {\n  border: 0;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  margin: -1px;\n  overflow: hidden;\n  padding: 0;\n  position: absolute;\n  width: 1px;\n}\n.r_bar .react-toggle--disabled {\n  opacity: 0.5;\n  transition: opacity 0.25s;\n}\n.r_bar .react-toggle-track {\n  width: 50px;\n  height: 24px;\n  padding: 0;\n  border-radius: 30px;\n  background-color: #4D4D4D;\n  transition: all 0.2s ease;\n}\n.r_bar .react-toggle:hover .react-toggle-track {\n  background-color: #000000;\n}\n.r_bar .react-toggle--checked .react-toggle-track {\n  background-color: #19AB27;\n}\n.r_bar .react-toggle.react-toggle--checked:hover .react-toggle-track {\n  background-color: #128D15;\n}\n.r_bar .react-toggle-track-check {\n  position: absolute;\n  width: 14px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  left: 8px;\n  opacity: 0;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-check {\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle-track-x {\n  position: absolute;\n  width: 10px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  right: 10px;\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-x {\n  opacity: 0;\n}\n.r_bar .react-toggle-thumb {\n  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  position: absolute;\n  top: 1px;\n  left: 1px;\n  width: 22px;\n  height: 22px;\n  border: 1px solid #4D4D4D;\n  border-radius: 50%;\n  background-color: #FAFAFA;\n  box-sizing: border-box;\n  transition: all 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-thumb {\n  left: 27px;\n  border-color: #19AB27;\n}\n.r_bar .react-toggle--focus .react-toggle-thumb {\n  box-shadow: 0px 0px 2px 3px #0099E0;\n}\n.r_bar .react-toggle:active .react-toggle-thumb {\n  box-shadow: 0px 0px 5px 5px #0099E0;\n}\n/*# sourceMappingURL=redaxtor.css.map */", ""]);
+	exports.push([module.id, ".r_bar {\n  box-sizing: border-box;\n  position: fixed;\n  top: 0;\n  left: 0;\n  color: #212121;\n  z-index: 1000;\n  width: 320px;\n  border-radius: 2px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif;\n  background-color: #ffffff;\n  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);\n}\n.r_bar .r_list-header {\n  margin-bottom: 10px;\n}\n.r_bar .r_list {\n  max-height: 400px;\n  overflow: auto;\n}\n.r_bar .r_item-row {\n  padding: 2px 0;\n}\n.r_bar .r_item-right {\n  float: right;\n}\n.r_bar .r_item-value {\n  color: gray;\n  font-size: 0.8em;\n}\n.r_bar .r_piece-name {\n  display: inline-block;\n  height: 20px;\n}\n.r_bar .r_item_name .level-0 {\n  display: block;\n}\n.r_bar .r_item_name .level-0 + * {\n  margin-left: 10px;\n}\n.r_bar .r_item_name .omit {\n  display: none;\n}\n.r_bar .r_item-message {\n  font-size: small;\n  padding: 5px 0 5px 10px;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  margin-top: 3px;\n  margin-bottom: 5px;\n}\n.r_bar .r_item-message.r_item-warning {\n  color: #8a6d3b;\n  background-color: #fcf8e3;\n  border-color: #faebcc;\n}\n.r_bar .r_item-message.r_item-info {\n  color: #31708f;\n  background-color: #d9edf7;\n  border-color: #bce8f1;\n}\n.r_bar .r_item-message.r_item-error {\n  color: #a94442;\n  background-color: #f2dede;\n  border-color: #ebccd1;\n}\n.r_bar-header {\n  padding: 0 5px 0 10px;\n  height: 30px;\n  line-height: 28px;\n  cursor: pointer;\n  color: #ffffff;\n  border-top-left-radius: 2px;\n  border-top-right-radius: 2px;\n  background-color: #455a64;\n}\n.r_bar-header-button {\n  float: right;\n  width: 25px;\n  height: 27px;\n  padding: 1px;\n  font-size: 18px;\n  background: none;\n  border: none;\n  box-sizing: border-box;\n  cursor: pointer;\n  color: #ffffff;\n}\n.r_tabs-header {\n  display: none;\n  width: 100%;\n  background-color: #37474f;\n}\n.r_tab-content {\n  padding: 10px;\n  position: relative;\n}\n.r_tab {\n  cursor: pointer;\n  -ms-flex: 1 1;\n      flex: 1 1;\n  padding: 5px 0;\n  color: #eceff1;\n  text-align: center;\n}\n.r_tab.r_active {\n  background-color: #455a64;\n}\n.r_pointer-div {\n  pointer-events: none;\n  border: 2px solid deepskyblue;\n  position: absolute;\n  transition: all 0.2s ease;\n  box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.2);\n  box-sizing: border-box;\n}\n.r_pointer-div .r_pointer-div-label {\n  font-family: \"Helvetica\", arial, sans-serif;\n  color: white;\n  font-size: 12px;\n  line-height: 20px;\n  height: 20px;\n  top: -20px;\n  position: absolute;\n  text-shadow: 1px 1px rgba(0, 0, 0, 0.3);\n}\n.r_pointer-div .r_pointer-edit-icon {\n  color: white;\n  position: absolute;\n  right: 1px;\n  font-size: 12px;\n  line-height: 20px;\n  height: 20px;\n  top: -20px;\n  text-shadow: 1px 1px rgba(0, 0, 0, 0.3);\n}\n@font-face {\r\n  font-family: 'r_';\r\n  src: url('../font/r_.eot?82604131');\r\n  src: url('../font/r_.eot?82604131#iefix') format('embedded-opentype'),\r\n       url('../font/r_.svg?82604131#r_') format('svg');\r\n  font-weight: normal;\r\n  font-style: normal;\r\n}\r\n@font-face {\r\n  font-family: 'r_';\r\n  src: url('data:application/octet-stream;base64,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') format('woff'),\r\n       url('data:application/octet-stream;base64,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RyNhsAlDKyMgPCAuIzixKwEUKy2wQSyxCAQlQrAAFrAEJbAEJSAuRyNHI2EgsAQjQrAJQysgsGBQWCCwQFFYswIgAyAbswImAxpZQkIjIEewBEOwAmIgsABQWLBAYFlmsAFjYCCwASsgiophILACQ2BkI7ADQ2FkUFiwAkNhG7ADQ2BZsAMlsAJiILAAUFiwQGBZZrABY2GwAiVGYTgjIDwjOBshICBGI0ewASsjYTghWbErARQrLbBCLLA1Ky6xKwEUKy2wQyywNishIyAgPLAEI0IjOLErARQrsARDLrArKy2wRCywABUgR7AAI0KyAAEBFRQTLrAxKi2wRSywABUgR7AAI0KyAAEBFRQTLrAxKi2wRiyxAAEUE7AyKi2wRyywNCotsEgssAAWRSMgLiBGiiNhOLErARQrLbBJLLAII0KwSCstsEossgAAQSstsEsssgABQSstsEwssgEAQSstsE0ssgEBQSstsE4ssgAAQistsE8ssgABQistsFAssgEAQistsFEssgEBQistsFIssgAAPistsFMssgABPistsFQssgEAPistsFUssgEBPistsFYssgAAQCstsFcssgABQCstsFgssgEAQCstsFkssgEBQCstsFossgAAQystsFsssgABQystsFwssgEAQystsF0ssgEBQystsF4ssgAAPystsF8ssgABPystsGAssgEAPystsGEssgEBPystsGIssDcrLrErARQrLbBjLLA3K7A7Ky2wZCywNyuwPCstsGUssAAWsDcrsD0rLbBmLLA4Ky6xKwEUKy2wZyywOCuwOystsGgssDgrsDwrLbBpLLA4K7A9Ky2waiywOSsusSsBFCstsGsssDkrsDsrLbBsLLA5K7A8Ky2wbSywOSuwPSstsG4ssDorLrErARQrLbBvLLA6K7A7Ky2wcCywOiuwPCstsHEssDorsD0rLbByLLMJBAIDRVghGyMhWUIrsAhlsAMkUHiwARUwLQBLuADIUlixAQGOWbABuQgACABjcLEABUKyAAEAKrEABUKzCgIBCCqxAAVCsw4AAQgqsQAGQroCwAABAAkqsQAHQroAQAABAAkqsQMARLEkAYhRWLBAiFixA2REsSYBiFFYugiAAAEEQIhjVFixAwBEWVlZWbMMAgEMKrgB/4WwBI2xAgBEAAA=') format('truetype');\r\n}\r\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\r\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\r\n/*\r\n@media screen and (-webkit-min-device-pixel-ratio:0) {\r\n  @font-face {\r\n    font-family: 'r_';\r\n    src: url('../font/r_.svg?82604131#r_') format('svg');\r\n  }\r\n}\r\n*/\r\n \r\n [class^=\"r_icon-\"]:before, [class*=\" r_icon-\"]:before {\r\n  font-family: \"r_\";\r\n  font-style: normal;\r\n  font-weight: normal;\r\n  speak: none;\r\n \r\n  display: inline-block;\r\n  text-decoration: inherit;\r\n  width: 1em;\r\n  margin-right: .2em;\r\n  text-align: center;\r\n  /* opacity: .8; */\r\n \r\n  /* For safety - reset parent styles, that can break glyph codes*/\r\n  font-variant: normal;\r\n  text-transform: none;\r\n     \r\n  /* fix buttons height, for twitter bootstrap */\r\n  line-height: 1em;\r\n \r\n  /* Animation center compensation - margins should be symmetric */\r\n  /* remove if not needed */\r\n  margin-left: .2em;\r\n \r\n  /* you can be more comfortable with increased icons size */\r\n  /* font-size: 120%; */\r\n \r\n  /* Uncomment for 3D effect */\r\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */\r\n}\r\n.r_icon-pencil:before { content: '\\E800'; } /* '' */\r\n.r_icon-trash-empty:before { content: '\\E801'; } /* '' */\r\n.r_icon-down-dir:before { content: '\\E802'; } /* '' */\r\n.r_icon-up-dir:before { content: '\\E803'; } /* '' */\r\n.r_icon-ccw:before { content: '\\E804'; } /* '' */\r\n.r_icon-arrows-cw:before { content: '\\E805'; } /* '' */\r\n.r_icon-floppy:before { content: '\\E806'; } /* '' */\r\n.r_icon-file-code:before { content: '\\E807'; } /* '' */\r\n.r_icon-code:before { content: '\\E808'; } /* '' */\n.r_btn {\n  cursor: pointer;\n}\nredaxtor {\n  display: block;\n}\n.r_editor.r_edit {\n  outline: rgba(80, 100, 120, 0.3) solid 1px;\n  transition: all 0.2s ease;\n}\n.r_editor iframe {\n  pointer-events: none;\n  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTExIDc5LjE1ODMyNSwgMjAxNS8wOS8xMC0wMToxMDoyMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFENkFDNTVEQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFENkFDNTVFQzc5RjExRTY4OTA2QTJCQjZCOTNFRjBEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUQ2QUM1NUJDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUQ2QUM1NUNDNzlGMTFFNjg5MDZBMkJCNkI5M0VGMEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz79vbmxAAAABlBMVEX////MzMw46qqDAAAAGElEQVR42mJggAJGKGAYIIGBth8KAAIMAEUQAIElnLuQAAAAAElFTkSuQmCC') 0 0 repeat;\n}\n@keyframes redaxtor-bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  60% {\n    opacity: 1;\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n  to {\n    opacity: 1;\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes redaxtor-bounceOut {\n  20% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n  50%,\n  55% {\n    opacity: 1;\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n  to {\n    opacity: 0;\n    transform: scale3d(0.3, 0.3, 0.3);\n  }\n}\n@keyframes redaxtor-fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}\n@keyframes redaxtor-fadeOut {\n  from {\n    opacity: 1;\n  }\n  to {\n    opacity: 0;\n  }\n}\n@keyframes redaxtor-bounceInDown {\n  from,\n  60%,\n  75%,\n  90%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n  0% {\n    opacity: 0;\n    transform: translate3d(0, -3000px, 0);\n  }\n  60% {\n    opacity: 1;\n    transform: translate3d(0, 25px, 0);\n  }\n  75% {\n    transform: translate3d(0, -10px, 0);\n  }\n  90% {\n    transform: translate3d(0, 5px, 0);\n  }\n  to {\n    transform: none;\n  }\n}\n@keyframes redaxtor-bounceOutUp {\n  20% {\n    transform: translate3d(0, -10px, 0);\n  }\n  40%,\n  45% {\n    opacity: 1;\n    transform: translate3d(0, 20px, 0);\n  }\n  to {\n    opacity: 0;\n    transform: translate3d(0, -2000px, 0);\n  }\n}\n.r_toast-container {\n  width: 310px;\n  position: fixed;\n  z-index: 99999999;\n}\n.r_toast-container.top-left,\n.r_toast-container.top-right {\n  top: 15px;\n}\n.r_toast-container.bottom-left,\n.r_toast-container.bottom-right {\n  bottom: 15px;\n}\n.r_toast-container.top-left {\n  left: 15px;\n}\n.r_toast-container.top-right {\n  right: 15px;\n}\n.r_toast-container.bottom-left {\n  left: 15px;\n}\n.r_toast-container.bottom-right {\n  right: 15px;\n}\n.r_toast-container .toastr {\n  background-color: #fcfcfc;\n  width: 100%;\n  min-height: 40px;\n  margin-bottom: 10px;\n  border-radius: 4px;\n  position: relative;\n  color: #333;\n  padding: 10px 0;\n  opacity: .9;\n}\n.r_toast-container .toastr button.close-toastr {\n  border: none;\n  background: none;\n  color: white;\n  position: absolute;\n  right: 10px;\n  top: 8px;\n}\n.r_toast-container .toastr.animated {\n  animation-duration: 1s;\n  animation-fill-mode: both;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-duration: .5s;\n}\n.r_toast-container .toastr.animated.bounceIn {\n  animation-name: redaxtor-bounceIn;\n}\n.r_toast-container .toastr.animated.bounceOut {\n  animation-name: redaxtor-bounceOut;\n}\n.r_toast-container .toastr.animated.fadeIn {\n  animation-name: redaxtor-fadeIn;\n  animation-duration: .7s;\n}\n.r_toast-container .toastr.animated.fadeOut {\n  animation-name: redaxtor-fadeOut;\n  animation-duration: .3s;\n}\n.r_toast-container .toastr.animated.bounceInDown {\n  animation-name: redaxtor-bounceInDown;\n}\n.r_toast-container .toastr.animated.bounceOutUp {\n  animation-name: redaxtor-bounceOutUp;\n}\n.r_toast-container .toastr:before {\n  position: absolute;\n  top: 50%;\n  left: 12px;\n  margin-top: -11px;\n  font-size: 22px;\n}\n.r_toast-container .toastr:hover {\n  cursor: pointer;\n  opacity: 1;\n}\n.r_toast-container .toastr .message-holder {\n  width: 80%;\n  margin-left: 15%;\n  position: relative;\n  font-family: Arial, Helvetica, sans-serif, sans-serif;\n  font-size: 1em;\n  text-align: left;\n}\n.r_toast-container .toastr .message-holder p {\n  padding: 5px;\n  margin: 0;\n}\n.r_toast-container .toastr .message-holder .title {\n  font-size: 1.1em;\n  font-weight: bold;\n}\n.r_toast-container .toastr.info,\n.r_toast-container .toastr.success,\n.r_toast-container .toastr.warning,\n.r_toast-container .toastr.error {\n  color: white;\n}\n.r_toast-container .toastr.info {\n  background-color: #58abc3;\n}\n.r_toast-container .toastr.success {\n  background-color: #60bb71;\n}\n.r_toast-container .toastr.warning {\n  background-color: #f7a336;\n}\n.r_toast-container .toastr.error {\n  background-color: #db6a64;\n}\n.r_toast-container .toastr.message {\n  opacity: 1;\n  border: 1px solid #dbdbdb;\n}\n.r_toast-container .toastr.message .message-holder {\n  width: 100%;\n  margin-left: 0;\n}\n.r_toast-container .toastr.message .message-holder .title {\n  width: 90%;\n  height: 50px;\n  text-align: center;\n  font-size: 1.2em;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n  line-height: 45px;\n  padding: 0 15px;\n}\n.r_toast-container .toastr.message .message-holder .message {\n  border-radius: 5px;\n  width: 100%;\n  max-height: 400px;\n  overflow: hidden;\n  overflow-y: auto;\n  border-top: 1px solid #f1f1f1;\n  background-color: white;\n  padding: 15px;\n  font-size: 1.1em;\n}\n.r_toast-container .toastr.message .message-holder .message img {\n  display: block;\n  margin: 10px auto;\n  max-width: 100%;\n}\n.r_portal {\n  border: 1px solid gray;\n  background: #fff;\n  z-index: 100000;\n  padding: 10px;\n}\n.r_bar .react-toggle {\n  display: inline-block;\n  position: relative;\n  cursor: pointer;\n  background-color: transparent;\n  border: 0;\n  padding: 0;\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  -webkit-tap-highlight-color: transparent;\n  right: 10px;\n  position: absolute;\n}\n.r_bar .r_list-subheader .react-toggle {\n  transform: scale(0.8);\n}\n.r_bar .react-toggle-screenreader-only {\n  border: 0;\n  clip: rect(0 0 0 0);\n  height: 1px;\n  margin: -1px;\n  overflow: hidden;\n  padding: 0;\n  position: absolute;\n  width: 1px;\n}\n.r_bar .react-toggle--disabled {\n  opacity: 0.5;\n  transition: opacity 0.25s;\n}\n.r_bar .react-toggle-track {\n  width: 50px;\n  height: 24px;\n  padding: 0;\n  border-radius: 30px;\n  background-color: #4D4D4D;\n  transition: all 0.2s ease;\n}\n.r_bar .react-toggle:hover .react-toggle-track {\n  background-color: #000000;\n}\n.r_bar .react-toggle--checked .react-toggle-track {\n  background-color: #19AB27;\n}\n.r_bar .react-toggle.react-toggle--checked:hover .react-toggle-track {\n  background-color: #128D15;\n}\n.r_bar .react-toggle-track-check {\n  position: absolute;\n  width: 14px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  left: 8px;\n  opacity: 0;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-check {\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle-track-x {\n  position: absolute;\n  width: 10px;\n  height: 10px;\n  top: 0px;\n  bottom: 0px;\n  margin-top: auto;\n  margin-bottom: auto;\n  line-height: 0;\n  right: 10px;\n  opacity: 1;\n  transition: opacity 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-track-x {\n  opacity: 0;\n}\n.r_bar .react-toggle-thumb {\n  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;\n  position: absolute;\n  top: 1px;\n  left: 1px;\n  width: 22px;\n  height: 22px;\n  border: 1px solid #4D4D4D;\n  border-radius: 50%;\n  background-color: #FAFAFA;\n  box-sizing: border-box;\n  transition: all 0.25s ease;\n}\n.r_bar .react-toggle--checked .react-toggle-thumb {\n  left: 27px;\n  border-color: #19AB27;\n}\n.r_bar .react-toggle--focus .react-toggle-thumb {\n  box-shadow: 0px 0px 2px 3px #0099E0;\n}\n.r_bar .react-toggle:active .react-toggle-thumb {\n  box-shadow: 0px 0px 5px 5px #0099E0;\n}\n/*# sourceMappingURL=redaxtor.css.map */", ""]);
 	
 	// exports
 
@@ -46000,7 +46126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var CSSProperty = __webpack_require__(90);
 	var ExecutionEnvironment = __webpack_require__(7);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	
 	var camelizeStyleName = __webpack_require__(176);
 	var dangerousStyleValue = __webpack_require__(271);
@@ -46542,7 +46668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ExecutionEnvironment = __webpack_require__(7);
 	
 	var createNodesFromMarkup = __webpack_require__(179);
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var invariant = __webpack_require__(1);
 	
 	var Danger = {
@@ -47238,7 +47364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactCurrentOwner = __webpack_require__(13);
 	var ReactErrorUtils = __webpack_require__(56);
 	var ReactInstanceMap = __webpack_require__(35);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var ReactNodeTypes = __webpack_require__(100);
 	var ReactReconciler = __webpack_require__(25);
 	
@@ -48223,7 +48349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	if (true) {
-	  var ReactInstrumentation = __webpack_require__(9);
+	  var ReactInstrumentation = __webpack_require__(10);
 	  var ReactDOMUnknownPropertyHook = __webpack_require__(237);
 	  var ReactDOMNullInputValuePropHook = __webpack_require__(231);
 	  var ReactDOMInvalidARIAHook = __webpack_require__(230);
@@ -48271,11 +48397,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactDOMOption = __webpack_require__(232);
 	var ReactDOMSelect = __webpack_require__(94);
 	var ReactDOMTextarea = __webpack_require__(235);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var ReactMultiChild = __webpack_require__(248);
 	var ReactServerRenderingTransaction = __webpack_require__(253);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var escapeTextContentForBrowser = __webpack_require__(42);
 	var invariant = __webpack_require__(1);
 	var isEventSupported = __webpack_require__(62);
@@ -51123,7 +51249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactUpdates = __webpack_require__(12);
 	var Transaction = __webpack_require__(41);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	
 	var RESET_BATCHED_UPDATES = {
 	  initialize: emptyFunction,
@@ -51675,13 +51801,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var ReactComponentEnvironment = __webpack_require__(55);
 	var ReactInstanceMap = __webpack_require__(35);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	
 	var ReactCurrentOwner = __webpack_require__(13);
 	var ReactReconciler = __webpack_require__(25);
 	var ReactChildReconciler = __webpack_require__(220);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var flattenChildren = __webpack_require__(273);
 	var invariant = __webpack_require__(1);
 	
@@ -52258,7 +52384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var PooledClass = __webpack_require__(21);
 	var ReactBrowserEventEmitter = __webpack_require__(39);
 	var ReactInputSelection = __webpack_require__(98);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var Transaction = __webpack_require__(41);
 	var ReactUpdateQueue = __webpack_require__(57);
 	
@@ -52531,7 +52657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var PooledClass = __webpack_require__(21);
 	var Transaction = __webpack_require__(41);
-	var ReactInstrumentation = __webpack_require__(9);
+	var ReactInstrumentation = __webpack_require__(10);
 	var ReactServerUpdateQueue = __webpack_require__(254);
 	
 	/**
@@ -53301,7 +53427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SyntheticUIEvent = __webpack_require__(36);
 	var SyntheticWheelEvent = __webpack_require__(268);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var getEventCharCode = __webpack_require__(59);
 	var invariant = __webpack_require__(1);
 	
@@ -54660,12 +54786,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(3);
-	var ReactDOM = __webpack_require__(11);
+	var ReactDOM = __webpack_require__(9);
 	var ExecutionEnvironment = __webpack_require__(174);
 	var ModalPortal = React.createFactory(__webpack_require__(281));
 	var ariaAppHider = __webpack_require__(282);
 	var elementClass = __webpack_require__(172);
-	var renderSubtreeIntoContainer = __webpack_require__(11).unstable_renderSubtreeIntoContainer;
+	var renderSubtreeIntoContainer = __webpack_require__(9).unstable_renderSubtreeIntoContainer;
 	var Assign = __webpack_require__(86);
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -55179,7 +55305,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactDom = __webpack_require__(11);
+	var _reactDom = __webpack_require__(9);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
@@ -57196,7 +57322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var PooledClass = __webpack_require__(300);
 	var ReactElement = __webpack_require__(22);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var traverseAllChildren = __webpack_require__(311);
 	
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
@@ -58287,7 +58413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ReactPropTypeLocationNames = __webpack_require__(69);
 	var ReactPropTypesSecret = __webpack_require__(122);
 	
-	var emptyFunction = __webpack_require__(10);
+	var emptyFunction = __webpack_require__(11);
 	var getIteratorFn = __webpack_require__(71);
 	var warning = __webpack_require__(2);
 	
