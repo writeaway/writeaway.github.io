@@ -1,0 +1,1 @@
+typedoc --target ES6 --includeDeclarations --mode file --out doc ..\redaxtor\src\index.d.ts
