@@ -15,10 +15,11 @@ Typical usage:
             pieces: {
             },
             api: {
-                getImageList: function () {
+                 getImageList: function (data) {
+                    const dataUrl = (data && data.type == "background") ? "api/imagesBg.json" : "api/images.json";
                     return new Promise(function(resolve, reject) {
                         $.get({
-                            url: "api/images.json",
+                            url: dataUrl ,
                             dataType: "json"
                         }).done(function(data) {
                             resolve(data.data.list);
