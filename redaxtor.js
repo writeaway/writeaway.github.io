@@ -36802,6 +36802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // console.log("Undo from history", this.historyIndex, this.history[this.historyIndex], this.history);
 	                return this.history[this.historyIndex];
 	            } else {
+	                this.historyIndex = -1;
 	                // console.log("Undo from initial state", this.historyIndex, this.startState);
 	                return this.startState;
 	            }
