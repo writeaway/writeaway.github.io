@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>redaxtor</title>
+	<title>IRedaxtorResource | redaxtor</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="redaxtor.html">redaxtor</a>
+					<a href="iredaxtorresource.html">IRedaxtorResource</a>
 				</li>
 			</ul>
-			<h1>Module redaxtor</h1>
+			<h1>Interface IRedaxtorResource</h1>
 		</div>
 	</div>
 </header>
@@ -69,32 +69,94 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Redaxtor main module including Redaxtor main class and basic module interface information</p>
+						<p>Redaxtor resource object stores data of a single image from server</p>
 					</div>
 				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">IRedaxtorResource</span>
+					</li>
+				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Classes</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/redaxtor.redaxtor-1.html" class="tsd-kind-icon">Redaxtor</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/redaxtor.redaxtorcomponent.html" class="tsd-kind-icon">Redaxtor<wbr>Component</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iredaxtorresource.html#height" class="tsd-kind-icon">height</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iredaxtorresource.html#thumbnailurl" class="tsd-kind-icon">thumbnail<wbr>Url</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iredaxtorresource.html#url" class="tsd-kind-icon">url</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iredaxtorresource.html#width" class="tsd-kind-icon">width</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
-							<h3>Interfaces</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtorapi.html" class="tsd-kind-icon">IRedaxtorAPI</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtorcomponentprops.html" class="tsd-kind-icon">IRedaxtor<wbr>Component<wbr>Props</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtoroptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Options</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtorpiece.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtorpieceoptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece<wbr>Options</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/redaxtor.iredaxtorresource.html" class="tsd-kind-icon">IRedaxtor<wbr>Resource</a></li>
-							</ul>
-						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="height" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> height</h3>
+					<div class="tsd-signature tsd-kind-icon">height<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/redaxtor/redaxtor/blob/89e2601/src/index-ts.ts#L34">index-ts.ts:34</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Server-side calculated height</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="thumbnailurl" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> thumbnail<wbr>Url</h3>
+					<div class="tsd-signature tsd-kind-icon">thumbnail<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/redaxtor/redaxtor/blob/89e2601/src/index-ts.ts#L24">index-ts.ts:24</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Thumbnail URL</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="url" class="tsd-anchor"></a>
+					<h3>url</h3>
+					<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/redaxtor/redaxtor/blob/89e2601/src/index-ts.ts#L20">index-ts.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>URL of image</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="width" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> width</h3>
+					<div class="tsd-signature tsd-kind-icon">width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/redaxtor/redaxtor/blob/89e2601/src/index-ts.ts#L29">index-ts.ts:29</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Server-side calculated width</p>
+						</div>
 					</div>
 				</section>
 			</section>
@@ -105,36 +167,57 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-module tsd-is-not-exported">
-						<a href="redaxtor.html">redaxtor</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/redaxtor.redaxtor-1.html" class="tsd-kind-icon">Redaxtor</a>
+					<li class=" tsd-kind-class">
+						<a href="../classes/redaxtor.html" class="tsd-kind-icon">Redaxtor</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/redaxtor.redaxtorcomponent.html" class="tsd-kind-icon">Redaxtor<wbr>Component</a>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="../classes/redaxtorcomponent.html" class="tsd-kind-icon">Redaxtor<wbr>Component</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtorapi.html" class="tsd-kind-icon">IRedaxtorAPI</a>
+					<li class=" tsd-kind-interface">
+						<a href="iredaxtorapi.html" class="tsd-kind-icon">IRedaxtorAPI</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtorcomponentprops.html" class="tsd-kind-icon">IRedaxtor<wbr>Component<wbr>Props</a>
+					<li class=" tsd-kind-interface">
+						<a href="iredaxtorcomponentprops.html" class="tsd-kind-icon">IRedaxtor<wbr>Component<wbr>Props</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtoroptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Options</a>
+					<li class=" tsd-kind-interface">
+						<a href="iredaxtoroptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Options</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtorpiece.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece</a>
+					<li class=" tsd-kind-interface">
+						<a href="iredaxtorpiece.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtorpieceoptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece<wbr>Options</a>
+					<li class=" tsd-kind-interface">
+						<a href="iredaxtorpieceoptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece<wbr>Options</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/redaxtor.iredaxtorresource.html" class="tsd-kind-icon">IRedaxtor<wbr>Resource</a>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
+						<a href="iredaxtorresource.html" class="tsd-kind-icon">IRedaxtor<wbr>Resource</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iredaxtorresource.html#height" class="tsd-kind-icon">height</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iredaxtorresource.html#thumbnailurl" class="tsd-kind-icon">thumbnail<wbr>Url</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iredaxtorresource.html#url" class="tsd-kind-icon">url</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iredaxtorresource.html#width" class="tsd-kind-icon">width</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="../globals.html#___r" class="tsd-kind-icon">___r</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#require" class="tsd-kind-icon">require</a>
 					</li>
 				</ul>
 			</nav>
