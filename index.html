@@ -9,30 +9,36 @@
             padding: 0;
             margin: 0;
         }
+
         .bs-docs-header {
             margin-bottom: 40px;
             font-size: 20px;
-            color: #cdbfe3;
-            background-color: #6f5499;
+            color: #fff;
+            background-color: #1a3e53;
         }
+
         .bs-docs-header h1 {
             margin-top: 0;
             color: #fff;
         }
+
         .bs-docs-header p {
             margin-bottom: 0;
             font-weight: 300;
             line-height: 1.4;
         }
+
         .bs-docs-header .container {
             position: relative;
         }
+
         .bs-docs-header {
             padding-top: 60px;
             padding-bottom: 60px;
             font-size: 24px;
             text-align: left;
         }
+
         .bs-docs-header h1 {
             font-size: 60px;
             line-height: 1;
@@ -40,140 +46,179 @@
     </style>
 </head>
 <body>
-    <div class="bs-docs-header" data-piece="background" data-id="bgSample2" data-name="Header:Background" >
-        <div class="container">
-            <div data-piece="html" data-id="pieceHTML" data-name="Header:base">
-                <h1>Getting started</h1>
-                <p>Click Redaxtor bar in top left corner, turn it on and edit me!</p>
+<div class="bs-docs-header" data-piece="background" data-id="bg-0" data-name="Header:Background">
+    <div class="container">
+        <div data-piece="html" data-id="pieceHTML" data-name="Header:Base">
+            <h1>RedaXtor</h1>
+            <p>RedaXtor in on-site overlay editor for your content</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col col-md-6">
+            <div data-piece="html" data-id="html-1" data-name="Body:Try It Out">
+                <h2>Try it out!</h2>
+                <p>1. Open RedaXtor floating panel and enable edit mode.</p>
+                <p>2. Edit this block! It's that simple!</p>
+            </div>
+        </div>
+        <div class="col col-md-6">
+            <div data-piece="html" data-id="html-2" data-name="Body:GitHub">
+                <h2>Visit our documentation</h2>
+                <p>RedaXtor is OpenSource with MIT licence and is distributed on <a href="https://github.com/redaxtor">GitHub</a>.
+                </p>
             </div>
         </div>
     </div>
+    <p>&nbsp;</p>
+</div>
 
-    <div class="container">
-        <p>&nbsp;</p>
-        <div data-piece="html" data-id="pieceHTMLFromPage" data-name="Body:base">
-            <h2>Alternative html mode</h2>
-            <p>If you use <pre>data-use-html</pre> attribute, Redaxtor is not ferching content from server, it uses html from DOM</p>
-            <p>Set it like so to DIV wrapper <pre>data-use-html="1"</pre> and you are set!</p>
-            <p style="text-align: center"><img src="http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png" alt="Happy smile"></p>
-        </div>
-        <p>&nbsp;</p>
-    </div>
-    <div class="container">
-        <p>&nbsp;</p>
-        <div>
-            <h2>Image editor</h2>
-            <p style="text-align: center"><img  data-name="Body:Image Sample" data-piece="image"  data-id="imageSample" src="http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png" alt="Happy smile"></p>
-        </div>
-        <p>&nbsp;</p>
-    </div>
-    <div class="container" data-piece="background" data-id="bgSample" data-name="Body:Backgound Sample" style="background: #efefef url('http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png') 0 0 repeat">
-        <p>&nbsp;</p>
-        <div>
-            <h2>Background editor</h2>
-            <p style="text-align: center">Edit this div background.</p>
-        </div>
-        <p>&nbsp;</p>
-    </div>
 
+<div data-piece="background" data-id="bg-1" data-name="Body:Background" style="background-image: url('api/images/sayagata-400px.png'); background-repeat: repeat;">
+    <br/><br/>
     <div class="container">
-        <p>&nbsp;</p>
-        <div data-piece="html" data-id="pieceSource" data-name="Body:Source Sample">
-            <h2>Edit source.</h2>
-            <p>This block has iframe, so Rick Text editor can't be used. Lets edit its code directly.</p>
-            <iframe></iframe>
-        </div>
-        <p>&nbsp;</p>
-    </div>
+        <div class="row">
 
+            <div class="col col-md-6">
+                <div>
+                    <h3>Edit predefined images!</h3>
+                    <p>You can force user to modify existing image without adding/removing new ones</p>
+                    <p>Useful for cases when you want strict structure or have custom image styling you don't want to
+                        touch</p>
+                    <p style="text-align: center"><img data-piece="image" data-id="image-1" data-name="Body:Image"
+                                                       style="width: 300px; border: 10px solid #f8f8f8; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); border-radius: 10px"
+                                                       src="http://orig03.deviantart.net/ffe1/f/2013/143/2/d/pusheen_the_cat_png_2_by_13taylorswiftlover13-d66byxz.png"
+                                                       alt="Happy smile"></p>
+                </div>
+            </div>
+            <div class="col col-md-6">
+                <div data-piece="source" data-id="source-1" data-name="Body:Source">
+                    <h3>Edit widget code!</h3>
+                    <p>If you have iframes or scripts on your page, source editor is your friend</p>
+                    <iframe style="width: 100%; min-height: 300px"
+                            src="https://www.youtube.com/embed/qRC4Vk6kisY?ecver=1" frameborder="0"
+                            allowfullscreen></iframe>
+                    <script></script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br/><br/>
+</div>
+
+
+<div data-piece="background" data-id="bg-2" data-name="Body:Background 2" style="background-image: url('api/images/weather.png');background-repeat: repeat;">
+    <br/><br/>
     <div class="container">
-        <p>&nbsp;</p>
-        <div data-piece="html" data-id="pieceSource2" data-name="Body:Source Sample 2">
-            <h2>Edit source 2.</h2>
-            <p>This block has script, so saving will show a warning.</p>
-            <script></script>
+        <div class="row">
+            <div class="col col-md-6">
+                <div data-piece="html" data-id="html-3" data-name="Body:Backgrounds Text">
+                    <h3>Edit block backgrounds!</h3>
+                    <p>You can change color or background image of blocks</p>
+                    <p>You can have different image set for usage in backgrounds and content images</p>
+                </div>
+            </div>
+            <div class="col col-md-6">
+                <div data-piece="html" data-id="errorSample" data-name="Body:Error Sample">
+                    <h3>This block will demo an error</h3>
+                    <p>When something happens, notification system comes in and shows a problem</p>
+                    <p>Of cause you can override this as you please</p>
+                </div>
+            </div>
         </div>
-        <p>&nbsp;</p>
     </div>
+    <br/><br/>
+</div>
 
+
+<div data-piece="background" data-id="bg-3" data-name="Body:Background 3" >
+    <br/><br/>
     <div class="container">
-        <p>&nbsp;</p>
-        <div data-piece="html" data-id="errorSample" data-name="Body:Error Sample">
-            <h2>And doing changes to this block will demo an error</h2>
-            <p>You can't save me, haha!</p>
+        <div class="row">
+            <div class="col col-md-12">
+                <div>
+                    <h3>SEO Compartible</h3>
+                    <p>You can also edit information that is not directly visible to page visitors</p>
+                    <p>Unless you are a robot! Then you will see page meta. As site admin you can edit these too with SEO button.</p>
+                </div>
+            </div>
         </div>
-        <p>&nbsp;</p>
     </div>
+    <br/><br/>
+</div>
+<p>&nbsp;</p>
 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"  rel="stylesheet"/>
-    <script
-            src="https://code.jquery.com/jquery-2.2.4.min.js"
-            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-            crossorigin="anonymous"></script>
-    <script src="redaxtor.js"></script>
-    <script>
-        var redaxtor = new Redaxtor({
-            pieces: {
-            },
-            options: {
-              html: {
-                  pickerColors: [
-                      "inherit",//Equivalent to resetting a color
-                      "#9b59b6",
-                      "#34495e",
-                      "#16a085",
-                      "#27ae60",
-                      "#2980b9"
-                  ]
-              }
-            },
-            api: {
-                /*api for get gallery image list*/
-                getImageList: function (data) {
-                    const dataUrl = (data && data.type == "background") ? "api/imagesBg.json" : "api/images.json";
-                    return new Promise(function(resolve, reject) {
-                        $.get({
-                            url: dataUrl ,
-                            dataType: "json"
-                        }).done(function(data) {
-                            resolve(data.data.list);
-                        }).fail(function(error) {
-                            reject(error);
-                        });
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+<script
+        src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+<script src="redaxtor.js"></script>
+<script>
+    var redaxtor = new Redaxtor({
+        pieces: {},
+        options: {
+            html: {
+                pickerColors: [
+                    "inherit",//Equivalent to resetting a color
+                    "#9b59b6",
+                    "#34495e",
+                    "#16a085",
+                    "#27ae60",
+                    "#2980b9"
+                ]
+            }
+        },
+        api: {
+            /*api for get gallery image list*/
+            getImageList: function (data) {
+                const dataUrl = (data && data.type == "background") ? "api/imagesBg.json" : "api/images.json";
+                return new Promise(function (resolve, reject) {
+                    $.get({
+                        url: dataUrl,
+                        dataType: "json"
+                    }).done(function (data) {
+                        resolve(data.data.list);
+                    }).fail(function (error) {
+                        reject(error);
                     });
-                },
-                /* example of api for delete images */
-                deleteImage: function (id) {
-                    return Promise.resolve();
-                },
-                uploadImage: function() {
+                });
+            },
+            /* example of api for delete images */
+            deleteImage: function (id) {
+                return Promise.resolve();
+            },
+            uploadImage: function () {
 
-                },
-                getPieceData: function(piece) {
-                    return Redaxtor.defaultApi.getPieceData(piece).then(function(piece) {
-                       if(piece.id==="pieceSource2") {
-                           piece.data.updateNode = false;
-                       }
-                       return piece;
-                    });
-                },
-                savePieceData: function(piece) {
-                    console.info("Saving to server", piece);
-                    if(piece.id==="errorSample") {
-                        return Promise.reject("Error sample");
-                    } else {
-                        return Promise.resolve();
+            },
+            getPieceData: function (piece) {
+                return Redaxtor.defaultApi.getPieceData(piece).then(function (piece) {
+                    if (piece.id === "pieceSource2") {
+                        piece.data.updateNode = false;
                     }
+                    return piece;
+                });
+            },
+            savePieceData: function (piece) {
+                console.info("Saving to server", piece);
+                if (piece.id === "errorSample") {
+                    return Promise.reject("Error sample");
+                } else {
+                    return Promise.resolve();
                 }
             }
-        });
+        }
+    });
 
-        redaxtor.attachSeo({
-            html: "" // Custom page header html
-            // title: "Override page title tag"
-            // description: "Override page meta[description] tag
-            // keywords: "Override page meta[keywords] tag
-        });
-    </script>
+    redaxtor.attachSeo({
+        html: "" // Custom page header html
+        // title: "Override page title tag"
+        // description: "Override page meta[description] tag
+        // keywords: "Override page meta[keywords] tag
+    });
+</script>
 </body>
 </html>
