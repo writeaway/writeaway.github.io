@@ -36405,11 +36405,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'deactivateEditor',
+	        value: function deactivateEditor() {
+	            if (this.props.editorActive && this.state.sourceEditorActive) {
+	                this.setEditorActive(false);
+	            }
+	        }
+	    }, {
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(newProps) {
 	            if (newProps.manualActivation) {
 	                this.props.onManualActivation(this.props.id);
 	                this.activateEditor();
+	            }
+	            if (newProps.manualDeactivation) {
+	                this.props.onManualDeactivation(this.props.id);
+	                this.deactivateEditor();
 	            }
 	        }
 	    }, {
@@ -36512,6 +36523,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.setEditorActive(true);
 	        }
 	    }, {
+	        key: 'handleCloseModal',
+	        value: function handleCloseModal(event) {
+	            if (event.type == 'keydown' && event.keyCode === 27) {
+	                this.modalNode.parentNode.dispatchEvent(new KeyboardEvent('keyDown', { key: 'Escape' }));
+	            }
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this3 = this;
@@ -36529,8 +36547,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                codemirror = _react2.default.createElement(
 	                    _reactModal2.default,
 	                    { contentLabel: 'Edit source', isOpen: true, overlayClassName: 'r_modal-overlay r_visible',
-	                        className: 'r_modal-content',
-	                        onRequestClose: this.onClose.bind(this) },
+	                        className: 'r_modal-content', ref: function ref(modal) {
+	                            return _this3.modalNode = modal && modal.node;
+	                        },
+	                        onRequestClose: this.handleCloseModal().bind(this) },
 	                    _react2.default.createElement(_reactCodemirror2.default, {
 	                        value: (0, _jsBeautify.html)(html),
 	                        onChange: this.updateCode.bind(this), options: options }),
@@ -36655,11 +36675,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'deactivateEditor',
+	        value: function deactivateEditor() {
+	            if (this.props.editorActive && _index.imageManagerApi.get().state.isVisible) {
+	                this.closePopup();
+	            }
+	        }
+	    }, {
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(newProps) {
 	            if (newProps.manualActivation) {
 	                this.props.onManualActivation(this.props.id);
 	                this.activateEditor();
+	            }
+	            if (newProps.manualDeactivation) {
+	                this.props.onManualDeactivation(this.props.id);
+	                this.deactivateEditor();
 	            }
 	        }
 	    }, {
@@ -36687,6 +36718,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	            _index.imageManagerApi.get().showPopup();
 	            this.props.onEditorActive && this.props.onEditorActive(this.props.id, true);
+	        }
+	    }, {
+	        key: 'closePopup',
+	        value: function closePopup() {
+	            _index.imageManagerApi.get().onClose();
 	        }
 	    }, {
 	        key: 'saveCallback',
@@ -37163,11 +37199,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'deactivateEditor',
+	        value: function deactivateEditor() {
+	            if (this.props.editorActive && _index.imageManagerApi.get().state.isVisible) {
+	                this.closePopup();
+	            }
+	        }
+	    }, {
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(newProps) {
 	            if (newProps.manualActivation) {
 	                this.props.onManualActivation(this.props.id);
 	                this.activateEditor();
+	            }
+	            if (newProps.manualDeactivation) {
+	                this.props.onManualDeactivation(this.props.id);
+	                this.deactivateEditor();
 	            }
 	        }
 	    }, {
@@ -37203,6 +37250,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	            _index.imageManagerApi.get().showPopup();
 	            this.props.onEditorActive && this.props.onEditorActive(this.props.id, true);
+	        }
+	    }, {
+	        key: 'closePopup',
+	        value: function closePopup() {
+	            _index.imageManagerApi.get().onClose();
 	        }
 	    }, {
 	        key: 'saveCallback',
@@ -39379,6 +39431,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'deactivateEditor',
+	        value: function deactivateEditor() {
+	            if (this.props.editorActive && this.state.sourceEditorActive) {
+	                this.setEditorActive(false);
+	            }
+	        }
+	    }, {
 	        key: 'setEditorActive',
 	        value: function setEditorActive(active) {
 	            if (active != this.state.sourceEditorActive) {
@@ -39414,7 +39473,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (nextProps.manualActivation) {
 	                this.props.onManualActivation(this.props.id);
 	                this.activateEditor();
-	            };
+	            }
+	
+	            if (nextProps.manualDeactivation) {
+	                this.props.onManualDeactivation(this.props.id);
+	                this.deactivateEditor();
+	            }
 	        }
 	    }, {
 	        key: 'shouldComponentUpdate',
@@ -39492,6 +39556,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }
+	
+	        /**
+	         * handle closed event from the modal component
+	         * @param event
+	         */
+	
+	    }, {
+	        key: 'handleCloseModal',
+	        value: function handleCloseModal(event) {
+	            if (event.type == 'keydown' && event.keyCode === 27) {
+	                this.modalNode.parentNode.dispatchEvent(new KeyboardEvent('keyDown', { key: 'Escape' }));
+	            }
+	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
@@ -39523,8 +39600,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                modalDiv = _react2.default.createElement(
 	                    _reactModal2.default,
 	                    { contentLabel: 'Edit SEO Information', isOpen: true, overlayClassName: 'r_modal-overlay r_visible',
-	                        className: 'r_modal-content',
-	                        onRequestClose: this.onClose.bind(this) },
+	                        className: 'r_modal-content', ref: function ref(modal) {
+	                            return _this2.modalNode = modal && modal.node;
+	                        },
+	                        onRequestClose: this.handleCloseModal.bind(this) },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'r_row' },
