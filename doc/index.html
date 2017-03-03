@@ -189,15 +189,16 @@ npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save 
                     <span class="hljs-comment">/**
                     * Background editor expects a set of background styling properties 
                     */</span>
+                    <span class="hljs-keyword">const</span> computedStyle = getComputedStyle(piece.node);
                     <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve({
                         ...piece,
                         <span class="hljs-attr">data</span>: {
-                            <span class="hljs-attr">url</span>: piece.node.style.backgroundImage &amp;&amp; piece.node.style.backgroundImage.slice(<span class="hljs-number">4</span>, <span class="hljs-number">-1</span>).replace(<span class="hljs-regexp">/"/g</span>, <span class="hljs-string">""</span>),
-                            <span class="hljs-attr">bgColor</span>: piece.node.style.backgroundColor,
-                            <span class="hljs-attr">bgRepeat</span>: piece.node.style.backgroundRepeat,
-                            <span class="hljs-attr">bgSize</span>: piece.node.style.backgroundSize,
-                            <span class="hljs-attr">bgPosition</span>: piece.node.style.backgroundPosition,
-                            <span class="hljs-attr">alt</span>: piece.node.title || <span class="hljs-string">""</span>
+                             <span class="hljs-attr">url</span>: computedStyle.backgroundImage &amp;&amp; computedStyle.backgroundImage.slice(<span class="hljs-number">4</span>, <span class="hljs-number">-1</span>).replace(<span class="hljs-regexp">/"/g</span>, <span class="hljs-string">""</span>),
+                             <span class="hljs-attr">bgColor</span>: computedStyle.backgroundColor,
+                             <span class="hljs-attr">bgRepeat</span>: computedStyle.backgroundRepeat,
+                             <span class="hljs-attr">bgSize</span>: computedStyle.style.backgroundSize,
+                             <span class="hljs-attr">bgPosition</span>: computedStyle.style.backgroundPosition,
+                             <span class="hljs-attr">alt</span>: piece.node.title || <span class="hljs-string">""</span>
                         }
                     });
                 }
@@ -323,14 +324,15 @@ npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save 
                 <span class="hljs-comment">/**
                 * Background editor expects a set of background styling properties 
                 */</span>
+                <span class="hljs-keyword">const</span> computedStyle = getComputedStyle(piece.node);
                 <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.resolve({
                     ...piece,
                     <span class="hljs-attr">data</span>: {
-                        <span class="hljs-attr">url</span>: piece.node.style.backgroundImage &amp;&amp; piece.node.style.backgroundImage.slice(<span class="hljs-number">4</span>, <span class="hljs-number">-1</span>).replace(<span class="hljs-regexp">/"/g</span>, <span class="hljs-string">""</span>),
-                        <span class="hljs-attr">bgColor</span>: piece.node.style.backgroundColor,
-                        <span class="hljs-attr">bgRepeat</span>: piece.node.style.backgroundRepeat,
-                        <span class="hljs-attr">bgSize</span>: piece.node.style.backgroundSize,
-                        <span class="hljs-attr">bgPosition</span>: piece.node.style.backgroundPosition,
+                        <span class="hljs-attr">url</span>: computedStyle.backgroundImage &amp;&amp; computedStyle.backgroundImage.slice(<span class="hljs-number">4</span>, <span class="hljs-number">-1</span>).replace(<span class="hljs-regexp">/"/g</span>, <span class="hljs-string">""</span>),
+                        <span class="hljs-attr">bgColor</span>: computedStyle.backgroundColor,
+                        <span class="hljs-attr">bgRepeat</span>: computedStyle.backgroundRepeat,
+                        <span class="hljs-attr">bgSize</span>: computedStyle.style.backgroundSize,
+                        <span class="hljs-attr">bgPosition</span>: computedStyle.style.backgroundPosition,
                         <span class="hljs-attr">alt</span>: piece.node.title || <span class="hljs-string">""</span>
                     }
                 });
@@ -361,40 +363,13 @@ npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save 
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-module tsd-is-not-exported">
+						<a href="modules/redaxtor.html">redaxtor</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class">
-						<a href="classes/redaxtor.html" class="tsd-kind-icon">Redaxtor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-is-not-exported">
-						<a href="classes/redaxtorcomponent.html" class="tsd-kind-icon">Redaxtor<wbr>Component</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtorapi.html" class="tsd-kind-icon">IRedaxtorAPI</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtorcomponentprops.html" class="tsd-kind-icon">IRedaxtor<wbr>Component<wbr>Props</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtoroptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtorpiece.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtorpieceoptions.html" class="tsd-kind-icon">IRedaxtor<wbr>Piece<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/iredaxtorresource.html" class="tsd-kind-icon">IRedaxtor<wbr>Resource</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#___r" class="tsd-kind-icon">___r</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#require" class="tsd-kind-icon">require</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
