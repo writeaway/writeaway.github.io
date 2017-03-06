@@ -11,7 +11,7 @@ require('../../redaxtor-medium/dist/redaxtor-medium.css');
 require('../../redaxtor-seo/src/google-preview.less');
 
 require('../node_modules/codemirror/lib/codemirror.css');
-require('../seo.css');
+require('../spiral-specific.css');
 
 var components = {
     html: RedaxtorMedium.HTMLEditor,
