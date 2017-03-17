@@ -5,9 +5,9 @@ var RedaxtorMedium = require('../../redaxtor-medium/src/index');
 var RedaxtorCodemirror = require('../../redaxtor-codemirror/src/index');
 var RedaxtorSeo = require('../../redaxtor-seo/src/index');
 
-require('../../redaxtor/dist/redaxtor.css');
-require('../../redaxtor-medium/dist/medium-editor.css');
-require('../../redaxtor-medium/dist/redaxtor-medium.css');
+require('../../redaxtor/src/styles/redaxtor.less');
+require('../../redaxtor-medium/src/medium-editor.less');
+require('../../redaxtor-medium/src/redaxtor-medium.less');
 require('../../redaxtor-seo/src/google-preview.less');
 
 require('../node_modules/codemirror/lib/codemirror.css');
