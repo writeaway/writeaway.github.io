@@ -96,7 +96,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            setTimeout(function () {
 	                var div = document.createElement('div');
-	                div.innerHTML = "Edit SEO Meta";
+	                div.innerHTML = "";
+	                div.style.display = "none";
 	                div.className = "edit-seo-div";
 	                _this2.addPiece(div, {
 	                    id: "seo",
