@@ -40164,7 +40164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                _react2.default.createElement(
 	                                    'span',
 	                                    { className: "number-badge " + (titleIsLong ? "warning" : "ok") },
-	                                    title.length
+	                                    70 - title.length
 	                                ),
 	                                _react2.default.createElement(
 	                                    'div',
@@ -40183,13 +40183,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                _react2.default.createElement(
 	                                    'span',
 	                                    {
-	                                        className: "number-badge " + (descriptionIsLong ? "warning" : "ok") },
-	                                    description.length
+	                                        className: "number-badge " + (description.length > 160 ? "warning" : "ok") },
+	                                    160 - description.length
 	                                ),
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'description' },
-	                                    'Keep less than 156 characters'
+	                                    'Keep less than 160 characters'
 	                                )
 	                            ),
 	                            _react2.default.createElement(
