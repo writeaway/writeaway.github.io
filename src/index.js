@@ -30,7 +30,7 @@ class RedaxtorBundle extends Redaxtor {
             div.className = "edit-seo-div";
             this.addPiece(div, {
                 id: "seo",
-                name: "SEO Meta",
+                name: "Edit SEO",
                 type: "seo",
                 data: {
                     html: (data && data.html)

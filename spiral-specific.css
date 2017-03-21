@@ -6,7 +6,7 @@
 }
 
 /* Hide SEO toggle */
-.r_reset  .r_bar .r_list-header:last-child {
+.r_reset  .r_bar .r_list-subheader-seo {
     display: none;
 }
 

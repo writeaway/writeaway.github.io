@@ -1373,8 +1373,14 @@ Sizes: [
                     });
                 });
             },
-            uploadImage: function() {
-
+            uploadImage: function () {
+                return Promise.resolve({
+                    url: "http://cdn2-www.dogtime.com/assets/uploads/gallery/30-impossibly-cute-puppies/impossibly-cute-puppy-8.jpg",
+                    thumbnailUrl: "http://cdn2-www.dogtime.com/assets/uploads/gallery/30-impossibly-cute-puppies/impossibly-cute-puppy-8.jpg",
+                    width: 680,
+                    height: 606,
+                    id: Date.now()
+                });
             },
             /* Use default getter, commenting out
              getPieceData: function(piece) {
