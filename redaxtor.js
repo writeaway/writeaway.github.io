@@ -36434,6 +36434,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param node
 	 */
 	var checkNode = function checkNode(node) {
+	    if (!node) {
+	        return;
+	    }
 	    var validTags = ['b', 'strong', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ul', 'ol', 'i', 'em', 'a'];
 	    var validStyles = ['fontWeight', 'fontStyle', 'textDecoration'];
 	    var children = node.querySelectorAll('*');
@@ -36454,6 +36457,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var checkLayer = function checkLayer(redaxtor, node) {
+	    if (!node || !node.children) {
+	        return;
+	    }
 	    for (var i = 0; i < node.children.length; i++) {
 	        if (!checkNode(node.children[i])) {
 	            redaxtor.addPiece(node.children[i], {

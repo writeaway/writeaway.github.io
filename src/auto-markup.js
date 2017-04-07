@@ -4,6 +4,9 @@ let id = 0;
  * @param node
  */
 const checkNode = function (node) {
+    if(!node) {
+        return;
+    }
     const validTags = ['b', 'strong', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ul', 'ol', 'i', 'em', 'a'];
     const validStyles = ['fontWeight', 'fontStyle', 'textDecoration'];
     let children = node.querySelectorAll('*');
@@ -24,6 +27,9 @@ const checkNode = function (node) {
 };
 
 const checkLayer = function (redaxtor, node) {
+    if(!node || !node.children) {
+        return;
+    }
     for (let i = 0; i < node.children.length; i++) {
         if (!checkNode(node.children[i])) {
             redaxtor.addPiece(node.children[i], {
