@@ -4,7 +4,11 @@ let id = 0;
  * @param node
  */
 const checkNode = function (node) {
-    if(!node) {
+    if (!node || window.getComputedStyle(node.display, null).display != 'block'
+        || node.tagName.toLowerCase() == 'script'
+        || node.tagName.toLowerCase() == 'style'
+        || node.tagName.toLowerCase() == 'noscript'
+        || node.tagName.toLowerCase() == 'img') {
         return;
     }
     const validTags = ['b', 'strong', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ul', 'ol', 'i', 'em', 'a'];
@@ -23,11 +27,15 @@ const checkNode = function (node) {
                 }
             }
         }
+        if (window.getComputedStyle(node.display, null).position == 'absolute') {
+            return `No absolute positioned nodes`;
+        }
     }
+    console.log('Node valid', node);
 };
 
 const checkLayer = function (redaxtor, node) {
-    if(!node || !node.children) {
+    if (!node || !node.children) {
         return;
     }
     for (let i = 0; i < node.children.length; i++) {

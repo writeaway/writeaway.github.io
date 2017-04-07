@@ -36434,7 +36434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param node
 	 */
 	var checkNode = function checkNode(node) {
-	    if (!node) {
+	    if (!node || window.getComputedStyle(node.display, null).display != 'block' || node.tagName.toLowerCase() == 'script' || node.tagName.toLowerCase() == 'style' || node.tagName.toLowerCase() == 'noscript' || node.tagName.toLowerCase() == 'img') {
 	        return;
 	    }
 	    var validTags = ['b', 'strong', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'ul', 'ol', 'i', 'em', 'a'];
@@ -36453,7 +36453,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        }
+	        if (window.getComputedStyle(node.display, null).position == 'absolute') {
+	            return 'No absolute positioned nodes';
+	        }
 	    }
+	    console.log('Node valid', node);
 	};
 	
 	var checkLayer = function checkLayer(redaxtor, node) {
