@@ -4,7 +4,7 @@ let id = 0;
  * @param node
  */
 const checkNode = function (node) {
-    if (!node || window.getComputedStyle(node.display, null).display != 'block'
+    if (!node || window.getComputedStyle(node, null).display != 'block'
         || node.tagName.toLowerCase() == 'script'
         || node.tagName.toLowerCase() == 'style'
         || node.tagName.toLowerCase() == 'noscript'
