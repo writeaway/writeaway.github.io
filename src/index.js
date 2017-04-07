@@ -126,5 +126,6 @@ class RedaxtorBundle extends Redaxtor {
 }
 
 RedaxtorBundle.defaultApi = RedaxtorDefaultApi;
+RedaxtorBundle.autoMarkup = require('./auto-markup');
 
 module.exports = RedaxtorBundle;
