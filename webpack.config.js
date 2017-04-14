@@ -9,7 +9,7 @@ var Visualizer = require('webpack-visualizer-plugin');
 var config = {
     output: {
         path: path.join(__dirname),
-        library: 'Redaxtor',
+        library: 'WriteAway',
         libraryTarget: 'umd'
     },
     plugins: [

@@ -1,9 +1,9 @@
 "use strict";
-var Redaxtor = require('../../redaxtor/src/index');
-var RedaxtorDefaultApi = require('../../redaxtor/src/Redaxtor').defaultMinimumApi;
-var RedaxtorMedium = require('../../redaxtor-medium/src/index');
-var RedaxtorCodemirror = require('../../redaxtor-codemirror/src/index');
-var RedaxtorSeo = require('../../redaxtor-seo/src/index');
+var WriteAway = require('../../redaxtor/src/index');
+var WriteAwayDefaultApi = require('../../redaxtor/src/Redaxtor').defaultMinimumApi;
+var WriteAwayMedium = require('../../redaxtor-medium/src/index');
+var WriteAwayCodemirror = require('../../redaxtor-codemirror/src/index');
+var WriteAwaySeo = require('../../redaxtor-seo/src/index');
 
 require('../../redaxtor/src/styles/redaxtor.less');
 require('../../redaxtor-medium/src/medium-editor.less');
@@ -14,14 +14,14 @@ require('../node_modules/codemirror/lib/codemirror.css');
 require('../spiral-specific.css');
 
 var components = {
-    html: RedaxtorMedium.HTMLEditor,
-    image: RedaxtorMedium.IMGTagEditor,
-    background: RedaxtorMedium.BackgroundImageEditor,
-    source: RedaxtorCodemirror,
-    seo: RedaxtorSeo
+    html: WriteAwayMedium.HTMLEditor,
+    image: WriteAwayMedium.IMGTagEditor,
+    background: WriteAwayMedium.BackgroundImageEditor,
+    source: WriteAwayCodemirror,
+    seo: WriteAwaySeo
 };
 
-class RedaxtorBundle extends Redaxtor {
+class WriteAwayBundle extends WriteAway {
     attachSeo(data) {
         setTimeout(() => {
             let div = document.createElement('div');
@@ -53,14 +53,14 @@ class RedaxtorBundle extends Redaxtor {
     constructor(options) {
         options.pieces.components = components;
         options.pieceNameGroupSeparator = ':';
-        RedaxtorBundle.checkHtmlPiecesCompartibility(document);
+        WriteAwayBundle.checkHtmlPiecesCompartibility(document);
         super(options);
 
         if (options.editorActive == undefined || options.editorActive == null) {
-            this.setEditorActive(RedaxtorBundle.getCookie('r_editorActive') == 'true');
+            this.setEditorActive(WriteAwayBundle.getCookie('r_editorActive') == 'true');
         }
         if (options.navBarCollapsed == undefined || options.navBarCollapsed == null) {
-            this.setNavBarCollapsed(RedaxtorBundle.getCookie('r_navBarCollapsed') == 'true');
+            this.setNavBarCollapsed(WriteAwayBundle.getCookie('r_navBarCollapsed') == 'true');
         }
 
         this.onUnload = this.beforeUnload.bind(this);
@@ -72,8 +72,8 @@ class RedaxtorBundle extends Redaxtor {
      * @param event
      */
     beforeUnload(event) {
-        RedaxtorBundle.setCookie('r_editorActive', this.isEditorActive());
-        RedaxtorBundle.setCookie('r_navBarCollapsed', this.isNavBarCollapsed())
+        WriteAwayBundle.setCookie('r_editorActive', this.isEditorActive());
+        WriteAwayBundle.setCookie('r_navBarCollapsed', this.isNavBarCollapsed())
     }
 
     static setCookie(name, value) {
@@ -125,7 +125,7 @@ class RedaxtorBundle extends Redaxtor {
     }
 }
 
-RedaxtorBundle.defaultApi = RedaxtorDefaultApi;
-RedaxtorBundle.autoMarkup = require('./auto-markup');
+WriteAwayBundle.defaultApi = WriteAwayDefaultApi;
+WriteAwayBundle.autoMarkup = require('./auto-markup');
 
-module.exports = RedaxtorBundle;
+module.exports = WriteAwayBundle;

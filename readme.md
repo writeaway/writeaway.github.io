@@ -1,6 +1,6 @@
-This repository is a helper tool that allows to bundle all Redaxtor stuff in one file for usage with Spiral
+This repository is a helper tool that allows to bundle all WriteAway stuff in one file for usage with Spiral
 
-1. Clone [Redaxtor repositories](https://github.com/redaxtor) in some folder with subfolders `redaxtor` `redaxtor-medium` `redaxtor-codemirror` 
+1. Clone [WriteAway repositories](https://github.com/writeaway) in some folder with subfolders `redaxtor` `redaxtor-medium` `redaxtor-codemirror`  `redaxtor-seo` (Note naming) 
 2. Clone this repository in same folder. Name does not matter.
 3. Run `npm install`
 4. Run `npm run build:umd` or `npm run build:umd:min` 
@@ -9,9 +9,9 @@ Most recent build is available as minified file directly in repository.
 Typical usage:
 
 ```
-    <script src="redaxtor.js"></script>
+    <script src="writeaway.js"></script>
     <script>
-        var redaxtor = new Redaxtor({
+        var writeaway = new WriteAway({
             pieces: {
             },
             api: {
@@ -41,7 +41,7 @@ Typical usage:
 
 ```
 
-Read about configuring Redaxtor on [Redaxtor repositories](https://github.com/redaxtor)
+Read about configuring WriteAway on [WriteAway repositories](https://github.com/writeaway)
  
 Styling notes
 ========
@@ -52,7 +52,7 @@ Image and background editors are attached in a node before target one in `redaxt
 
 Default styles are applied by attaching `r_editor r_edit` classes to target node. This applies to all editor types.
 
-Default CSS styles can be found in [Redaxtor repositories](https://github.com/redaxtor)
+Default CSS styles can be found in [WriteAway repositories](https://github.com/writeaway)
 
 This bundle includes:
 
@@ -70,7 +70,7 @@ require('/node_modules/codemirror/lib/codemirror.css');//Styles for Codemirror e
 Scripting notes
 ========
 
-Redaxtor is expected to be one and the only JS events handler. Don't attach it to nodes with other handlers or disable them before activating redaxtor.
+WriteAway is expected to be one and the only JS events handler. Don't attach it to nodes with other handlers or disable them before activating WriteAway.
 
 
 Customise bundle
