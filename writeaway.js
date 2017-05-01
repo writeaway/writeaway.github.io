@@ -32233,7 +32233,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = {
 	    bar: {
 	        editAll: "Edit Page",
-	        title: "R E D A X T O R"
+	        title: "W R I T E A W A Y"
 	    }
 	};
 
@@ -37100,7 +37100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    _createClass(HistoryManager, [{
-	        key: 'registerChange',
+	        key: "registerChange",
 	        value: function registerChange(content) {
 	
 	            if (this.historyIndex >= 0 && this.history[this.historyIndex].html == content.html) {
@@ -37118,7 +37118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // console.log("Pushed ", this.history[this.historyIndex]);
 	        }
 	    }, {
-	        key: 'undo',
+	        key: "undo",
 	        value: function undo() {
 	            this.applied = true;
 	            if (this.historyIndex > 0) {
@@ -37132,7 +37132,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'redo',
+	        key: "redo",
 	        value: function redo() {
 	            if (this.historyIndex < this.history.length - 1) {
 	                this.historyIndex++;
@@ -37160,6 +37160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            buttonLabels: 'fontawesome',
 	            autoLink: true,
 	            stickyTopOffset: 5,
+	            cleanPastedHTML: true,
 	            toolbar: {
 	                buttons: ['undo', 'redo', {
 	                    name: 'bold',
@@ -37391,7 +37392,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    _createClass(HTMLEditor, [{
-	        key: 'onChange',
+	        key: "onChange",
 	        value: function onChange() {
 	            clearTimeout(this.onChangeDebounceTimer);
 	            if (this.historyManager.applied) {
@@ -37403,7 +37404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.options.onNeedResizeCheck();
 	        }
 	    }, {
-	        key: 'getEditorContent',
+	        key: "getEditorContent",
 	        value: function getEditorContent() {
 	            if (this.editor) {
 	                return this.editor.getContent();
@@ -37412,17 +37413,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'saveData',
+	        key: "saveData",
 	        value: function saveData() {
 	            this.savedContent = this.editor ? this.editor.getContent() : this.savedContent;
 	        }
 	    }, {
-	        key: 'needSave',
+	        key: "needSave",
 	        value: function needSave() {
 	            return this.getEditorContent() != this.startHTML;
 	        }
 	    }, {
-	        key: 'save',
+	        key: "save",
 	        value: function save() {
 	            if (!this.needSave()) return;
 	
@@ -37431,19 +37432,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.startHTML = this.getEditorContent();
 	        }
 	    }, {
-	        key: 'setCurrentSourcePieceId',
+	        key: "setCurrentSourcePieceId",
 	        value: function setCurrentSourcePieceId() {
 	            this.options.onSetCurrentSourcePieceId && this.options.onSetCurrentSourcePieceId();
 	        }
 	    }, {
-	        key: 'onFocus',
+	        key: "onFocus",
 	        value: function onFocus() {
 	            this.options.onFocus && this.options.onFocus();
 	            clearTimeout(this.blurTimeout);
 	            this.options.onEditorActive && this.options.onEditorActive(true);
 	        }
 	    }, {
-	        key: 'onBlur',
+	        key: "onBlur",
 	        value: function onBlur() {
 	            var _this2 = this;
 	
@@ -37471,7 +37472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }, 100);
 	        }
 	    }, {
-	        key: 'removeListeners',
+	        key: "removeListeners",
 	        value: function removeListeners() {
 	            this.editor.unsubscribe('focus', this.onFocusBinded);
 	            this.editor.unsubscribe('blur', this.onBlurBinded);
@@ -37480,16 +37481,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.editor.getExtensionByName('source').destroy();
 	        }
 	    }, {
-	        key: 'updatePiece',
+	        key: "updatePiece",
 	        value: function updatePiece() {
 	            if (this.needSave()) {
-	                this.applyEditor();
+	                this.fixStyles();
 	                this.options.onUpdate && this.options.onUpdate();
 	            }
 	        }
 	    }, {
-	        key: 'applyEditor',
-	        value: function applyEditor() {
+	        key: "fixStyles",
+	        value: function fixStyles() {
+	            return;
+	
 	            var convertRgbToHex = function convertRgbToHex(value) {
 	                return ('0' + parseInt(value).toString(16)).slice(-2);
 	            };
@@ -37524,7 +37527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    //if it is correct then converts
 	                    if (rgbData) {
 	                        // !!! NOTE if use <element>.style.color = '#ffffff' or <element>.style.cssText = <some css string> than color converted to 'rgb(255,255,255)' automatically
-	                        var hexColor = '#' + convertRgbToHex(rgbData[1]) + convertRgbToHex(rgbData[2]) + convertRgbToHex(rgbData[3]);
+	                        var hexColor = "#" + convertRgbToHex(rgbData[1]) + convertRgbToHex(rgbData[2]) + convertRgbToHex(rgbData[3]);
 	                        var inlineStyle = node.style.cssText;
 	                        inlineStyle = inlineStyle.replace(node.style.color, hexColor);
 	                        node.setAttribute('style', inlineStyle);
@@ -37532,10 +37535,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	
-	            this.editor.setContent(rootNode.innerHTML);
+	            this.editor.setContent(editDomString);
 	        }
 	    }, {
-	        key: 'destroy',
+	        key: "destroy",
 	        value: function destroy() {
 	            if (this.editor) {
 	                this.saveData();
