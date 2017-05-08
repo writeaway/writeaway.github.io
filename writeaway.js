@@ -31954,6 +31954,82 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
+	         * Get a list of all active pieces information
+	         * @returns {{[pieceId: string]: IRedaxtorPiece}}
+	         */
+	
+	    }, {
+	        key: "getPieceList",
+	        value: function getPieceList() {
+	            var state = this.store.getState();
+	            var pieces = state.pieces && state.pieces.byId || {};
+	            var out = {};
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+	
+	            try {
+	                for (var _iterator = Object.keys(pieces)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var pieceId = _step.value;
+	
+	                    out[pieceId] = _extends({}, pieces[pieceId], {
+	                        data: pieces[pieceId].data ? _extends({}, pieces[pieceId].data) : void 0
+	                    });
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	
+	            return out;
+	        }
+	
+	        /**
+	         * Destroy all existing pieces
+	         */
+	
+	    }, {
+	        key: "destroyAllPieces",
+	        value: function destroyAllPieces() {
+	            var state = this.store.getState();
+	            var pieces = state.pieces && state.pieces.byId || {};
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
+	
+	            try {
+	                for (var _iterator2 = Object.keys(pieces)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var pieceId = _step2.value;
+	
+	                    this.destroyPiece(pieceId);
+	                }
+	            } catch (err) {
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
+	                    }
+	                }
+	            }
+	        }
+	
+	        /**
 	         * Check if navbar is collapsed
 	         * @returns {boolean}
 	         */
