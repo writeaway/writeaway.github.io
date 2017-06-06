@@ -31523,7 +31523,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var isNodeVisible = exports.isNodeVisible = function isNodeVisible(piece) {
-	    if (piece.node.style.display === 'none' || piece.node.style.opacity == 0) {
+	    var computedStyle = getComputedStyle(piece.node);
+	    if (computedStyle.display === 'none' || computedStyle.opacity === 0) {
 	        return false;
 	    }
 	    return true;
