@@ -41,7 +41,7 @@
     "classnames": "^2.2.3",
     "cross-env": "^1.0.7",
     "css-loader": "^0.26.1",
-    "eslint": "^2.4.0",
+    "eslint": "^4.18.2",
     "eslint-plugin-react": "^4.2.3",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
