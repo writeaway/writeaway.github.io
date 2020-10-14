@@ -9,12 +9,12 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@writeaway/bundle@2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@writeaway/bundle/-/bundle-2.0.3.tgz#48f3dc896e46f20660f174644234a21230cafc6a"
-  integrity sha512-yN9lwiCt5YQ+sgqaNX4PUqLkHExzVe4AoxDEUzNuVhwxvqou80o/pd6txdcX2oCEt7eyaDxWTFWcEthcCPd1aA==
+"@writeaway/bundle@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@writeaway/bundle/-/bundle-2.0.4.tgz#da95c461cb203a12afcf3d51d601a2f0ef901d8d"
+  integrity sha512-+KI+76JfBCQXXYW3MV7kkOw9Qff++Xp4i1coRGd4DAQwwfLm0vPB58drom7MIeC7BSXn+o3o7KMMZxfDYhg+zg==
   dependencies:
-    "@writeaway/core" "^2.0.3"
+    "@writeaway/core" "^2.0.4"
     "@writeaway/plugin-codemirror" "^2.0.3"
     "@writeaway/plugin-medium" "^2.0.3"
     "@writeaway/plugin-seo" "^2.0.3"
@@ -32,10 +32,10 @@
     redux-thunk "^2.3.0"
     typescript "^4.0.3"
 
-"@writeaway/core@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@writeaway/core/-/core-2.0.3.tgz#c236b025a44db2879da625473859edbe76e9e774"
-  integrity sha512-hK6e+3Y+5VC5yE9fbimGBXboYhLgHawRgmeXiY8IOOGENf4R4tXhkt8R73+3vXye71cyrqLhDSEiNs4AyMm8qw==
+"@writeaway/core@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@writeaway/core/-/core-2.0.4.tgz#b4191aa776452210373dc65a3ffcb717eec60580"
+  integrity sha512-RYRsW69lhozfDGVkzoH1M9dgJqsxZYQaKdmZhPjVmeIVZLf7yW4Zmkb2+eE16kv92o6I7KWbxzOTHE3QyWNn9w==
 
 "@writeaway/plugin-codemirror@^2.0.3":
   version "2.0.3"

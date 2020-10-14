@@ -5,12 +5,12 @@
   "description": "",
   "main": "./docs/writeaway.js",
   "scripts": {
-    "update": "rimraf docs && copyfiles -u 4 ./node_modules/@writeaway/bundle/dist/**/*.* ./docs"
+    "update": "rimraf docs && copyfiles -u 4 ./node_modules/@writeaway/bundle/dist/**/*.* ./docs && copyfiles .nojekyll ./docs"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@writeaway/bundle": "2.0.3"
+    "@writeaway/bundle": "2.0.4"
   },
   "devDependencies": {
     "copyfiles": "^2.4.0",
