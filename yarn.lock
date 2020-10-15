@@ -9,15 +9,15 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@writeaway/bundle@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@writeaway/bundle/-/bundle-2.0.4.tgz#da95c461cb203a12afcf3d51d601a2f0ef901d8d"
-  integrity sha512-+KI+76JfBCQXXYW3MV7kkOw9Qff++Xp4i1coRGd4DAQwwfLm0vPB58drom7MIeC7BSXn+o3o7KMMZxfDYhg+zg==
+"@writeaway/bundle@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@writeaway/bundle/-/bundle-2.0.5.tgz#5ceddc63480767a058807db7bd19e13b1170099b"
+  integrity sha512-+hVUk4caYlpqxRIgZT4+1xo/3HdQ6/O8DoCe5x+Ihc04eTzmWB0ecyPGGf5jGLKOyo0yvXevuh2RE/VREGPTtA==
   dependencies:
-    "@writeaway/core" "^2.0.4"
+    "@writeaway/core" "^2.0.5"
     "@writeaway/plugin-codemirror" "^2.0.3"
     "@writeaway/plugin-medium" "^2.0.3"
-    "@writeaway/plugin-seo" "^2.0.3"
+    "@writeaway/plugin-seo" "^2.0.4"
     autobind-decorator "^2.4.0"
     classnames "^2.2.6"
     medium-editor "^5.23.3"
@@ -32,10 +32,10 @@
     redux-thunk "^2.3.0"
     typescript "^4.0.3"
 
-"@writeaway/core@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@writeaway/core/-/core-2.0.4.tgz#b4191aa776452210373dc65a3ffcb717eec60580"
-  integrity sha512-RYRsW69lhozfDGVkzoH1M9dgJqsxZYQaKdmZhPjVmeIVZLf7yW4Zmkb2+eE16kv92o6I7KWbxzOTHE3QyWNn9w==
+"@writeaway/core@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@writeaway/core/-/core-2.0.5.tgz#58d03bd356a07d759b4bb35f295e2cfe356cd33a"
+  integrity sha512-EO9wAoL2U5z5VdU4476ttMMQx+3w3VjCWFe3lF2mOjRIEFrtU1KgP5+DKGs9D+UnTlOoLyqB3NEF6TVfwfrVZQ==
 
 "@writeaway/plugin-codemirror@^2.0.3":
   version "2.0.3"
@@ -47,10 +47,10 @@
   resolved "https://registry.yarnpkg.com/@writeaway/plugin-medium/-/plugin-medium-2.0.3.tgz#d4ce01ead477503fbe59394c09b34796cb2d3edd"
   integrity sha512-olS6tFdLo5fHmV09Ha3qbZC7FozMLK9Mlmx92BL2ZrFqhoH/DR+MdtA2Z6R0j26yrMOfznGEaPYh4i7r+23wXQ==
 
-"@writeaway/plugin-seo@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@writeaway/plugin-seo/-/plugin-seo-2.0.3.tgz#db22f57f3c1b0ead2690a723e1c277ba4c7f86cf"
-  integrity sha512-4+8kRyZtYnHypZ369K99ogo/N7RDMEisa/IPn9CbQcbXT+dHqcFVSRktEP15jRDVqrubJxYa9YfJ7JH7OHZffA==
+"@writeaway/plugin-seo@^2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@writeaway/plugin-seo/-/plugin-seo-2.0.4.tgz#797c664c739f704d94d2fe44477a3efd3e088949"
+  integrity sha512-H089cTUvdAYhF0oj/Sf6QmyKzdLcoP/rg8jebESaGsNlQP7HS1JpE02aySdvTEGPpB7k/O9yxHZDV47Zq7kKpA==
 
 ansi-regex@^5.0.0:
   version "5.0.0"
