@@ -1,6 +1,9 @@
 import { WriteAwayCore, IOptions } from '@writeaway/core';
 import 'style.less';
 import { WriteAwaySeoData } from '@writeaway/plugin-seo';
+/**
+ * Declare which editors will be controlling which piece types
+ */
 export declare const components: {
     html: import("../../core/dist").IComponent<{
         html: string;
@@ -12,13 +15,13 @@ export declare const components: {
 };
 declare class WriteAwaySampleBundle extends WriteAwayCore {
     /**
-     * Attaches invisible div handling SEO editing
+     * Creates a fake div handling SEO editing. Alternatively a button can be rendered in that div to show SEO editor.
      */
     attachSeo(data: Partial<WriteAwaySeoData>): void;
     constructor(options: IOptions);
     beforeUnload(): void;
     /**
-     * Scans html pieces for invalid internal html and reverts them to source editor if needed
+     * Scans html for invalid internal html and reverts them to source editor if needed
      */
     static checkHtmlPiecesCompartibility(node: Element | Document): void;
 }
